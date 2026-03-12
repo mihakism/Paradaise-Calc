@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌴 낙원계산기 v2.0 — FIRE 시뮬레이터</title>
+  <meta name="description" content="입력값을 바꾸면 자산 성장 그래프가 즉시 반응하는 시각적 FIRE 시뮬레이터" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    /* ─── 디자인 토큰 ─── */
+    :root {
+      --bg-base:       #080d1a;
+      --bg-card:       #0f1629;
+      --bg-card-hover: #141e36;
+      --bg-input:      #1a2540;
+      --border:        #1e2d4a;
+      --border-light:  #253859;
+
+      --primary:       #00d4a1;
+      --primary-dim:   #00a37c;
+      --primary-glow:  rgba(0, 212, 161, 0.18);
+
+      --accent:        #f6c90e;
+      --accent-dim:    #c99f00;
+      --accent-glow:   rgba(246, 201, 14, 0.18);
+
+      --scenario-b:    #7b6cf6;
+      --scenario-b-glow: rgba(123, 108, 246, 0.18);
+
+      --danger:        #ff5a5a;
+      --warning:       #ff9f43;
+
+      --text-primary:  #e8f0fe;
+      --text-secondary:#8ea3c0;
+      --text-muted:    #4a6080;
+
+      --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+
+      --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
+      --shadow-glow: 0 0 32px rgba(0, 212, 161, 0.12);
+      --transition: 150ms ease;
+    }
+
+    /* ─── 리셋 & 베이스 ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ─── 스크롤바 ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
+
+    /* ─── 레이아웃 ─── */
+    .app-header {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(12px);
+      background: rgba(8, 13, 26, 0.9);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo .logo-icon {
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .header-logo .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+
+    .logo-title span {
+      color: var(--primary);
+    }
+
+    .logo-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 0;
+      min-height: calc(100vh - 73px);
+    }
+
+    /* ─── 입력 패널 ─── */
+    .input-panel {
+      background: var(--bg-card);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .panel-section {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ─── 슬라이더 그룹 ─── */
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .slider-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .slider-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .slider-value-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .slider-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      min-width: 80px;
+      text-align: right;
+    }
+
+    .slider-unit {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ─── 커스텀 슬라이더 ─── */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      background: var(--bg-input);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+      position: relative;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 0 0 3px rgba(0, 212, 161, 0.2);
+      transition: box-shadow var(--transition);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 0 6px rgba(0, 212, 161, 0.25);
+    }
+
+    input[type="range"].scenario-b-slider::-webkit-slider-thumb {
+      background: var(--scenario-b);
+      box-shadow: 0 0 0 3px rgba(123, 108, 246, 0.2);
+    }
+
+    input[type="range"].scenario-b-slider::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 0 6px rgba(123, 108, 246, 0.25);
+    }
+
+    .slider-track-fill {
+      position: relative;
+    }
+
+    /* ─── 버튼 ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: #00f0b8;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-light);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-input);
+      color: var(--text-primary);
+      border-color: var(--border-light);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 8px 12px;
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-input);
+      color: var(--text-primary);
+    }
+
+    .btn-sm {
+      padding: 7px 13px;
+      font-size: 12px;
+    }
+
+    .btn-icon {
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    /* ─── 토글 스위치 ─── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .toggle-row:hover {
+      border-color: var(--border-light);
+    }
+
+    .toggle-label {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toggle-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .toggle-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .toggle-switch {
+      width: 40px;
+      height: 22px;
+      background: var(--border-light);
+      border-radius: 11px;
+      position: relative;
+      transition: background var(--transition);
+      flex-shrink: 0;
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform var(--transition);
+    }
+
+    .toggle-row.active .toggle-switch {
+      background: var(--primary);
+    }
+
+    .toggle-row.active .toggle-switch::after {
+      transform: translateX(18px);
+    }
+
+    .toggle-row.active-b .toggle-switch {
+      background: var(--scenario-b);
+    }
+
+    /* ─── 콘텐츠 영역 ─── */
+    .content-area {
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      gap: 20px;
+      overflow-y: auto;
+    }
+
+    /* ─── 결과 카드 그리드 ─── */
+    .result-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .result-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--primary);
+      opacity: 0.5;
+    }
+
+    .result-card.highlight::before {
+      opacity: 1;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    .result-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-light);
+    }
+
+    .card-icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .card-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .card-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .card-value.primary { color: var(--primary); }
+    .card-value.accent  { color: var(--accent); }
+
+    .card-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ─── 차트 영역 ─── */
+    .chart-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      flex: 1;
+      min-height: 380px;
+      position: relative;
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .chart-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .chart-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-dot.primary  { background: var(--primary); }
+    .legend-dot.scenario-b { background: var(--scenario-b); }
+
+    .chart-wrap {
+      position: relative;
+      height: 300px;
+    }
+
+    /* ─── 시나리오 비교 배너 ─── */
+    .scenario-compare-banner {
+      display: none;
+      background: linear-gradient(135deg, rgba(0,212,161,0.08), rgba(123,108,246,0.08));
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .scenario-compare-banner.visible {
+      display: flex;
+    }
+
+    .compare-text {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .compare-text .diff-years {
+      color: var(--primary);
+      font-size: 18px;
+    }
+
+    .compare-text .diff-years.negative {
+      color: var(--danger);
+    }
+
+    /* ─── 시나리오 B 입력 패널 ─── */
+    .scenario-b-panel {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .scenario-b-panel.visible {
+      display: flex;
+    }
+
+    .scenario-b-label {
+      color: var(--scenario-b);
+    }
+
+    /* ─── 인플레이션 패널 ─── */
+    .inflation-row {
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .inflation-row.visible {
+      display: flex;
+    }
+
+    /* ─── 로딩 오버레이 (초기화용) ─── */
+    .chart-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      z-index: 10;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── 숫자 입력 필드 ─── */
+    .number-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0 12px;
+      transition: border-color var(--transition);
+    }
+
+    .number-input-group:focus-within {
+      border-color: var(--primary);
+    }
+
+    .number-input-group input[type="number"] {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 0;
+      font-family: var(--font-sans);
+    }
+
+    .number-input-group .input-unit {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ─── 뱃지 ─── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge-primary {
+      background: rgba(0, 212, 161, 0.15);
+      color: var(--primary);
+    }
+
+    .badge-accent {
+      background: rgba(246, 201, 14, 0.15);
+      color: var(--accent);
+    }
+
+    .badge-b {
+      background: rgba(123, 108, 246, 0.15);
+      color: var(--scenario-b);
+    }
+
+    /* ─── 구분선 ─── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── 반응형 ─── */
+    @media (max-width: 1024px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+      .input-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        max-height: none;
+      }
+      .result-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .app-header { padding: 14px 16px; }
+      .input-panel { padding: 16px; }
+      .content-area { padding: 16px; }
+      .result-cards { grid-template-columns: 1fr 1fr; }
+      .chart-container { padding: 16px; }
+      .header-actions { display: none; }
+    }
+
+    /* ─── 애니메이션 ─── */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card, .chart-container {
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    /* ─── 숫자 카운터 애니메이션 ─── */
+    .card-value {
+      transition: color 0.2s ease;
+    }
+
+    /* ─── 인플레이션 rate 입력 ─── */
+    .inflation-input {
+      width: 56px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 5px 8px;
+      text-align: center;
+      outline: none;
+      font-family: var(--font-sans);
+    }
+
+    .inflation-input:focus {
+      border-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── 헤더 ─── -->
+<header class="app-header">
+  <div class="header-logo">
+    <span class="logo-icon">🌴</span>
+    <div class="logo-text">
+      <span class="logo-title">낙원계산기 <span>v2.0</span></span>
+      <span class="logo-subtitle">시각적 FIRE 시뮬레이터</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-outline btn-sm" id="btn-share">
+      <span class="btn-icon">🔗</span> 공유하기
+    </button>
+    <button class="btn btn-outline btn-sm" id="btn-download">
+      <span class="btn-icon">📷</span> 이미지 저장
+    </button>
+  </div>
+</header>
+
+<!-- ─── 메인 ─── -->
+<div class="main-layout">
+
+  <!-- ─── 입력 패널 ─── -->
+  <aside class="input-panel" id="input-panel">
+
+    <!-- 시나리오 A -->
+    <div class="panel-section">
+      <div class="section-label">📊 시나리오 A <span class="badge badge-primary" style="margin-left:6px">현재</span></div>
+
+      <div class="slider-group" data-field="currentAge" data-scenario="a">
+        <div class="slider-header">
+          <span class="slider-label">현재 나이</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="val-a-currentAge">30</span>
+            <span class="slider-unit">세</span>
+          </div>
+        </div>
+        <input type="range" id="sl-a-currentAge" min="20" max="60" value="30" step="1" />
+      </div>
+
+      <div class="slider-group" data-field="currentAssets" data-scenario="a">
+        <div class="slider-header">
+          <span class="slider-label">현재 자산</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="val-a-currentAssets">5,000</span>
+            <span class="slider-unit">만원</span>
+          </div>
+        </div>
+        <input type="range" id="sl-a-currentAssets" min="0" max="100000" value="5000" step="500" />
+      </div>
+
+      <div class="slider-group" data-field="monthlySavings" data-scenario="a">
+        <div class="slider-header">
+          <span class="slider-label">월 저축액</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="val-a-monthlySavings">150</span>
+            <span class="slider-unit">만원</span>
+          </div>
+        </div>
+        <input type="range" id="sl-a-monthlySavings" min="10" max="1000" value="150" step="10" />
+      </div>
+
+      <div class="slider-group" data-field="annualReturn" data-scenario="a">
+        <div class="slider-header">
+          <span class="slider-label">연 수익률 (적립기)</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="val-a-annualReturn">7.0</span>
+            <span class="slider-unit">%</span>
+          </div>
+        </div>
+        <input type="range" id="sl-a-annualReturn" min="1" max="20" value="7" step="0.5" />
+      </div>
+
+      <div class="slider-group" data-field="targetWithdrawal" data-scenario="a">
+        <div class="slider-header">
+          <span class="slider-label">희망 월 인출액</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="val-a-targetWithdrawal">300</span>
+            <span class="slider-unit">만원</span>
+          </div>
+        </div>
+        <input type="range" id="sl-a-targetWithdrawal" min="50" max="2000" value="300" step="10" />
+      </div>
+
+      <div class="slider-group" data-field="safeRate" data-scenario="a">
+        <div class="slider-header">
+          <span class="slider-label">안전 인출률 (SWR)</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="val-a-safeRate">4.0</span>
+            <span class="slider-unit">%</span>
+          </div>
+        </div>
+        <input type="range" id="sl-a-safeRate" min="2" max="8" value="4" step="0.5" />
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 인플레이션 토글 -->
+    <div class="panel-section">
+      <div class="section-label">⚙️ 설정</div>
+
+      <div class="toggle-row" id="toggle-inflation" onclick="toggleInflation()">
+        <div class="toggle-label">
+          <span class="toggle-title">인플레이션 반영</span>
+          <span class="toggle-desc">실질 수익률로 환산 (기본 2.5%)</span>
+        </div>
+        <div class="toggle-switch"></div>
+      </div>
+
+      <div class="inflation-row" id="inflation-row">
+        <span style="font-size:13px; color:var(--text-secondary)">인플레이션율:</span>
+        <input type="number" class="inflation-input" id="inflation-rate" value="2.5" min="0" max="10" step="0.1" />
+        <span style="font-size:12px; color:var(--text-muted)">%</span>
+      </div>
+
+      <div class="toggle-row" id="toggle-scenario-b" onclick="toggleScenarioB()">
+        <div class="toggle-label">
+          <span class="toggle-title">시나리오 B 비교</span>
+          <span class="toggle-desc">두 시나리오를 동시에 비교</span>
+        </div>
+        <div class="toggle-switch"></div>
+      </div>
+    </div>
+
+    <!-- 시나리오 B -->
+    <div class="scenario-b-panel" id="scenario-b-panel">
+      <div class="divider"></div>
+      <div class="section-label scenario-b-label">🔮 시나리오 B <span class="badge badge-b" style="margin-left:6px">비교</span></div>
+
+      <div class="slider-group" data-field="currentAge" data-scenario="b">
+        <div class="slider-header">
+          <span class="slider-label">현재 나이</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="val-b-currentAge">30</span>
+            <span class="slider-unit">세</span>
+          </div>
+        </div>
+        <input type="range" class="scenario-b-slider" id="sl-b-currentAge" min="20" max="60" value="30" step="1" />
+      </div>
+
+      <div class="slider-group" data-field="currentAssets" data-scenario="b">
+        <div class="slider-header">
+          <span class="slider-label">현재 자산</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="val-b-currentAssets">5,000</span>
+            <span class="slider-unit">만원</span>
+          </div>
+        </div>
+        <input type="range" class="scenario-b-slider" id="sl-b-currentAssets" min="0" max="100000" value="5000" step="500" />
+      </div>
+
+      <div class="slider-group" data-field="monthlySavings" data-scenario="b">
+        <div class="slider-header">
+          <span class="slider-label">월 저축액</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="val-b-monthlySavings">250</span>
+            <span class="slider-unit">만원</span>
+          </div>
+        </div>
+        <input type="range" class="scenario-b-slider" id="sl-b-monthlySavings" min="10" max="1000" value="250" step="10" />
+      </div>
+
+      <div class="slider-group" data-field="annualReturn" data-scenario="b">
+        <div class="slider-header">
+          <span class="slider-label">연 수익률 (적립기)</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="val-b-annualReturn">7.0</span>
+            <span class="slider-unit">%</span>
+          </div>
+        </div>
+        <input type="range" class="scenario-b-slider" id="sl-b-annualReturn" min="1" max="20" value="7" step="0.5" />
+      </div>
+
+      <div class="slider-group" data-field="targetWithdrawal" data-scenario="b">
+        <div class="slider-header">
+          <span class="slider-label">희망 월 인출액</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="val-b-targetWithdrawal">300</span>
+            <span class="slider-unit">만원</span>
+          </div>
+        </div>
+        <input type="range" class="scenario-b-slider" id="sl-b-targetWithdrawal" min="50" max="2000" value="300" step="10" />
+      </div>
+
+      <div class="slider-group" data-field="safeRate" data-scenario="b">
+        <div class="slider-header">
+          <span class="slider-label">안전 인출률 (SWR)</span>
+          <div class="slider-value-wrap">
+            <span class="slider-value" id="val-b-safeRate">4.0</span>
+            <span class="slider-unit">%</span>
+          </div>
+        </div>
+        <input type="range" class="scenario-b-slider" id="sl-b-safeRate" min="2" max="8" value="4" step="0.5" />
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ─── 콘텐츠 영역 ─── -->
+  <main class="content-area" id="capture-area">
+
+    <!-- 결과 카드 -->
+    <div class="result-cards">
+      <div class="result-card highlight">
+        <span class="card-icon">🏝️</span>
+        <span class="card-label">낙원까지</span>
+        <span class="card-value accent" id="card-years-left">—</span>
+        <span class="card-sub" id="card-retire-year">은퇴 연도 계산 중...</span>
+      </div>
+      <div class="result-card">
+        <span class="card-icon">💰</span>
+        <span class="card-label">은퇴 시 자산</span>
+        <span class="card-value primary" id="card-fire-assets">—</span>
+        <span class="card-sub" id="card-fire-number">목표: 계산 중...</span>
+      </div>
+      <div class="result-card">
+        <span class="card-icon">💸</span>
+        <span class="card-label">월 인출 가능액</span>
+        <span class="card-value" id="card-monthly-income">—</span>
+        <span class="card-sub" id="card-annual-income">연간: 계산 중...</span>
+      </div>
+      <div class="result-card">
+        <span class="card-icon">📈</span>
+        <span class="card-label">FIRE 달성률</span>
+        <span class="card-value" id="card-fire-rate">—</span>
+        <span class="card-sub" id="card-fire-progress">현재 자산 기준</span>
+      </div>
+    </div>
+
+    <!-- 시나리오 비교 배너 -->
+    <div class="scenario-compare-banner" id="compare-banner">
+      <div>
+        <span class="compare-text">
+          시나리오 B가 <span class="diff-years" id="compare-diff">—</span> 빠릅니다
+        </span>
+      </div>
+      <div style="display:flex; gap:16px; font-size:13px; color:var(--text-secondary)">
+        <span>A: <strong id="compare-a-year" style="color:var(--primary)">—</strong></span>
+        <span>B: <strong id="compare-b-year" style="color:var(--scenario-b)">—</strong></span>
+      </div>
+    </div>
+
+    <!-- 차트 -->
+    <div class="chart-container">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">자산 성장 시뮬레이션</div>
+          <div class="chart-subtitle">연도별 순자산 추이 및 FIRE 달성 시점</div>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item">
+            <div class="legend-dot primary"></div>
+            <span id="legend-a-label">시나리오 A</span>
+          </div>
+          <div class="legend-item" id="legend-b-item" style="display:none">
+            <div class="legend-dot scenario-b"></div>
+            <span>시나리오 B</span>
+          </div>
+        </div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="fire-chart"></canvas>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  낙원계산기 v2.0 — 메인 스크립트
+// ═══════════════════════════════════════════════════════
+
+// ─── 상태 ───
+const state = {
+  a: {
+    currentAge:      30,
+    currentAssets:   5000,    // 만원
+    monthlySavings:  150,     // 만원
+    annualReturn:    7.0,     // %
+    targetWithdrawal: 300,    // 만원/월
+    safeRate:        4.0,     // %
+  },
+  b: {
+    currentAge:      30,
+    currentAssets:   5000,
+    monthlySavings:  250,
+    annualReturn:    7.0,
+    targetWithdrawal: 300,
+    safeRate:        4.0,
+  },
+  showInflation:   false,
+  inflationRate:   2.5,
+  scenarioBEnabled: false,
+  maxAge:          90,
+};
+
+// ─── 유틸 ───
+const $ = id => document.getElementById(id);
+
+function fmt만원(val) {
+  if (val >= 100000000) return (val / 100000000).toFixed(1) + '억';
+  if (val >= 10000) return (val / 10000).toFixed(1) + '조';
+  return val.toLocaleString('ko-KR') + '만원';
+}
+
+function fmt만원Short(val) {
+  if (val >= 100000000) return (val / 100000000).toFixed(1) + '억원';
+  if (val >= 100000) return (val / 10000).toFixed(0) + '억원';
+  return val.toLocaleString('ko-KR') + '만원';
+}
+
+// ─── FIRE 계산 엔진 ───
+function calcFIRE(params) {
+  let { currentAge, currentAssets, monthlySavings, annualReturn, targetWithdrawal, safeRate } = params;
+  const maxAge = state.maxAge;
+
+  // 인플레이션 보정
+  let effReturn = annualReturn / 100;
+  if (state.showInflation) {
+    effReturn = (1 + effReturn) / (1 + state.inflationRate / 100) - 1;
+  }
+
+  const fireNumber = (targetWithdrawal * 12) / (safeRate / 100); // 만원
+  const monthlySavingsPerYear = monthlySavings * 12;
+
+  const dataPoints = [];
+  let assets = currentAssets;
+  let retirementAge = null;
+  let retirementAssets = null;
+
+  for (let age = currentAge; age <= maxAge; age++) {
+    dataPoints.push({ age, assets: Math.max(0, assets) });
+
+    if (retirementAge === null && assets >= fireNumber) {
+      retirementAge = age;
+      retirementAssets = assets;
+    }
+
+    if (retirementAge === null) {
+      assets = (assets + monthlySavingsPerYear) * (1 + effReturn);
+    } else {
+      assets = assets * (1 + effReturn) - targetWithdrawal * 12;
+    }
+  }
+
+  const fireRate = Math.min(100, (currentAssets / fireNumber) * 100);
+
+  return {
+    dataPoints,
+    retirementAge,
+    retirementAssets,
+    fireNumber,
+    fireRate,
+    targetWithdrawal,
+    safeRate,
+  };
+}
+
+// ─── 차트 초기화 ───
+let fireChart = null;
+
+function initChart() {
+  const ctx = $('fire-chart').getContext('2d');
+
+  fireChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels: [], datasets: [] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      animation: { duration: 200 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(13, 22, 48, 0.95)',
+          borderColor: '#1e2d4a',
+          borderWidth: 1,
+          padding: 14,
+          titleColor: '#8ea3c0',
+          bodyColor: '#e8f0fe',
+          titleFont: { size: 12, weight: '600' },
+          bodyFont: { size: 14, weight: '700', family: "'Pretendard', sans-serif" },
+          callbacks: {
+            title: items => `${items[0].label}세`,
+            label: item => {
+              const val = item.raw;
+              if (val === null) return null;
+              return ` ${item.dataset.label}: ${fmt만원Short(val)}`;
+            },
+          },
+        },
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(30,45,74,0.6)', drawBorder: false },
+          ticks: {
+            color: '#4a6080',
+            font: { size: 11 },
+            callback: v => v + '세',
+          },
+          border: { display: false },
+        },
+        y: {
+          grid: { color: 'rgba(30,45,74,0.6)', drawBorder: false },
+          ticks: {
+            color: '#4a6080',
+            font: { size: 11 },
+            callback: v => fmt만원Short(v),
+          },
+          border: { display: false },
+        },
+      },
+    },
+  });
+}
+
+// ─── 차트 업데이트 ───
+function updateChart(resA, resB) {
+  const labels = resA.dataPoints.map(p => p.age);
+
+  const retireIdxA = resA.retirementAge
+    ? resA.dataPoints.findIndex(p => p.age === resA.retirementAge)
+    : -1;
+
+  // 포인트 배경색 (은퇴 시점 강조)
+  const pointColorsA = labels.map((_, i) => i === retireIdxA ? '#f6c90e' : 'transparent');
+  const pointRadiiA  = labels.map((_, i) => i === retireIdxA ? 7 : 0);
+  const pointBorderA = labels.map((_, i) => i === retireIdxA ? 3 : 0);
+
+  const datasets = [
+    {
+      label: '시나리오 A',
+      data: resA.dataPoints.map(p => p.assets),
+      borderColor: '#00d4a1',
+      backgroundColor: ctx => {
+        const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
+        g.addColorStop(0, 'rgba(0,212,161,0.15)');
+        g.addColorStop(1, 'rgba(0,212,161,0.01)');
+        return g;
+      },
+      borderWidth: 2.5,
+      pointBackgroundColor: pointColorsA,
+      pointBorderColor: '#f6c90e',
+      pointBorderWidth: pointBorderA,
+      pointRadius: pointRadiiA,
+      pointHoverRadius: 5,
+      tension: 0.4,
+      fill: true,
+    },
+  ];
+
+  // FIRE 목표선 A
+  datasets.push({
+    label: 'FIRE 목표 (A)',
+    data: labels.map(() => resA.fireNumber),
+    borderColor: 'rgba(246,201,14,0.35)',
+    borderDash: [6, 4],
+    borderWidth: 1.5,
+    pointRadius: 0,
+    pointHoverRadius: 0,
+    fill: false,
+    tension: 0,
+  });
+
+  if (resB) {
+    const retireIdxB = resB.retirementAge
+      ? resB.dataPoints.findIndex(p => p.age === resB.retirementAge)
+      : -1;
+
+    const bLabels = resB.dataPoints.map(p => p.age);
+    // B 데이터를 A 라벨 기준으로 맞추기
+    const bData = labels.map(age => {
+      const pt = resB.dataPoints.find(p => p.age === age);
+      return pt ? pt.assets : null;
+    });
+
+    const pointColorsB = bLabels.map((_, i) => i === retireIdxB ? '#a89cf7' : 'transparent');
+    const pointRadiiB  = bLabels.map((_, i) => i === retireIdxB ? 7 : 0);
+    const pointBorderB = bLabels.map((_, i) => i === retireIdxB ? 3 : 0);
+
+    datasets.push({
+      label: '시나리오 B',
+      data: bData,
+      borderColor: '#7b6cf6',
+      backgroundColor: ctx => {
+        const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
+        g.addColorStop(0, 'rgba(123,108,246,0.12)');
+        g.addColorStop(1, 'rgba(123,108,246,0.01)');
+        return g;
+      },
+      borderWidth: 2.5,
+      pointBackgroundColor: pointColorsB,
+      pointBorderColor: '#a89cf7',
+      pointBorderWidth: pointBorderB,
+      pointRadius: pointRadiiB,
+      pointHoverRadius: 5,
+      tension: 0.4,
+      fill: true,
+    });
+  }
+
+  fireChart.data.labels = labels;
+  fireChart.data.datasets = datasets;
+  fireChart.update('active');
+}
+
+// ─── 결과 카드 업데이트 ───
+function updateCards(resA) {
+  const currentYear = new Date().getFullYear();
+  const yearsLeft = resA.retirementAge
+    ? resA.retirementAge - resA.dataPoints[0].age
+    : null;
+
+  // 낙원까지
+  if (yearsLeft !== null && yearsLeft >= 0) {
+    $('card-years-left').textContent = `D-${yearsLeft}년`;
+    const retireYear = currentYear + yearsLeft;
+    $('card-retire-year').textContent = `${retireYear}년 (${resA.retirementAge}세) 은퇴 예정`;
+  } else if (yearsLeft === 0) {
+    $('card-years-left').textContent = '지금!';
+    $('card-retire-year').textContent = '이미 FIRE 달성 가능합니다 🎉';
+  } else {
+    $('card-years-left').textContent = '90세+';
+    $('card-retire-year').textContent = '조건을 조정해 보세요';
+  }
+
+  // 은퇴 시 자산
+  if (resA.retirementAssets) {
+    $('card-fire-assets').textContent = fmt만원Short(resA.retirementAssets);
+    $('card-fire-number').textContent = `목표: ${fmt만원Short(resA.fireNumber)}`;
+  } else {
+    $('card-fire-assets').textContent = '미달성';
+    $('card-fire-number').textContent = `목표: ${fmt만원Short(resA.fireNumber)}`;
+  }
+
+  // 월 인출
+  $('card-monthly-income').textContent = `${resA.targetWithdrawal.toLocaleString()}만원`;
+  $('card-annual-income').textContent = `연간: ${(resA.targetWithdrawal * 12).toLocaleString()}만원`;
+
+  // FIRE 달성률
+  const rate = resA.fireRate;
+  $('card-fire-rate').textContent = `${rate.toFixed(1)}%`;
+  $('card-fire-progress').textContent = `현재 자산 / FIRE 목표`;
+}
+
+// ─── 시나리오 비교 배너 업데이트 ───
+function updateCompareBanner(resA, resB) {
+  const banner = $('compare-banner');
+  if (!resB) {
+    banner.classList.remove('visible');
+    return;
+  }
+
+  banner.classList.add('visible');
+  const currentYear = new Date().getFullYear();
+
+  const ageA = resA.retirementAge;
+  const ageB = resB.retirementAge;
+  const yearsA = ageA ? ageA - state.a.currentAge : null;
+  const yearsB = ageB ? ageB - state.b.currentAge : null;
+
+  $('compare-a-year').textContent = ageA
+    ? `${currentYear + (ageA - state.a.currentAge)}년 (${ageA}세)`
+    : '90세+';
+  $('compare-b-year').textContent = ageB
+    ? `${currentYear + (ageB - state.b.currentAge)}년 (${ageB}세)`
+    : '90세+';
+
+  if (yearsA !== null && yearsB !== null) {
+    const diff = yearsA - yearsB;
+    const diffEl = $('compare-diff');
+    if (diff > 0) {
+      diffEl.textContent = `${diff}년`;
+      diffEl.className = 'diff-years';
+      document.querySelector('.compare-text').innerHTML =
+        `시나리오 B가 <span class="diff-years" id="compare-diff">${diff}년</span> 더 빠릅니다`;
+    } else if (diff < 0) {
+      diffEl.textContent = `${Math.abs(diff)}년`;
+      diffEl.className = 'diff-years negative';
+      document.querySelector('.compare-text').innerHTML =
+        `시나리오 A가 <span class="diff-years" id="compare-diff">${Math.abs(diff)}년</span> 더 빠릅니다`;
+    } else {
+      document.querySelector('.compare-text').innerHTML =
+        `두 시나리오의 은퇴 시점이 <span class="diff-years" id="compare-diff">동일</span>합니다`;
+    }
+  }
+}
+
+// ─── 메인 업데이트 함수 ───
+function update() {
+  const resA = calcFIRE(state.a);
+  const resB = state.scenarioBEnabled ? calcFIRE(state.b) : null;
+
+  updateCards(resA);
+  updateChart(resA, resB);
+  updateCompareBanner(resA, resB);
+  updateURL();
+}
+
+// ─── Debounce ───
+let debounceTimer = null;
+function scheduleUpdate() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(update, 300);
+}
+
+// ─── 슬라이더 바인딩 ───
+function bindSliders() {
+  const fields = ['currentAge', 'currentAssets', 'monthlySavings', 'annualReturn', 'targetWithdrawal', 'safeRate'];
+  const scenarios = ['a', 'b'];
+
+  scenarios.forEach(sc => {
+    fields.forEach(field => {
+      const slider = $(`sl-${sc}-${field}`);
+      const valueEl = $(`val-${sc}-${field}`);
+      if (!slider || !valueEl) return;
+
+      slider.addEventListener('input', () => {
+        const raw = parseFloat(slider.value);
+        state[sc][field] = raw;
+
+        // 표시 포맷
+        if (field === 'currentAssets') {
+          valueEl.textContent = raw.toLocaleString('ko-KR');
+        } else if (field === 'annualReturn' || field === 'safeRate') {
+          valueEl.textContent = raw.toFixed(1);
+        } else {
+          valueEl.textContent = raw.toLocaleString('ko-KR');
+        }
+
+        // 슬라이더 채움 색상 업데이트
+        updateSliderFill(slider, sc);
+        scheduleUpdate();
+      });
+
+      // 초기 채움 설정
+      updateSliderFill(slider, sc);
+    });
+  });
+}
+
+function updateSliderFill(slider, sc) {
+  const min = parseFloat(slider.min);
+  const max = parseFloat(slider.max);
+  const val = parseFloat(slider.value);
+  const pct = ((val - min) / (max - min)) * 100;
+  const color = sc === 'b' ? '#7b6cf6' : '#00d4a1';
+  slider.style.background = `linear-gradient(to right, ${color} ${pct}%, #1a2540 ${pct}%)`;
+}
+
+// ─── 인플레이션 토글 ───
+function toggleInflation() {
+  state.showInflation = !state.showInflation;
+  const toggle = $('toggle-inflation');
+  const row    = $('inflation-row');
+  toggle.classList.toggle('active', state.showInflation);
+  row.classList.toggle('visible', state.showInflation);
+  scheduleUpdate();
+}
+
+$('inflation-rate').addEventListener('input', e => {
+  state.inflationRate = parseFloat(e.target.value) || 2.5;
+  scheduleUpdate();
+});
+
+// ─── 시나리오 B 토글 ───
+function toggleScenarioB() {
+  state.scenarioBEnabled = !state.scenarioBEnabled;
+  const toggle  = $('toggle-scenario-b');
+  const panel   = $('scenario-b-panel');
+  const legendB = $('legend-b-item');
+
+  toggle.classList.toggle('active-b', state.scenarioBEnabled);
+  panel.classList.toggle('visible', state.scenarioBEnabled);
+  legendB.style.display = state.scenarioBEnabled ? 'flex' : 'none';
+
+  scheduleUpdate();
+}
+
+// ─── URL 공유 ───
+function updateURL() {
+  const p = new URLSearchParams();
+  const fields = ['currentAge', 'currentAssets', 'monthlySavings', 'annualReturn', 'targetWithdrawal', 'safeRate'];
+  fields.forEach(f => p.set(`a_${f}`, state.a[f]));
+  if (state.scenarioBEnabled) {
+    fields.forEach(f => p.set(`b_${f}`, state.b[f]));
+    p.set('b', '1');
+  }
+  if (state.showInflation) {
+    p.set('inf', state.inflationRate);
+  }
+  const newURL = `${location.pathname}?${p.toString()}`;
+  history.replaceState(null, '', newURL);
+}
+
+function loadFromURL() {
+  const p = new URLSearchParams(location.search);
+  const fields = ['currentAge', 'currentAssets', 'monthlySavings', 'annualReturn', 'targetWithdrawal', 'safeRate'];
+
+  let loaded = false;
+  fields.forEach(f => {
+    if (p.has(`a_${f}`)) {
+      state.a[f] = parseFloat(p.get(`a_${f}`));
+      loaded = true;
+    }
+  });
+
+  if (p.has('b')) {
+    state.scenarioBEnabled = true;
+    fields.forEach(f => {
+      if (p.has(`b_${f}`)) state.b[f] = parseFloat(p.get(`b_${f}`));
+    });
+  }
+
+  if (p.has('inf')) {
+    state.showInflation = true;
+    state.inflationRate = parseFloat(p.get('inf'));
+    $('inflation-rate').value = state.inflationRate;
+  }
+
+  if (loaded) syncSlidersToState();
+  if (state.scenarioBEnabled) {
+    $('toggle-scenario-b').classList.add('active-b');
+    $('scenario-b-panel').classList.add('visible');
+    $('legend-b-item').style.display = 'flex';
+  }
+  if (state.showInflation) {
+    $('toggle-inflation').classList.add('active');
+    $('inflation-row').classList.add('visible');
+  }
+}
+
+function syncSlidersToState() {
+  const fields = ['currentAge', 'currentAssets', 'monthlySavings', 'annualReturn', 'targetWithdrawal', 'safeRate'];
+  ['a', 'b'].forEach(sc => {
+    fields.forEach(f => {
+      const sl = $(`sl-${sc}-${f}`);
+      const valEl = $(`val-${sc}-${f}`);
+      if (!sl) return;
+      sl.value = state[sc][f];
+      if (f === 'currentAssets') {
+        valEl.textContent = state[sc][f].toLocaleString('ko-KR');
+      } else if (f === 'annualReturn' || f === 'safeRate') {
+        valEl.textContent = parseFloat(state[sc][f]).toFixed(1);
+      } else {
+        valEl.textContent = state[sc][f].toLocaleString('ko-KR');
+      }
+      updateSliderFill(sl, sc);
+    });
+  });
+}
+
+// ─── 공유 버튼 ───
+$('btn-share').addEventListener('click', () => {
+  update(); // URL 최신화
+  navigator.clipboard.writeText(location.href).then(() => {
+    const btn = $('btn-share');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<span class="btn-icon">✅</span> 복사됨!';
+    btn.style.color = 'var(--primary)';
+    setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
+  });
+});
+
+// ─── 이미지 다운로드 ───
+$('btn-download').addEventListener('click', async () => {
+  const btn = $('btn-download');
+  btn.innerHTML = '<span class="btn-icon">⏳</span> 저장 중...';
+  btn.disabled = true;
+
+  try {
+    const el = $('capture-area');
+    const canvas = await html2canvas(el, {
+      backgroundColor: '#080d1a',
+      scale: 2,
+      logging: false,
+    });
+    const link = document.createElement('a');
+    link.download = `낙원계산기_${new Date().toISOString().slice(0,10)}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch (e) {
+    alert('이미지 저장 중 오류가 발생했습니다.');
+  }
+
+  btn.innerHTML = '<span class="btn-icon">📷</span> 이미지 저장';
+  btn.disabled = false;
+});
+
+// ─── 초기화 ───
+function init() {
+  initChart();
+  loadFromURL();
+  bindSliders();
+  update();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
