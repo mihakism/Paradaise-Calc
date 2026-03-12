@@ -658,9 +658,12 @@
       .app-header { padding: 14px 16px; }
       .input-panel { padding: 16px; }
       .content-area { padding: 16px; }
-      .result-cards { grid-template-columns: 1fr 1fr; }
-      .chart-container { padding: 16px; }
-      .header-actions { display: none; }
+      .result-cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .chart-container { padding: 14px; }
+      .chart-wrap { height: 240px; }
+      .preset-grid { grid-template-columns: repeat(3, 1fr); }
+      .btn-sm span:not(.btn-icon) { display: none; }
+      .card-value { font-size: 18px; }
     }
 
     /* ─── 애니메이션 ─── */
@@ -677,6 +680,46 @@
     .card-value {
       transition: color 0.2s ease;
     }
+
+    /* ─── 프리셋 그리드 ─── */
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .preset-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 10px 6px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition);
+      text-align: center;
+    }
+
+    .preset-btn:hover {
+      border-color: var(--primary);
+      background: rgba(0, 212, 161, 0.06);
+      transform: translateY(-1px);
+    }
+
+    .preset-btn:active {
+      transform: translateY(0);
+    }
+
+    .preset-btn.active-preset {
+      border-color: var(--primary);
+      background: rgba(0, 212, 161, 0.1);
+    }
+
+    .preset-emoji { font-size: 18px; line-height: 1; }
+    .preset-name  { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+    .preset-desc  { font-size: 10px; color: var(--text-muted); }
 
     /* ─── 인플레이션 rate 입력 ─── */
     .inflation-input {
@@ -724,6 +767,30 @@
 
   <!-- ─── 입력 패널 ─── -->
   <aside class="input-panel" id="input-panel">
+
+    <!-- 프리셋 -->
+    <div class="panel-section">
+      <div class="section-label">⚡ 빠른 시작</div>
+      <div class="preset-grid">
+        <button class="preset-btn" onclick="applyPreset('minjun')">
+          <span class="preset-emoji">👨‍💻</span>
+          <span class="preset-name">김민준</span>
+          <span class="preset-desc">32세 IT 6년차</span>
+        </button>
+        <button class="preset-btn" onclick="applyPreset('seoyeon')">
+          <span class="preset-emoji">👩‍💼</span>
+          <span class="preset-name">박서연</span>
+          <span class="preset-desc">41세 늦깎이 FIRE</span>
+        </button>
+        <button class="preset-btn" onclick="applyPreset('aggressive')">
+          <span class="preset-emoji">🚀</span>
+          <span class="preset-name">공격형</span>
+          <span class="preset-desc">고수익률 전략</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
 
     <!-- 시나리오 A -->
     <div class="panel-section">
@@ -1002,16 +1069,10 @@ const state = {
 // ─── 유틸 ───
 const $ = id => document.getElementById(id);
 
-function fmt만원(val) {
-  if (val >= 100000000) return (val / 100000000).toFixed(1) + '억';
-  if (val >= 10000) return (val / 10000).toFixed(1) + '조';
-  return val.toLocaleString('ko-KR') + '만원';
-}
-
-function fmt만원Short(val) {
-  if (val >= 100000000) return (val / 100000000).toFixed(1) + '억원';
-  if (val >= 100000) return (val / 10000).toFixed(0) + '억원';
-  return val.toLocaleString('ko-KR') + '만원';
+    function fmt만원Short(val) {
+  if (val >= 100000000) return (val / 100000000).toFixed(2).replace(/\.?0+$/, '') + '조원';
+  if (val >= 10000)     return (val / 10000).toFixed(1).replace(/\.0$/, '') + '억원';
+  return Math.round(val).toLocaleString('ko-KR') + '만원';
 }
 
 // ─── FIRE 계산 엔진 ───
@@ -1103,15 +1164,18 @@ function initChart() {
             color: '#4a6080',
             font: { size: 11 },
             callback: v => v + '세',
+            maxTicksLimit: 12,
           },
           border: { display: false },
         },
         y: {
+          min: 0,
           grid: { color: 'rgba(30,45,74,0.6)', drawBorder: false },
           ticks: {
             color: '#4a6080',
             font: { size: 11 },
             callback: v => fmt만원Short(v),
+            maxTicksLimit: 6,
           },
           border: { display: false },
         },
@@ -1218,16 +1282,16 @@ function updateCards(resA) {
     : null;
 
   // 낙원까지
-  if (yearsLeft !== null && yearsLeft >= 0) {
+  if (yearsLeft !== null && yearsLeft === 0) {
+    $('card-years-left').textContent = '지금!';
+    $('card-retire-year').textContent = '이미 FIRE 달성 가능합니다 🎉';
+  } else if (yearsLeft !== null && yearsLeft > 0) {
     $('card-years-left').textContent = `D-${yearsLeft}년`;
     const retireYear = currentYear + yearsLeft;
     $('card-retire-year').textContent = `${retireYear}년 (${resA.retirementAge}세) 은퇴 예정`;
-  } else if (yearsLeft === 0) {
-    $('card-years-left').textContent = '지금!';
-    $('card-retire-year').textContent = '이미 FIRE 달성 가능합니다 🎉';
   } else {
     $('card-years-left').textContent = '90세+';
-    $('card-retire-year').textContent = '조건을 조정해 보세요';
+    $('card-retire-year').textContent = '저축액 또는 수익률을 높여보세요';
   }
 
   // 은퇴 시 자산
@@ -1492,6 +1556,33 @@ $('btn-download').addEventListener('click', async () => {
   btn.innerHTML = '<span class="btn-icon">📷</span> 이미지 저장';
   btn.disabled = false;
 });
+
+// ─── 프리셋 ───
+const PRESETS = {
+  minjun: {
+    currentAge: 32, currentAssets: 3000, monthlySavings: 150,
+    annualReturn: 7.0, targetWithdrawal: 250, safeRate: 4.0,
+  },
+  seoyeon: {
+    currentAge: 41, currentAssets: 8000, monthlySavings: 200,
+    annualReturn: 5.5, targetWithdrawal: 300, safeRate: 3.5,
+  },
+  aggressive: {
+    currentAge: 28, currentAssets: 2000, monthlySavings: 300,
+    annualReturn: 12.0, targetWithdrawal: 400, safeRate: 4.0,
+  },
+};
+
+function applyPreset(key) {
+  const p = PRESETS[key];
+  if (!p) return;
+  Object.assign(state.a, p);
+  syncSlidersToState();
+  // 프리셋 버튼 피드백
+  document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active-preset'));
+  event.currentTarget.classList.add('active-preset');
+  update();
+}
 
 // ─── 초기화 ───
 function init() {
