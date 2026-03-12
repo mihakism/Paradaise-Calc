@@ -1163,7 +1163,9 @@ function initChart() {
           ticks: {
             color: '#4a6080',
             font: { size: 11 },
-            callback: v => v + '세',
+            callback: function(value) {
+              return this.getLabelForValue(value) + '세';
+            },
             maxTicksLimit: 12,
           },
           border: { display: false },
