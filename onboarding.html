@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>파라다이스 계산기 v2.0</title>
+  <meta name="description" content="원하는 삶에서 출발하는 역산 FIRE 시뮬레이터" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
+
+  <style>
+    /* ──────────────────────────────────────────
+       Design Tokens  (DESIGN_SPEC §2)
+    ────────────────────────────────────────── */
+    :root {
+      --bg:     #0F1117;
+      --card:   #1A1D2E;
+      --blue:   #1E4FBF;
+      --green:  #0FAD77;
+      --orange: #F59E0B;
+      --t1:     #F9FAFB;
+      --t2:     #9CA3AF;
+      --t3:     #4B5563;
+      --border: #2D3148;
+
+      --ff-ko: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      --ff-en: 'Inter', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--t1);
+      font-family: var(--ff-ko);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ──────────────────────────────────────────
+       Scroll container  —  wheel은 JS로 막음
+    ────────────────────────────────────────── */
+    #scroller {
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+    }
+    #scroller::-webkit-scrollbar { display: none; }
+
+    /* ──────────────────────────────────────────
+       Progress bar (fixed top-center)
+    ────────────────────────────────────────── */
+    #progress {
+      position: fixed; top: 32px; left: 50%; transform: translateX(-50%);
+      z-index: 200;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .dot {
+      width: 6px; height: 6px; border-radius: 3px;
+      background: rgba(255,255,255,0.15);
+      transition: width .4s ease, background .4s ease;
+    }
+    .dot.active { width: 28px; background: var(--green); }
+    .dot.done   { background: rgba(15,173,119,.4); }
+
+    /* ──────────────────────────────────────────
+       Section  —  각 100vh
+    ────────────────────────────────────────── */
+    .section {
+      height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 80px 24px 60px;
+      position: relative; overflow: hidden;
+    }
+
+    /* section backgrounds: 새벽 → 낙원 */
+    #s1 { background: linear-gradient(155deg, #0F1117 0%, #1A1D2E 100%); }
+    #s2 { background: linear-gradient(155deg, #141827 0%, #1E3A5F 100%); }
+    #s3 { background: linear-gradient(155deg, #1a2e4a 0%, #0D4F3C 100%); }
+    #s4 { background: linear-gradient(155deg, #0b3d2e 0%, #0a7a5a 100%); }
+    #s5 { background: linear-gradient(155deg, #0b6040 0%, #1E4FBF 100%); }
+
+    /* ambient glow */
+    #s4::after, #s5::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 30%,
+        rgba(15,173,119,.14) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    /* ──────────────────────────────────────────
+       Content box (fade-in on enter)
+    ────────────────────────────────────────── */
+    .content {
+      width: 100%; max-width: 560px;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 44px;
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .content.in { opacity: 1; transform: translateY(0); }
+
+    /* step label */
+    .step-lbl {
+      align-self: flex-start;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,255,255,.25);
+    }
+
+    /* question */
+    .question {
+      font-size: clamp(26px, 5vw, 36px);
+      font-weight: 700; line-height: 1.35;
+      text-align: center;
+    }
+
+    /* ──────────────────────────────────────────
+       Number + Slider block
+    ────────────────────────────────────────── */
+    .input-block {
+      width: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 28px;
+    }
+
+    .num-row {
+      display: flex; align-items: baseline; gap: 6px;
+      user-select: none;
+    }
+    .num {
+      font-family: var(--ff-en);
+      font-size: clamp(72px, 14vw, 108px);
+      font-weight: 900;
+      color: var(--green);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      transition: color .2s;
+    }
+    .unit {
+      font-family: var(--ff-en);
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 600;
+      color: var(--t2);
+      line-height: 1;
+    }
+
+    /* slider */
+    .slider-wrap { width: 100%; }
+    .slider-limits {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: rgba(255,255,255,.2);
+      margin-bottom: 12px;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 3px;
+      border-radius: 2px; outline: none; cursor: pointer;
+      background: rgba(255,255,255,.1);
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--green);
+      box-shadow:
+        0 0 0 4px rgba(15,173,119,.18),
+        0 0 20px rgba(15,173,119,.35);
+      cursor: pointer;
+      transition: box-shadow .2s ease, transform .2s ease;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      box-shadow:
+        0 0 0 7px rgba(15,173,119,.22),
+        0 0 30px rgba(15,173,119,.45);
+      transform: scale(1.1);
+    }
+
+    .hint {
+      font-size: 13px; color: rgba(255,255,255,.22);
+      text-align: center; line-height: 1.5;
+    }
+
+    /* ──────────────────────────────────────────
+       Navigation buttons
+    ────────────────────────────────────────── */
+    .nav-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-top: 4px;
+    }
+
+    .btn-next {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 15px 36px; border-radius: 12px;
+      background: var(--green); color: #02160e;
+      font-family: var(--ff-ko); font-size: 16px; font-weight: 700;
+      border: none; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(15,173,119,.28);
+      transition: transform .2s ease, box-shadow .2s ease, background .15s;
+    }
+    .btn-next:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 32px rgba(15,173,119,.52);
+      background: #12c98a;
+    }
+    .btn-next:active { transform: translateY(0); }
+    .btn-next .arrow { font-size: 18px; transition: transform .2s; }
+    .btn-next:hover .arrow { transform: translateX(4px); }
+
+    .btn-prev {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 13px 20px; border-radius: 10px;
+      background: transparent; color: rgba(255,255,255,.35);
+      border: 1px solid rgba(255,255,255,.12);
+      font-family: var(--ff-ko); font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all .2s ease;
+    }
+    .btn-prev:hover {
+      border-color: rgba(255,255,255,.28);
+      color: rgba(255,255,255,.7);
+    }
+
+    /* shake */
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%  { transform: translateX(-10px); }
+      40%  { transform: translateX(10px); }
+      60%  { transform: translateX(-6px); }
+      80%  { transform: translateX(6px); }
+    }
+    .shake { animation: shake .38s ease-in-out; }
+
+    /* ──────────────────────────────────────────
+       Section 5 — Preview
+    ────────────────────────────────────────── */
+    .content-wide { max-width: 640px; gap: 30px; }
+
+    .preview-headline {
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 700; text-align: center; line-height: 1.5;
+    }
+    .preview-headline .hl { color: var(--green); }
+
+    .preview-cards {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 14px; width: 100%;
+    }
+    .pcard {
+      background: rgba(26,29,46,.65);
+      border: 1px solid rgba(45,49,72,.9);
+      border-radius: 16px; padding: 22px;
+      backdrop-filter: blur(10px);
+    }
+    .pcard-lbl {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .8px; text-transform: uppercase;
+      color: var(--t3); margin-bottom: 10px;
+    }
+    .pcard-val {
+      font-family: var(--ff-en);
+      font-size: 38px; font-weight: 800;
+      color: var(--green); line-height: 1;
+    }
+    .pcard-unit {
+      font-size: 18px; font-weight: 600;
+      color: var(--t2); margin-left: 3px;
+    }
+    .pcard-sub {
+      font-size: 12px; color: var(--t3);
+      margin-top: 6px; line-height: 1.4;
+    }
+
+    /* persona selection */
+    .persona-label {
+      font-size: 13px; color: var(--t2); text-align: center;
+    }
+    .persona-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; width: 100%;
+    }
+    .pcard-sel {
+      display: flex; flex-direction: column; gap: 5px;
+      padding: 18px 20px; border-radius: 14px;
+      background: rgba(26,29,46,.55);
+      border: 2px solid rgba(45,49,72,.8);
+      cursor: pointer; transition: all .25s ease;
+      backdrop-filter: blur(8px);
+    }
+    .pcard-sel:hover {
+      border-color: rgba(15,173,119,.5);
+      background: rgba(15,173,119,.07);
+      transform: translateY(-2px);
+    }
+    .pcard-sel.selected {
+      border-color: var(--green);
+      background: rgba(15,173,119,.11);
+    }
+    .pcard-sel.selected-b {
+      border-color: var(--blue);
+      background: rgba(30,79,191,.11);
+    }
+    .ps-emoji { font-size: 22px; }
+    .ps-name  { font-size: 15px; font-weight: 700; }
+    .ps-type  { font-size: 12px; color: var(--green); font-weight: 600; }
+    .ps-info  { font-size: 11px; color: var(--t3); }
+
+    /* CTA */
+    .btn-cta {
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 18px 52px; border-radius: 14px;
+      background: var(--green); color: #02160e;
+      font-family: var(--ff-ko); font-size: 17px; font-weight: 700;
+      border: none; cursor: pointer;
+      box-shadow: 0 4px 28px rgba(15,173,119,.32);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .btn-cta:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 40px rgba(15,173,119,.58);
+    }
+    .btn-cta:active { transform: translateY(-1px); }
+    .cta-arrow { font-size: 20px; transition: transform .2s; }
+    .btn-cta:hover .cta-arrow { transform: translateX(5px); }
+    .btn-cta:disabled {
+      opacity: .4; cursor: not-allowed;
+      transform: none; box-shadow: none;
+    }
+
+    /* ──────────────────────────────────────────
+       Page fade cover
+    ────────────────────────────────────────── */
+    #fade {
+      position: fixed; inset: 0; z-index: 500;
+      background: #0F1117;
+      opacity: 0; pointer-events: none;
+      transition: opacity .5s ease;
+    }
+    #fade.on { opacity: 1; pointer-events: all; }
+
+    /* ──────────────────────────────────────────
+       Responsive
+    ────────────────────────────────────────── */
+    @media (max-width: 560px) {
+      .content { gap: 32px; }
+      .preview-cards { grid-template-columns: 1fr; }
+      .btn-cta { padding: 16px 36px; font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Fade cover -->
+<div id="fade"></div>
+
+<!-- Progress dots -->
+<nav id="progress">
+  <div class="dot active" data-i="0"></div>
+  <div class="dot" data-i="1"></div>
+  <div class="dot" data-i="2"></div>
+  <div class="dot" data-i="3"></div>
+  <div class="dot" data-i="4"></div>
+</nav>
+
+<!-- ────────────────────────────────────────
+     Scroll container
+──────────────────────────────────────── -->
+<div id="scroller">
+
+  <!-- S1 · 현재 나이 -->
+  <section class="section" id="s1">
+    <div class="content" id="c1">
+      <span class="step-lbl">01 / 05 &nbsp;·&nbsp; 현재 상황</span>
+      <p class="question">지금 몇 살이세요?</p>
+      <div class="input-block">
+        <div class="num-row">
+          <span class="num" id="n1">35</span>
+          <span class="unit">세</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-limits"><span>20세</span><span>65세</span></div>
+          <input type="range" id="sl1" min="20" max="65" value="35" step="1" />
+        </div>
+        <span class="hint">Enter 키 또는 버튼으로 다음 단계로 이동합니다</span>
+      </div>
+      <div class="nav-row">
+        <button class="btn-next" id="btn1" onclick="next()">
+          다음 <span class="arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- S2 · 월 저축액 -->
+  <section class="section" id="s2">
+    <div class="content" id="c2">
+      <span class="step-lbl">02 / 05 &nbsp;·&nbsp; 저축 현황</span>
+      <p class="question">매달 얼마를 저축하나요?</p>
+      <div class="input-block">
+        <div class="num-row">
+          <span class="num" id="n2">150</span>
+          <span class="unit">만원</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-limits"><span>10만원</span><span>1,000만원</span></div>
+          <input type="range" id="sl2" min="10" max="1000" value="150" step="10" />
+        </div>
+        <span class="hint">투자·적금·예금 합산 금액을 입력하세요</span>
+      </div>
+      <div class="nav-row">
+        <button class="btn-prev" onclick="prev()">← 이전</button>
+        <button class="btn-next" onclick="next()">다음 <span class="arrow">→</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- S3 · 은퇴 희망 나이 -->
+  <section class="section" id="s3">
+    <div class="content" id="c3">
+      <span class="step-lbl">03 / 05 &nbsp;·&nbsp; 목표 시점</span>
+      <p class="question">언제 은퇴하고 싶으세요?</p>
+      <div class="input-block">
+        <div class="num-row">
+          <span class="num" id="n3">50</span>
+          <span class="unit">세</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-limits"><span>40세</span><span>70세</span></div>
+          <input type="range" id="sl3" min="40" max="70" value="50" step="1" />
+        </div>
+        <span class="hint">일하지 않아도 되는 나이를 설정하세요</span>
+      </div>
+      <div class="nav-row">
+        <button class="btn-prev" onclick="prev()">← 이전</button>
+        <button class="btn-next" onclick="next()">다음 <span class="arrow">→</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- S4 · 희망 월 인출액 -->
+  <section class="section" id="s4">
+    <div class="content" id="c4">
+      <span class="step-lbl">04 / 05 &nbsp;·&nbsp; 원하는 삶</span>
+      <p class="question">매달 얼마가 필요하세요?</p>
+      <div class="input-block">
+        <div class="num-row">
+          <span class="num" id="n4">300</span>
+          <span class="unit">만원</span>
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-limits"><span>50만원</span><span>1,000만원</span></div>
+          <input type="range" id="sl4" min="50" max="1000" value="300" step="10" />
+        </div>
+        <span class="hint">은퇴 후 매달 원하는 생활비를 입력하세요</span>
+      </div>
+      <div class="nav-row">
+        <button class="btn-prev" onclick="prev()">← 이전</button>
+        <button class="btn-next" onclick="next()">결과 미리보기 <span class="arrow">→</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- S5 · 결과 프리뷰 + 페르소나 -->
+  <section class="section" id="s5">
+    <div class="content content-wide" id="c5">
+      <span class="step-lbl">05 / 05 &nbsp;·&nbsp; 내 낙원 미리보기</span>
+
+      <p class="preview-headline" id="headline">
+        <span id="ph-age">35</span>세부터 시작하면<br/>
+        <span class="hl" id="ph-retire">50</span>세에 낙원 도달 가능 🌴
+      </p>
+
+      <!-- Preview cards -->
+      <div class="preview-cards">
+        <div class="pcard">
+          <div class="pcard-lbl">필요 은퇴 자산</div>
+          <div>
+            <span class="pcard-val" id="pv1">9</span><span class="pcard-unit" id="pu1">억원</span>
+          </div>
+          <div class="pcard-sub" id="ps1">희망 인출액 × 12 ÷ SWR</div>
+        </div>
+        <div class="pcard">
+          <div class="pcard-lbl">월 필요 저축액 (역산)</div>
+          <div>
+            <span class="pcard-val" id="pv2">187</span><span class="pcard-unit" id="pu2">만원</span>
+          </div>
+          <div class="pcard-sub" id="ps2">목표 은퇴 나이까지 필요</div>
+        </div>
+      </div>
+
+      <!-- Persona selection -->
+      <div style="display:flex;flex-direction:column;gap:10px;width:100%">
+        <p class="persona-label">투자 성향을 선택하면 수익률이 자동 설정됩니다 (선택 없이도 진행 가능)</p>
+        <div class="persona-grid">
+          <div class="pcard-sel" id="ps-stable" onclick="selectPersona('stable')">
+            <span class="ps-emoji">👩‍💼</span>
+            <span class="ps-name">이지현 · 안정형</span>
+            <span class="ps-type">연 4.5% · 채권혼합형</span>
+            <span class="ps-info">저축 증가율 2% · SWR 4%</span>
+          </div>
+          <div class="pcard-sel" id="ps-aggr" onclick="selectPersona('aggressive')">
+            <span class="ps-emoji">👨‍💻</span>
+            <span class="ps-name">박준혁 · 공격형</span>
+            <span class="ps-type">연 9% · 글로벌 ETF</span>
+            <span class="ps-info">저축 증가율 5% · SWR 3.5%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <button class="btn-cta" id="btn-cta" onclick="goToDashboard()">
+        내 낙원 보기
+        <span class="cta-arrow">→</span>
+      </button>
+    </div>
+  </section>
+
+</div><!-- /#scroller -->
+
+<script>
+// ════════════════════════════════════════════════════════
+//  파라다이스 계산기 v2.0  —  온보딩
+//  DESIGN_SPEC §4 구현
+// ════════════════════════════════════════════════════════
+
+/* ─── State ─── */
+const D = {
+  currentAge:          35,
+  monthlySavings:      150,
+  targetRetirementAge: 50,
+  targetWithdrawal:    300,
+  // Set by persona (or defaults)
+  currentAssets:  5000,
+  annualReturn:   7.0,
+  savingsGrowth:  3.0,
+  safeRate:       4.0,
+  persona:        null,
+};
+
+const PRESETS = {
+  stable: {
+    currentAssets: 8000, annualReturn: 4.5, savingsGrowth: 2.0, safeRate: 4.0,
+  },
+  aggressive: {
+    currentAssets: 3000, annualReturn: 9.0, savingsGrowth: 5.0, safeRate: 3.5,
+  },
+};
+
+let cur = 0; // current section index (0-based)
+
+/* ─── Utils ─── */
+const $ = id => document.getElementById(id);
+
+function fmtNum(v) { return Math.round(v).toLocaleString('ko-KR'); }
+
+function fmtParts(만원) {
+  if (만원 >= 10000)
+    return { v: (만원 / 10000).toFixed(1).replace(/\.0$/, ''), u: '억원' };
+  return { v: fmtNum(만원), u: '만원' };
+}
+
+/* ─── FIRE reverse calc (for preview) ─── */
+function calcPreview() {
+  const r  = D.annualReturn  / 100;
+  const g  = D.savingsGrowth / 100;
+  const sw = D.safeRate      / 100;
+  const N  = D.targetRetirementAge - D.currentAge;
+
+  const fireNum = (D.targetWithdrawal * 12) / sw;
+
+  let reqSave = 0;
+  if (N > 0) {
+    const fvCur = D.currentAssets * Math.pow(1 + r, N);
+    const need  = fireNum - fvCur;
+    if (need > 0) {
+      const eps = 0.0001;
+      let fvF;
+      if (Math.abs(g - r) < eps) {
+        fvF = 12 * N * Math.pow(1 + r, N - 1);
+      } else {
+        const x = (1 + g) / (1 + r);
+        fvF = 12 * Math.pow(1 + r, N - 1) * (Math.pow(x, N) - 1) / (x - 1);
+      }
+      reqSave = need / fvF;
+    }
+  }
+  return { fireNum, reqSave };
+}
+
+/* ─── Update Section 5 preview ─── */
+function updatePreview() {
+  $('ph-age').textContent    = D.currentAge;
+  $('ph-retire').textContent = D.targetRetirementAge;
+
+  const { fireNum, reqSave } = calcPreview();
+
+  const fp = fmtParts(fireNum);
+  $('pv1').textContent = fp.v;
+  $('pu1').textContent = fp.u;
+  $('ps1').textContent =
+    `${fmtNum(D.targetWithdrawal)}만원 × 12 ÷ ${D.safeRate}% = ${fp.v}${fp.u}`;
+
+  if (reqSave > 0) {
+    $('pv2').textContent = fmtNum(Math.ceil(reqSave));
+    $('pu2').textContent = '만원';
+    const gap = D.monthlySavings - Math.ceil(reqSave);
+    $('ps2').textContent = gap >= 0
+      ? `현재보다 ${fmtNum(Math.abs(gap))}만원 여유 ✓`
+      : `현재보다 ${fmtNum(Math.abs(gap))}만원 더 필요`;
+  } else {
+    $('pv2').textContent = '0';
+    $('pu2').textContent = '만원';
+    $('ps2').textContent = '현재 자산으로 이미 달성 가능 ✓';
+  }
+}
+
+/* ─── Slider fill ─── */
+function fillSlider(el) {
+  const pct = ((+el.value - +el.min) / (+el.max - +el.min)) * 100;
+  el.style.background =
+    `linear-gradient(to right, var(--green) ${pct}%, rgba(255,255,255,.1) ${pct}%)`;
+}
+
+/* ─── Bind sliders ─── */
+const SLIDERS = [
+  { id: 'sl1', numId: 'n1', key: 'currentAge',          fmt: v => v },
+  { id: 'sl2', numId: 'n2', key: 'monthlySavings',       fmt: v => v.toLocaleString('ko-KR') },
+  { id: 'sl3', numId: 'n3', key: 'targetRetirementAge',  fmt: v => v },
+  { id: 'sl4', numId: 'n4', key: 'targetWithdrawal',     fmt: v => v.toLocaleString('ko-KR') },
+];
+
+function bindSliders() {
+  SLIDERS.forEach(({ id, numId, key, fmt }) => {
+    const sl = $(id);
+    sl.addEventListener('input', () => {
+      D[key] = parseFloat(sl.value);
+      $(numId).textContent = fmt(D[key]);
+      fillSlider(sl);
+      if (cur === 4) updatePreview();
+    });
+    fillSlider(sl);
+  });
+}
+
+/* ─── Section navigation ─── */
+function goTo(idx) {
+  cur = idx;
+
+  // scroll
+  $(`s${idx + 1}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // dots
+  document.querySelectorAll('.dot').forEach((d, i) => {
+    d.classList.toggle('active', i === idx);
+    d.classList.toggle('done',   i < idx);
+  });
+
+  // fade in content after scroll settles
+  setTimeout(() => {
+    const c = $(`c${idx + 1}`);
+    if (c) c.classList.add('in');
+  }, 380);
+
+  if (idx === 4) updatePreview();
+}
+
+function next() {
+  if (cur < 4) goTo(cur + 1);
+}
+function prev() {
+  if (cur > 0) goTo(cur - 1);
+}
+
+/* ─── Keyboard Enter ─── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && cur < 4) next();
+});
+
+/* ─── Block wheel / touch scroll ─── */
+$('scroller').addEventListener('wheel',     e => e.preventDefault(), { passive: false });
+$('scroller').addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+
+/* ─── Persona ─── */
+function selectPersona(type) {
+  D.persona = type;
+  Object.assign(D, PRESETS[type]);
+
+  document.querySelectorAll('.pcard-sel').forEach(c =>
+    c.classList.remove('selected', 'selected-b'));
+  $('ps-stable').classList.toggle('selected',   type === 'stable');
+  $('ps-aggr').classList.toggle('selected',     type === 'aggressive');
+
+  updatePreview();
+}
+
+/* ─── Go to Dashboard ─── */
+function goToDashboard() {
+  // Build URL params matching index.html's FIELDS & prefix convention
+  const p = new URLSearchParams({
+    'a_currentAge':          D.currentAge,
+    'a_monthlySavings':      D.monthlySavings,
+    'a_targetRetirementAge': D.targetRetirementAge,
+    'a_targetWithdrawal':    D.targetWithdrawal,
+    'a_currentAssets':       D.currentAssets,
+    'a_annualReturn':        D.annualReturn,
+    'a_savingsGrowth':       D.savingsGrowth,
+    'a_safeRate':            D.safeRate,
+  });
+
+  // Fade out → redirect
+  $('fade').classList.add('on');
+  setTimeout(() => {
+    window.location.href = `index.html?${p.toString()}`;
+  }, 500);
+}
+
+/* ─── Init ─── */
+function init() {
+  bindSliders();
+  // Fade in the first section
+  setTimeout(() => $('c1').classList.add('in'), 200);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
