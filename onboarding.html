@@ -11,19 +11,18 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
 
   <style>
-    /* ──────────────────────────────────────────
-       Design Tokens  (DESIGN_SPEC §2)
-    ────────────────────────────────────────── */
+    /* ══════════════════════════════════════════
+       Design Tokens  (DESIGN_SPEC §2 — exact)
+    ══════════════════════════════════════════ */
     :root {
-      --bg:     #0F1117;
-      --card:   #1A1D2E;
-      --blue:   #1E4FBF;
-      --green:  #0FAD77;
-      --orange: #F59E0B;
-      --t1:     #F9FAFB;
-      --t2:     #9CA3AF;
-      --t3:     #4B5563;
-      --border: #2D3148;
+      --bg-primary:    #0F1117;
+      --bg-card:       #1A1D2E;
+      --color-primary: #1E4FBF;
+      --color-accent:  #0FAD77;
+      --color-warning: #F59E0B;
+      --text-primary:  #F9FAFB;
+      --text-sub:      #6B7280;
+      --border:        #2D3148;
 
       --ff-ko: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       --ff-en: 'Inter', sans-serif;
@@ -34,322 +33,479 @@
     html, body {
       height: 100%;
       overflow: hidden;
-      background: var(--bg);
-      color: var(--t1);
+      background: var(--bg-primary);
+      color: var(--text-primary);
       font-family: var(--ff-ko);
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
 
-    /* ──────────────────────────────────────────
-       Scroll container  —  wheel은 JS로 막음
-    ────────────────────────────────────────── */
+    /* ══════════════════════════════════════════
+       Scroller  (wheel locked via JS)
+    ══════════════════════════════════════════ */
     #scroller {
       height: 100vh;
       overflow-y: scroll;
-      scroll-behavior: smooth;
       scrollbar-width: none;
     }
     #scroller::-webkit-scrollbar { display: none; }
 
-    /* ──────────────────────────────────────────
-       Progress bar (fixed top-center)
-    ────────────────────────────────────────── */
+    /* ══════════════════════════════════════════
+       Progress indicator
+    ══════════════════════════════════════════ */
     #progress {
-      position: fixed; top: 32px; left: 50%; transform: translateX(-50%);
+      position: fixed;
+      top: 0; left: 0; right: 0;
       z-index: 200;
-      display: flex; align-items: center; gap: 8px;
+      padding: 28px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .prog-logo {
+      font-family: var(--ff-en);
+      font-size: 15px;
+      font-weight: 700;
+      color: rgba(255,255,255,.22);
+      letter-spacing: -.2px;
+    }
+    .prog-dots {
+      display: flex;
+      align-items: center;
+      gap: 7px;
     }
     .dot {
-      width: 6px; height: 6px; border-radius: 3px;
-      background: rgba(255,255,255,0.15);
-      transition: width .4s ease, background .4s ease;
+      width: 6px; height: 6px;
+      border-radius: 3px;
+      background: rgba(255,255,255,.12);
+      transition: width .4s cubic-bezier(.4,0,.2,1),
+                  background .4s cubic-bezier(.4,0,.2,1);
     }
-    .dot.active { width: 28px; background: var(--green); }
-    .dot.done   { background: rgba(15,173,119,.4); }
+    .dot.active { width: 24px; background: var(--color-accent); }
+    .dot.done   { background: rgba(15,173,119,.35); }
+    .prog-step {
+      font-family: var(--ff-en);
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,.22);
+    }
 
-    /* ──────────────────────────────────────────
-       Section  —  각 100vh
-    ────────────────────────────────────────── */
+    /* ══════════════════════════════════════════
+       Sections — each 100vh
+    ══════════════════════════════════════════ */
     .section {
       height: 100vh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 80px 24px 60px;
-      position: relative; overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 96px 24px 72px;
+      position: relative;
+      overflow: hidden;
     }
 
-    /* section backgrounds: 새벽 → 낙원 */
+    /* DESIGN_SPEC §4-2 — exact gradients */
     #s1 { background: linear-gradient(155deg, #0F1117 0%, #1A1D2E 100%); }
-    #s2 { background: linear-gradient(155deg, #141827 0%, #1E3A5F 100%); }
-    #s3 { background: linear-gradient(155deg, #1a2e4a 0%, #0D4F3C 100%); }
-    #s4 { background: linear-gradient(155deg, #0b3d2e 0%, #0a7a5a 100%); }
-    #s5 { background: linear-gradient(155deg, #0b6040 0%, #1E4FBF 100%); }
+    #s2 { background: linear-gradient(155deg, #1A1D2E 0%, #1E3A5F 100%); }
+    #s3 { background: linear-gradient(155deg, #1E3A5F 0%, #0D4F3C 100%); }
+    #s4 { background: linear-gradient(155deg, #0D4F3C 0%, #0FAD77 100%); }
+    #s5 { background: linear-gradient(155deg, #0FAD77 0%, #1E4FBF 100%); }
 
-    /* ambient glow */
-    #s4::after, #s5::after {
+    /* ambient radial glow */
+    .section::before {
       content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 50% 30%,
-        rgba(15,173,119,.14) 0%, transparent 65%);
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        ellipse 70% 55% at 50% 45%,
+        rgba(15,173,119,.07) 0%,
+        transparent 70%
+      );
       pointer-events: none;
     }
+    #s5::before {
+      background: radial-gradient(
+        ellipse 70% 55% at 50% 35%,
+        rgba(30,79,191,.12) 0%,
+        transparent 65%
+      );
+    }
 
-    /* ──────────────────────────────────────────
-       Content box (fade-in on enter)
-    ────────────────────────────────────────── */
+    /* ══════════════════════════════════════════
+       Content (fade-in on section enter)
+    ══════════════════════════════════════════ */
     .content {
-      width: 100%; max-width: 560px;
-      display: flex; flex-direction: column;
-      align-items: center; gap: 44px;
-      opacity: 0; transform: translateY(28px);
-      transition: opacity .55s ease, transform .55s ease;
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .5s ease-out, transform .5s ease-out;
     }
     .content.in { opacity: 1; transform: translateY(0); }
 
     /* step label */
     .step-lbl {
       align-self: flex-start;
-      font-size: 11px; font-weight: 700;
-      letter-spacing: 2px; text-transform: uppercase;
-      color: rgba(255,255,255,.25);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.2);
     }
 
-    /* question */
+    /* question — DESIGN_SPEC §3: 32px / 700 */
     .question {
-      font-size: clamp(26px, 5vw, 36px);
-      font-weight: 700; line-height: 1.35;
+      font-family: var(--ff-ko);
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.4;
       text-align: center;
+      color: var(--text-primary);
     }
 
-    /* ──────────────────────────────────────────
+    /* ══════════════════════════════════════════
        Number + Slider block
-    ────────────────────────────────────────── */
+    ══════════════════════════════════════════ */
     .input-block {
       width: 100%;
-      display: flex; flex-direction: column;
-      align-items: center; gap: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
     }
 
+    /* clickable big number — also an <input type="number"> */
     .num-row {
-      display: flex; align-items: baseline; gap: 6px;
-      user-select: none;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      position: relative;
     }
-    .num {
+
+    /* Big editable number — DESIGN_SPEC §3: accent, Inter 800 */
+    .num-input {
       font-family: var(--ff-en);
-      font-size: clamp(72px, 14vw, 108px);
+      font-size: clamp(80px, 15vw, 112px);
       font-weight: 900;
-      color: var(--green);
+      color: var(--color-accent);
       line-height: 1;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.045em;
+      background: transparent;
+      border: none;
+      outline: none;
+      /* Dynamic width — JS will set this */
+      width: 4ch;
+      min-width: 2ch;
+      text-align: right;
+      cursor: text;
+      -moz-appearance: textfield;
       transition: color .2s;
     }
+    .num-input::-webkit-inner-spin-button,
+    .num-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .num-input:focus { color: #12dfa0; }
+
+    /* unit — DESIGN_SPEC §3: 28px / 600 / text-sub */
     .unit {
       font-family: var(--ff-en);
-      font-size: clamp(28px, 5vw, 44px);
+      font-size: 28px;
       font-weight: 600;
-      color: var(--t2);
+      color: var(--text-sub);
       line-height: 1;
+      white-space: nowrap;
     }
 
-    /* slider */
+    /* underline cursor hint on the num */
+    .num-cursor {
+      position: absolute;
+      bottom: 2px;
+      left: 0; right: 30px;
+      height: 2px;
+      background: var(--color-accent);
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: opacity .2s, transform .2s;
+    }
+    .num-row:focus-within .num-cursor {
+      opacity: .5;
+      transform: scaleX(1);
+    }
+
+    /* ── Slider ── */
     .slider-wrap { width: 100%; }
     .slider-limits {
-      display: flex; justify-content: space-between;
-      font-size: 12px; color: rgba(255,255,255,.2);
-      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--ff-en);
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,.18);
+      margin-bottom: 14px;
     }
 
     input[type="range"] {
-      -webkit-appearance: none; appearance: none;
-      width: 100%; height: 3px;
-      border-radius: 2px; outline: none; cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 2px;
+      border-radius: 1px;
+      outline: none;
+      cursor: pointer;
       background: rgba(255,255,255,.1);
+      transition: background .15s;
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 26px; height: 26px; border-radius: 50%;
-      background: var(--green);
-      box-shadow:
-        0 0 0 4px rgba(15,173,119,.18),
-        0 0 20px rgba(15,173,119,.35);
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--color-accent);
       cursor: pointer;
-      transition: box-shadow .2s ease, transform .2s ease;
+      box-shadow:
+        0 0 0 4px rgba(15,173,119,.16),
+        0 0 18px rgba(15,173,119,.30);
+      transition: box-shadow .2s ease, transform .15s ease;
     }
     input[type="range"]::-webkit-slider-thumb:hover {
       box-shadow:
-        0 0 0 7px rgba(15,173,119,.22),
-        0 0 30px rgba(15,173,119,.45);
-      transform: scale(1.1);
+        0 0 0 7px rgba(15,173,119,.20),
+        0 0 28px rgba(15,173,119,.42);
+      transform: scale(1.08);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 24px; height: 24px;
+      border-radius: 50%; border: none;
+      background: var(--color-accent);
+      cursor: pointer;
     }
 
     .hint {
-      font-size: 13px; color: rgba(255,255,255,.22);
-      text-align: center; line-height: 1.5;
+      font-size: 13px;
+      color: rgba(255,255,255,.2);
+      text-align: center;
+      line-height: 1.6;
     }
 
-    /* ──────────────────────────────────────────
-       Navigation buttons
-    ────────────────────────────────────────── */
+    /* ══════════════════════════════════════════
+       Navigation — DESIGN_SPEC §7 (버튼 스펙)
+    ══════════════════════════════════════════ */
     .nav-row {
-      display: flex; align-items: center; gap: 12px;
-      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
+    /* Primary — DESIGN_SPEC §7 exact */
     .btn-next {
-      display: inline-flex; align-items: center; gap: 9px;
-      padding: 15px 36px; border-radius: 12px;
-      background: var(--green); color: #02160e;
-      font-family: var(--ff-ko); font-size: 16px; font-weight: 700;
-      border: none; cursor: pointer;
-      box-shadow: 0 4px 20px rgba(15,173,119,.28);
-      transition: transform .2s ease, box-shadow .2s ease, background .15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 34px;
+      border-radius: 12px;
+      background: var(--color-accent);
+      color: #022b1a;
+      font-family: var(--ff-ko);
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(15,173,119,.22);
+      transition: transform 200ms ease,
+                  box-shadow 200ms ease,
+                  background 150ms ease;
     }
     .btn-next:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 32px rgba(15,173,119,.52);
-      background: #12c98a;
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(15,173,119,.40); /* DESIGN_SPEC §7 exact */
     }
     .btn-next:active { transform: translateY(0); }
-    .btn-next .arrow { font-size: 18px; transition: transform .2s; }
+    .btn-next .arrow { font-size: 16px; transition: transform .2s; }
     .btn-next:hover .arrow { transform: translateX(4px); }
 
+    /* Ghost prev button */
     .btn-prev {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 13px 20px; border-radius: 10px;
-      background: transparent; color: rgba(255,255,255,.35);
-      border: 1px solid rgba(255,255,255,.12);
-      font-family: var(--ff-ko); font-size: 14px; font-weight: 500;
-      cursor: pointer; transition: all .2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 20px;
+      border-radius: 12px;
+      background: transparent;
+      color: rgba(255,255,255,.3);
+      border: 1px solid rgba(255,255,255,.1);
+      font-family: var(--ff-ko);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 200ms ease;
     }
     .btn-prev:hover {
-      border-color: rgba(255,255,255,.28);
-      color: rgba(255,255,255,.7);
+      border-color: rgba(255,255,255,.25);
+      color: rgba(255,255,255,.65);
     }
 
-    /* shake */
+    /* Shake animation */
     @keyframes shake {
       0%,100% { transform: translateX(0); }
-      20%  { transform: translateX(-10px); }
-      40%  { transform: translateX(10px); }
-      60%  { transform: translateX(-6px); }
-      80%  { transform: translateX(6px); }
+      15%  { transform: translateX(-12px); }
+      35%  { transform: translateX(10px); }
+      55%  { transform: translateX(-7px); }
+      75%  { transform: translateX(5px); }
     }
-    .shake { animation: shake .38s ease-in-out; }
+    .shake { animation: shake .4s ease; }
 
-    /* ──────────────────────────────────────────
+    /* ══════════════════════════════════════════
        Section 5 — Preview
-    ────────────────────────────────────────── */
-    .content-wide { max-width: 640px; gap: 30px; }
+    ══════════════════════════════════════════ */
+    .content-wide { max-width: 600px; gap: 28px; }
 
     .preview-headline {
-      font-size: clamp(22px, 4vw, 30px);
-      font-weight: 700; text-align: center; line-height: 1.5;
+      font-family: var(--ff-ko);
+      font-size: clamp(22px, 4vw, 28px);
+      font-weight: 700;
+      text-align: center;
+      line-height: 1.55;
+      color: var(--text-primary);
     }
-    .preview-headline .hl { color: var(--green); }
+    .preview-headline .hl { color: var(--color-accent); }
 
+    /* Cards — DESIGN_SPEC §7 exact */
     .preview-cards {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 14px; width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      width: 100%;
     }
     .pcard {
-      background: rgba(26,29,46,.65);
-      border: 1px solid rgba(45,49,72,.9);
-      border-radius: 16px; padding: 22px;
-      backdrop-filter: blur(10px);
+      background: var(--bg-card);          /* #1A1D2E */
+      border: 1px solid var(--border);     /* #2D3148 */
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.3);
     }
     .pcard-lbl {
-      font-size: 11px; font-weight: 700;
-      letter-spacing: .8px; text-transform: uppercase;
-      color: var(--t3); margin-bottom: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-sub);
+      margin-bottom: 10px;
     }
     .pcard-val {
       font-family: var(--ff-en);
-      font-size: 38px; font-weight: 800;
-      color: var(--green); line-height: 1;
+      font-size: 48px;              /* DESIGN_SPEC §3 */
+      font-weight: 800;
+      color: var(--color-accent);
+      line-height: 1;
     }
-    .pcard-unit {
-      font-size: 18px; font-weight: 600;
-      color: var(--t2); margin-left: 3px;
+    .pcard-unit-s {
+      font-family: var(--ff-en);
+      font-size: 28px;              /* DESIGN_SPEC §3 */
+      font-weight: 600;
+      color: var(--text-sub);
     }
     .pcard-sub {
-      font-size: 12px; color: var(--t3);
-      margin-top: 6px; line-height: 1.4;
+      font-size: 12px;
+      color: rgba(255,255,255,.2);
+      margin-top: 8px;
+      line-height: 1.5;
     }
 
-    /* persona selection */
-    .persona-label {
-      font-size: 13px; color: var(--t2); text-align: center;
+    /* Persona label */
+    .persona-title {
+      font-size: 13px;
+      color: var(--text-sub);
+      text-align: center;
     }
+
+    /* Persona cards — DESIGN_SPEC §7 card spec */
     .persona-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 12px; width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
     }
     .pcard-sel {
-      display: flex; flex-direction: column; gap: 5px;
-      padding: 18px 20px; border-radius: 14px;
-      background: rgba(26,29,46,.55);
-      border: 2px solid rgba(45,49,72,.8);
-      cursor: pointer; transition: all .25s ease;
-      backdrop-filter: blur(8px);
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 22px;
+      cursor: pointer;
+      transition: border-color .2s ease,
+                  background .2s ease,
+                  transform .2s ease,
+                  box-shadow .2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
     .pcard-sel:hover {
       border-color: rgba(15,173,119,.5);
-      background: rgba(15,173,119,.07);
+      background: rgba(15,173,119,.05);
       transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0,0,0,.25);
     }
     .pcard-sel.selected {
-      border-color: var(--green);
-      background: rgba(15,173,119,.11);
+      border-color: var(--color-accent);
+      background: rgba(15,173,119,.08);
+      box-shadow: 0 0 20px rgba(15,173,119,.18);
     }
-    .pcard-sel.selected-b {
-      border-color: var(--blue);
-      background: rgba(30,79,191,.11);
-    }
-    .ps-emoji { font-size: 22px; }
-    .ps-name  { font-size: 15px; font-weight: 700; }
-    .ps-type  { font-size: 12px; color: var(--green); font-weight: 600; }
-    .ps-info  { font-size: 11px; color: var(--t3); }
+    .ps-emoji { font-size: 20px; margin-bottom: 4px; }
+    .ps-name  { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .ps-type  { font-size: 12px; font-weight: 600; color: var(--color-accent); }
+    .ps-info  { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
 
-    /* CTA */
+    /* CTA — DESIGN_SPEC §7 exact */
     .btn-cta {
-      display: inline-flex; align-items: center; gap: 12px;
-      padding: 18px 52px; border-radius: 14px;
-      background: var(--green); color: #02160e;
-      font-family: var(--ff-ko); font-size: 17px; font-weight: 700;
-      border: none; cursor: pointer;
-      box-shadow: 0 4px 28px rgba(15,173,119,.32);
-      transition: transform .2s ease, box-shadow .2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 52px;
+      border-radius: 12px;
+      background: var(--color-accent);
+      color: #022b1a;
+      font-family: var(--ff-ko);
+      font-size: 17px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(15,173,119,.28);
+      transition: transform 200ms ease,
+                  box-shadow 200ms ease;
     }
     .btn-cta:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 0 40px rgba(15,173,119,.58);
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(15,173,119,.40); /* DESIGN_SPEC §7 exact */
     }
-    .btn-cta:active { transform: translateY(-1px); }
-    .cta-arrow { font-size: 20px; transition: transform .2s; }
+    .btn-cta:active { transform: translateY(0); }
+    .cta-arrow { font-size: 18px; transition: transform .2s; }
     .btn-cta:hover .cta-arrow { transform: translateX(5px); }
-    .btn-cta:disabled {
-      opacity: .4; cursor: not-allowed;
-      transform: none; box-shadow: none;
-    }
 
-    /* ──────────────────────────────────────────
-       Page fade cover
-    ────────────────────────────────────────── */
+    /* ══════════════════════════════════════════
+       Page fade cover — DESIGN_SPEC §4-6
+    ══════════════════════════════════════════ */
     #fade {
       position: fixed; inset: 0; z-index: 500;
-      background: #0F1117;
+      background: var(--bg-primary);
       opacity: 0; pointer-events: none;
-      transition: opacity .5s ease;
+      transition: opacity .6s ease; /* 600ms per spec */
     }
     #fade.on { opacity: 1; pointer-events: all; }
 
-    /* ──────────────────────────────────────────
+    /* ══════════════════════════════════════════
        Responsive
-    ────────────────────────────────────────── */
+    ══════════════════════════════════════════ */
     @media (max-width: 560px) {
-      .content { gap: 32px; }
-      .preview-cards { grid-template-columns: 1fr; }
-      .btn-cta { padding: 16px 36px; font-size: 15px; }
+      #progress { padding: 20px 20px; }
+      .content  { gap: 28px; }
+      .question { font-size: 26px; }
+      .content-wide { gap: 20px; }
+      .preview-cards  { grid-template-columns: 1fr; }
+      .persona-grid   { grid-template-columns: 1fr; }
+      .btn-cta  { padding: 16px 36px; font-size: 15px; }
     }
   </style>
 </head>
@@ -358,32 +514,39 @@
 <!-- Fade cover -->
 <div id="fade"></div>
 
-<!-- Progress dots -->
+<!-- Header / progress bar -->
 <nav id="progress">
-  <div class="dot active" data-i="0"></div>
-  <div class="dot" data-i="1"></div>
-  <div class="dot" data-i="2"></div>
-  <div class="dot" data-i="3"></div>
-  <div class="dot" data-i="4"></div>
+  <span class="prog-logo">Paradise Calculator</span>
+  <div class="prog-dots">
+    <div class="dot active" data-i="0"></div>
+    <div class="dot" data-i="1"></div>
+    <div class="dot" data-i="2"></div>
+    <div class="dot" data-i="3"></div>
+    <div class="dot" data-i="4"></div>
+  </div>
+  <span class="prog-step" id="prog-step">01 / 05</span>
 </nav>
 
-<!-- ────────────────────────────────────────
+<!-- ─────────────────────────────
      Scroll container
-──────────────────────────────────────── -->
+───────────────────────────── -->
 <div id="scroller">
 
-  <!-- S1 · 현재 나이 -->
+  <!-- ── S1 현재 나이 ── -->
   <section class="section" id="s1">
     <div class="content" id="c1">
       <span class="step-lbl">01 / 05 &nbsp;·&nbsp; 현재 상황</span>
       <p class="question">지금 몇 살이세요?</p>
       <div class="input-block">
         <div class="num-row">
-          <span class="num" id="n1">35</span>
+          <input type="number" class="num-input" id="ni1"
+            value="35" min="20" max="65" step="1"
+            aria-label="현재 나이" />
           <span class="unit">세</span>
+          <span class="num-cursor"></span>
         </div>
         <div class="slider-wrap">
-          <div class="slider-limits"><span>20세</span><span>65세</span></div>
+          <div class="slider-limits"><span>20</span><span>65</span></div>
           <input type="range" id="sl1" min="20" max="65" value="35" step="1" />
         </div>
         <span class="hint">Enter 키 또는 버튼으로 다음 단계로 이동합니다</span>
@@ -396,15 +559,18 @@
     </div>
   </section>
 
-  <!-- S2 · 월 저축액 -->
+  <!-- ── S2 월 저축액 ── -->
   <section class="section" id="s2">
     <div class="content" id="c2">
       <span class="step-lbl">02 / 05 &nbsp;·&nbsp; 저축 현황</span>
       <p class="question">매달 얼마를 저축하나요?</p>
       <div class="input-block">
         <div class="num-row">
-          <span class="num" id="n2">150</span>
+          <input type="number" class="num-input" id="ni2"
+            value="150" min="10" max="1000" step="10"
+            aria-label="월 저축액" />
           <span class="unit">만원</span>
+          <span class="num-cursor"></span>
         </div>
         <div class="slider-wrap">
           <div class="slider-limits"><span>10만원</span><span>1,000만원</span></div>
@@ -419,18 +585,21 @@
     </div>
   </section>
 
-  <!-- S3 · 은퇴 희망 나이 -->
+  <!-- ── S3 은퇴 희망 나이 ── -->
   <section class="section" id="s3">
     <div class="content" id="c3">
       <span class="step-lbl">03 / 05 &nbsp;·&nbsp; 목표 시점</span>
       <p class="question">언제 은퇴하고 싶으세요?</p>
       <div class="input-block">
         <div class="num-row">
-          <span class="num" id="n3">50</span>
+          <input type="number" class="num-input" id="ni3"
+            value="50" min="40" max="70" step="1"
+            aria-label="은퇴 희망 나이" />
           <span class="unit">세</span>
+          <span class="num-cursor"></span>
         </div>
         <div class="slider-wrap">
-          <div class="slider-limits"><span>40세</span><span>70세</span></div>
+          <div class="slider-limits"><span>40</span><span>70</span></div>
           <input type="range" id="sl3" min="40" max="70" value="50" step="1" />
         </div>
         <span class="hint">일하지 않아도 되는 나이를 설정하세요</span>
@@ -442,15 +611,18 @@
     </div>
   </section>
 
-  <!-- S4 · 희망 월 인출액 -->
+  <!-- ── S4 희망 월 인출액 ── -->
   <section class="section" id="s4">
     <div class="content" id="c4">
       <span class="step-lbl">04 / 05 &nbsp;·&nbsp; 원하는 삶</span>
       <p class="question">매달 얼마가 필요하세요?</p>
       <div class="input-block">
         <div class="num-row">
-          <span class="num" id="n4">300</span>
+          <input type="number" class="num-input" id="ni4"
+            value="300" min="50" max="1000" step="10"
+            aria-label="희망 월 인출액" />
           <span class="unit">만원</span>
+          <span class="num-cursor"></span>
         </div>
         <div class="slider-wrap">
           <div class="slider-limits"><span>50만원</span><span>1,000만원</span></div>
@@ -465,29 +637,31 @@
     </div>
   </section>
 
-  <!-- S5 · 결과 프리뷰 + 페르소나 -->
+  <!-- ── S5 결과 프리뷰 + 페르소나 ── -->
   <section class="section" id="s5">
     <div class="content content-wide" id="c5">
       <span class="step-lbl">05 / 05 &nbsp;·&nbsp; 내 낙원 미리보기</span>
 
-      <p class="preview-headline" id="headline">
+      <p class="preview-headline">
         <span id="ph-age">35</span>세부터 시작하면<br/>
         <span class="hl" id="ph-retire">50</span>세에 낙원 도달 가능 🌴
       </p>
 
-      <!-- Preview cards -->
+      <!-- Preview cards — DESIGN_SPEC §7 card spec -->
       <div class="preview-cards">
         <div class="pcard">
           <div class="pcard-lbl">필요 은퇴 자산</div>
-          <div>
-            <span class="pcard-val" id="pv1">9</span><span class="pcard-unit" id="pu1">억원</span>
+          <div style="display:flex;align-items:baseline;gap:4px">
+            <span class="pcard-val" id="pv1">9</span>
+            <span class="pcard-unit-s" id="pu1">억원</span>
           </div>
           <div class="pcard-sub" id="ps1">희망 인출액 × 12 ÷ SWR</div>
         </div>
         <div class="pcard">
           <div class="pcard-lbl">월 필요 저축액 (역산)</div>
-          <div>
-            <span class="pcard-val" id="pv2">187</span><span class="pcard-unit" id="pu2">만원</span>
+          <div style="display:flex;align-items:baseline;gap:4px">
+            <span class="pcard-val" id="pv2">187</span>
+            <span class="pcard-unit-s" id="pu2">만원</span>
           </div>
           <div class="pcard-sub" id="ps2">목표 은퇴 나이까지 필요</div>
         </div>
@@ -495,7 +669,7 @@
 
       <!-- Persona selection -->
       <div style="display:flex;flex-direction:column;gap:10px;width:100%">
-        <p class="persona-label">투자 성향을 선택하면 수익률이 자동 설정됩니다 (선택 없이도 진행 가능)</p>
+        <p class="persona-title">투자 성향을 선택하면 수익률이 자동 설정됩니다</p>
         <div class="persona-grid">
           <div class="pcard-sel" id="ps-stable" onclick="selectPersona('stable')">
             <span class="ps-emoji">👩‍💼</span>
@@ -512,7 +686,7 @@
         </div>
       </div>
 
-      <!-- CTA -->
+      <!-- CTA — DESIGN_SPEC §7 -->
       <button class="btn-cta" id="btn-cta" onclick="goToDashboard()">
         내 낙원 보기
         <span class="cta-arrow">→</span>
@@ -523,53 +697,138 @@
 </div><!-- /#scroller -->
 
 <script>
-// ════════════════════════════════════════════════════════
-//  파라다이스 계산기 v2.0  —  온보딩
-//  DESIGN_SPEC §4 구현
-// ════════════════════════════════════════════════════════
+/* ════════════════════════════════════════════════
+   파라다이스 계산기 v2.0  —  온보딩
+   DESIGN_SPEC §4 구현 (vanilla HTML + JS)
+════════════════════════════════════════════════ */
 
-/* ─── State ─── */
+/* ── State ── */
 const D = {
   currentAge:          35,
   monthlySavings:      150,
   targetRetirementAge: 50,
   targetWithdrawal:    300,
-  // Set by persona (or defaults)
-  currentAssets:  5000,
-  annualReturn:   7.0,
-  savingsGrowth:  3.0,
-  safeRate:       4.0,
-  persona:        null,
+  currentAssets:       5000,
+  annualReturn:        7.0,
+  savingsGrowth:       3.0,
+  safeRate:            4.0,
+  persona:             null,
 };
 
 const PRESETS = {
-  stable: {
-    currentAssets: 8000, annualReturn: 4.5, savingsGrowth: 2.0, safeRate: 4.0,
-  },
-  aggressive: {
-    currentAssets: 3000, annualReturn: 9.0, savingsGrowth: 5.0, safeRate: 3.5,
-  },
+  stable:     { currentAssets: 8000, annualReturn: 4.5, savingsGrowth: 2.0, safeRate: 4.0 },
+  aggressive: { currentAssets: 3000, annualReturn: 9.0, savingsGrowth: 5.0, safeRate: 3.5 },
 };
 
-let cur = 0; // current section index (0-based)
+let cur = 0;   // active section index (0-based)
+let isScrolling = false;
 
-/* ─── Utils ─── */
+/* ── Utils ── */
 const $ = id => document.getElementById(id);
-
-function fmtNum(v) { return Math.round(v).toLocaleString('ko-KR'); }
+const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
 
 function fmtParts(만원) {
   if (만원 >= 10000)
     return { v: (만원 / 10000).toFixed(1).replace(/\.0$/, ''), u: '억원' };
-  return { v: fmtNum(만원), u: '만원' };
+  return { v: Math.round(만원).toLocaleString('ko-KR'), u: '만원' };
 }
 
-/* ─── FIRE reverse calc (for preview) ─── */
+/* ── Custom smooth scroll (800ms ease-in-out per DESIGN_SPEC §4-3) ── */
+function smoothScrollTo(targetEl, duration = 800) {
+  const container = $('scroller');
+  const start    = container.scrollTop;
+  const end      = targetEl.offsetTop;
+  const dist     = end - start;
+  let startTime  = null;
+  isScrolling = true;
+
+  function easeInOut(t) {
+    return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  }
+
+  function step(now) {
+    if (!startTime) startTime = now;
+    const elapsed  = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    container.scrollTop = start + dist * easeInOut(progress);
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      isScrolling = false;
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+/* ── Slider fill gradient ── */
+function fillSlider(el) {
+  const pct = ((+el.value - +el.min) / (+el.max - +el.min)) * 100;
+  el.style.background =
+    `linear-gradient(to right, var(--color-accent) ${pct}%, rgba(255,255,255,.1) ${pct}%)`;
+}
+
+/* ── Auto-resize num-input width to its content ── */
+function autoWidth(input) {
+  const len = String(input.value).length || 1;
+  input.style.width = Math.max(len, 1) + 'ch';
+}
+
+/* ── Field definitions ── */
+const FIELDS = [
+  { ni: 'ni1', sl: 'sl1', key: 'currentAge',          min: 20,  max: 65,   step: 1  },
+  { ni: 'ni2', sl: 'sl2', key: 'monthlySavings',       min: 10,  max: 1000, step: 10 },
+  { ni: 'ni3', sl: 'sl3', key: 'targetRetirementAge',  min: 40,  max: 70,   step: 1  },
+  { ni: 'ni4', sl: 'sl4', key: 'targetWithdrawal',     min: 50,  max: 1000, step: 10 },
+];
+
+function bindFields() {
+  FIELDS.forEach(({ ni, sl, key, min, max, step }) => {
+    const numEl = $(ni);
+    const slEl  = $(sl);
+
+    autoWidth(numEl);
+    fillSlider(slEl);
+
+    /* Slider → number */
+    slEl.addEventListener('input', () => {
+      D[key] = +slEl.value;
+      numEl.value = slEl.value;
+      autoWidth(numEl);
+      fillSlider(slEl);
+      if (cur === 4) updatePreview();
+    });
+
+    /* Number input → slider */
+    numEl.addEventListener('input', () => {
+      let v = +numEl.value;
+      if (isNaN(v)) return;
+      v = clamp(v, min, max);
+      D[key] = v;
+      slEl.value = v;
+      autoWidth(numEl);
+      fillSlider(slEl);
+      if (cur === 4) updatePreview();
+    });
+
+    /* Clamp on blur */
+    numEl.addEventListener('blur', () => {
+      let v = clamp(+numEl.value || min, min, max);
+      v = Math.round(v / step) * step;
+      D[key] = v;
+      numEl.value = v;
+      slEl.value  = v;
+      autoWidth(numEl);
+      fillSlider(slEl);
+    });
+  });
+}
+
+/* ── FIRE reverse calc ── */
 function calcPreview() {
   const r  = D.annualReturn  / 100;
   const g  = D.savingsGrowth / 100;
   const sw = D.safeRate      / 100;
-  const N  = D.targetRetirementAge - D.currentAge;
+  const N  = Math.max(0, D.targetRetirementAge - D.currentAge);
 
   const fireNum = (D.targetWithdrawal * 12) / sw;
 
@@ -578,40 +837,40 @@ function calcPreview() {
     const fvCur = D.currentAssets * Math.pow(1 + r, N);
     const need  = fireNum - fvCur;
     if (need > 0) {
-      const eps = 0.0001;
-      let fvF;
+      const eps = 1e-4;
+      let fvFactor;
       if (Math.abs(g - r) < eps) {
-        fvF = 12 * N * Math.pow(1 + r, N - 1);
+        fvFactor = 12 * N * Math.pow(1 + r, N - 1);
       } else {
         const x = (1 + g) / (1 + r);
-        fvF = 12 * Math.pow(1 + r, N - 1) * (Math.pow(x, N) - 1) / (x - 1);
+        fvFactor = 12 * Math.pow(1 + r, N - 1) * (Math.pow(x, N) - 1) / (x - 1);
       }
-      reqSave = need / fvF;
+      reqSave = fvFactor > 0 ? need / fvFactor : 0;
     }
   }
   return { fireNum, reqSave };
 }
 
-/* ─── Update Section 5 preview ─── */
+/* ── Update Section 5 ── */
 function updatePreview() {
   $('ph-age').textContent    = D.currentAge;
   $('ph-retire').textContent = D.targetRetirementAge;
 
   const { fireNum, reqSave } = calcPreview();
-
   const fp = fmtParts(fireNum);
   $('pv1').textContent = fp.v;
   $('pu1').textContent = fp.u;
   $('ps1').textContent =
-    `${fmtNum(D.targetWithdrawal)}만원 × 12 ÷ ${D.safeRate}% = ${fp.v}${fp.u}`;
+    `${D.targetWithdrawal.toLocaleString('ko-KR')}만원 × 12 ÷ ${D.safeRate}% SWR`;
 
   if (reqSave > 0) {
-    $('pv2').textContent = fmtNum(Math.ceil(reqSave));
+    const rs = Math.ceil(reqSave);
+    $('pv2').textContent = rs.toLocaleString('ko-KR');
     $('pu2').textContent = '만원';
-    const gap = D.monthlySavings - Math.ceil(reqSave);
+    const gap = D.monthlySavings - rs;
     $('ps2').textContent = gap >= 0
-      ? `현재보다 ${fmtNum(Math.abs(gap))}만원 여유 ✓`
-      : `현재보다 ${fmtNum(Math.abs(gap))}만원 더 필요`;
+      ? `현재보다 ${Math.abs(gap).toLocaleString('ko-KR')}만원 여유 ✓`
+      : `현재보다 ${Math.abs(gap).toLocaleString('ko-KR')}만원 더 필요`;
   } else {
     $('pv2').textContent = '0';
     $('pu2').textContent = '만원';
@@ -619,88 +878,84 @@ function updatePreview() {
   }
 }
 
-/* ─── Slider fill ─── */
-function fillSlider(el) {
-  const pct = ((+el.value - +el.min) / (+el.max - +el.min)) * 100;
-  el.style.background =
-    `linear-gradient(to right, var(--green) ${pct}%, rgba(255,255,255,.1) ${pct}%)`;
-}
-
-/* ─── Bind sliders ─── */
-const SLIDERS = [
-  { id: 'sl1', numId: 'n1', key: 'currentAge',          fmt: v => v },
-  { id: 'sl2', numId: 'n2', key: 'monthlySavings',       fmt: v => v.toLocaleString('ko-KR') },
-  { id: 'sl3', numId: 'n3', key: 'targetRetirementAge',  fmt: v => v },
-  { id: 'sl4', numId: 'n4', key: 'targetWithdrawal',     fmt: v => v.toLocaleString('ko-KR') },
-];
-
-function bindSliders() {
-  SLIDERS.forEach(({ id, numId, key, fmt }) => {
-    const sl = $(id);
-    sl.addEventListener('input', () => {
-      D[key] = parseFloat(sl.value);
-      $(numId).textContent = fmt(D[key]);
-      fillSlider(sl);
-      if (cur === 4) updatePreview();
-    });
-    fillSlider(sl);
-  });
-}
-
-/* ─── Section navigation ─── */
+/* ── Go to section ── */
 function goTo(idx) {
   cur = idx;
 
-  // scroll
-  $(`s${idx + 1}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  smoothScrollTo($(`s${idx + 1}`));
 
-  // dots
+  /* progress dots */
   document.querySelectorAll('.dot').forEach((d, i) => {
     d.classList.toggle('active', i === idx);
     d.classList.toggle('done',   i < idx);
   });
+  $('prog-step').textContent = `0${idx + 1} / 05`;
 
-  // fade in content after scroll settles
+  /* fade in content after scroll */
   setTimeout(() => {
     const c = $(`c${idx + 1}`);
     if (c) c.classList.add('in');
-  }, 380);
+
+    /* auto-focus matching number input (DESIGN_SPEC §4-3) */
+    if (idx < 4) {
+      const ni = $(`ni${idx + 1}`);
+      if (ni) ni.focus();
+    }
+  }, 420);
 
   if (idx === 4) updatePreview();
 }
 
+/* ── Validate & shake if out of range ── */
+function validateCurrent() {
+  const field = FIELDS[cur];
+  if (!field) return true;
+  const v = D[field.key];
+  if (isNaN(v) || v < field.min || v > field.max) {
+    const numEl = $(field.ni);
+    numEl.classList.remove('shake');
+    void numEl.offsetWidth;
+    numEl.classList.add('shake');
+    numEl.addEventListener('animationend', () =>
+      numEl.classList.remove('shake'), { once: true });
+    return false;
+  }
+  return true;
+}
+
 function next() {
+  if (!validateCurrent()) return;
   if (cur < 4) goTo(cur + 1);
 }
 function prev() {
   if (cur > 0) goTo(cur - 1);
 }
 
-/* ─── Keyboard Enter ─── */
+/* ── Keyboard ── */
 document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && cur < 4) next();
+  if (e.key === 'Enter') {
+    /* allow Enter inside num-input to advance */
+    next();
+  }
 });
 
-/* ─── Block wheel / touch scroll ─── */
+/* ── Block wheel / touch (DESIGN_SPEC §4-1) ── */
 $('scroller').addEventListener('wheel',     e => e.preventDefault(), { passive: false });
 $('scroller').addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
-/* ─── Persona ─── */
+/* ── Persona selection ── */
 function selectPersona(type) {
   D.persona = type;
   Object.assign(D, PRESETS[type]);
 
-  document.querySelectorAll('.pcard-sel').forEach(c =>
-    c.classList.remove('selected', 'selected-b'));
-  $('ps-stable').classList.toggle('selected',   type === 'stable');
-  $('ps-aggr').classList.toggle('selected',     type === 'aggressive');
+  document.querySelectorAll('.pcard-sel').forEach(c => c.classList.remove('selected'));
+  $(`ps-${type === 'stable' ? 'stable' : 'aggr'}`).classList.add('selected');
 
   updatePreview();
 }
 
-/* ─── Go to Dashboard ─── */
+/* ── Go to Dashboard (DESIGN_SPEC §4-6: 600ms fade) ── */
 function goToDashboard() {
-  // Build URL params matching index.html's FIELDS & prefix convention
   const p = new URLSearchParams({
     'a_currentAge':          D.currentAge,
     'a_monthlySavings':      D.monthlySavings,
@@ -712,18 +967,21 @@ function goToDashboard() {
     'a_safeRate':            D.safeRate,
   });
 
-  // Fade out → redirect
   $('fade').classList.add('on');
   setTimeout(() => {
-    window.location.href = `index.html?${p.toString()}`;
-  }, 500);
+    window.location.href = `index.html?${p}`;
+  }, 600); /* 600ms per DESIGN_SPEC §4-6 */
 }
 
-/* ─── Init ─── */
+/* ── Init ── */
 function init() {
-  bindSliders();
-  // Fade in the first section
-  setTimeout(() => $('c1').classList.add('in'), 200);
+  bindFields();
+  updatePreview();
+  /* Fade in first section */
+  setTimeout(() => {
+    $('c1').classList.add('in');
+    $('ni1').focus();
+  }, 180);
 }
 
 document.addEventListener('DOMContentLoaded', init);
