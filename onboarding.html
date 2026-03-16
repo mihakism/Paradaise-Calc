@@ -7,7 +7,7 @@
   <meta name="description" content="원하는 삶에서 출발하는 역산 FIRE 시뮬레이터" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
 
   <style>
@@ -479,9 +479,9 @@
     ══════════════════════════════════════════ */
     #landing {
       position: fixed; inset: 0; z-index: 300;
-      background: #FFFFFF;
+      background: #000;
       color: #000;
-      display: flex; flex-direction: column;
+      display: flex; align-items: center; justify-content: center;
       opacity: 1;
       transition: opacity .55s ease;
     }
@@ -489,121 +489,91 @@
       opacity: 0; pointer-events: none;
     }
 
-    /* ── Landing header ── */
-    .l-header {
-      padding: 28px 44px;
-      display: flex; align-items: center; justify-content: space-between;
-      flex-shrink: 0;
+    /* 배경 비디오 */
+    #l-bg-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 0;
     }
-    .l-logo {
-      font-family: var(--ff-ko);
-      font-size: 17px; font-weight: 800;
-      letter-spacing: -.4px; color: #000;
+    /* 비디오 위 오버레이 (텍스트 가독성) */
+    #landing::after {
+      content: '';
+      position: absolute; inset: 0; z-index: 0;
+      background: rgba(255,255,255,.70);
     }
-    .l-start-sm {
-      font-family: var(--ff-ko);
-      font-size: 13px; font-weight: 600;
-      color: #000; background: none; border: none;
-      cursor: pointer; letter-spacing: -.2px;
-      text-decoration: underline; text-underline-offset: 3px;
-      opacity: .5;
-    }
-    .l-start-sm:hover { opacity: 1; }
 
-    /* ── Hero ── */
-    .l-hero {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
+    /* ── 중앙 콘텐츠 그룹 ── */
+    .l-content {
+      position: relative; z-index: 1;
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 0;
-      position: relative;
-      overflow: hidden;
-      padding: 0 72px;
+      text-align: center;
+      padding: 0 24px;
     }
 
-    /* Scrolling background marquee */
-    .l-marquee {
-      position: absolute;
-      inset: 0;
-      display: flex; flex-direction: column;
-      justify-content: center;
-      pointer-events: none; overflow: hidden;
-      gap: 0;
-    }
-    .l-marquee-row {
-      white-space: nowrap;
-      font-family: var(--ff-en);
-      font-size: clamp(52px, 7.5vw, 96px);
+    /* ── 메인 디스플레이 타이틀 (MoMoney style) ── */
+    .l-main-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(52px, 9.5vw, 128px);
       font-weight: 900;
-      color: rgba(0,0,0,.055);
-      letter-spacing: -3px;
-      line-height: 1.05;
-      animation: lmarquee 22s linear infinite;
-    }
-    .l-marquee-row:nth-child(2) {
-      animation-direction: reverse;
-      animation-duration: 28s;
-      color: rgba(0,0,0,.035);
-    }
-    @keyframes lmarquee {
-      from { transform: translateX(0); }
-      to   { transform: translateX(-50%); }
-    }
-
-    /* Left / right prose */
-    .l-prose {
-      position: relative; z-index: 1;
-      font-family: var(--ff-ko);
-      font-size: 15px; line-height: 1.9;
+      font-style: italic;
+      line-height: 0.95;
+      letter-spacing: -2px;
       color: #000;
-    }
-    .l-prose-left  { text-align: right; padding-right: 56px; }
-    .l-prose-right { text-align: left;  padding-left: 56px; }
-    .l-prose p { margin-bottom: .2em; }
-    .l-prose strong { font-weight: 800; }
-
-    /* Center emoji */
-    .l-center {
-      position: relative; z-index: 1;
-      width: clamp(160px, 18vw, 240px);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      border: 1.5px solid rgba(0,0,0,.18);
-      display: flex; align-items: center; justify-content: center;
-      font-size: clamp(64px, 8vw, 100px);
-      line-height: 1;
-      flex-shrink: 0;
+      text-transform: uppercase;
+      margin: 0 0 48px;
     }
 
-    /* ── Landing footer ── */
-    .l-footer {
-      padding: 28px 44px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
+    /* ── 롤링 서브타이틀 ── */
+    .l-rolling-wrap {
+      height: 28px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 0;
     }
+    .l-rolling-text {
+      display: block;
+      text-align: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: rgba(0,0,0,.65);
+      white-space: nowrap;
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity .35s ease, transform .35s ease;
+      letter-spacing: .01em;
+    }
+    .l-rolling-text.out {
+      opacity: 0;
+      transform: translateY(-14px);
+    }
+    .l-rolling-text.in {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: none;
+    }
+
     .btn-l-start {
       display: inline-flex; align-items: center; gap: 10px;
-      padding: 15px 52px;
+      padding: 16px 56px;
       background: #000; color: #fff;
-      font-family: var(--ff-ko); font-size: 16px; font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 700;
       border: none; border-radius: 999px; cursor: pointer;
       transition: opacity .2s ease, transform .2s ease;
-      letter-spacing: -.2px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-top: 48px;
     }
-    .btn-l-start:hover { opacity: .8; transform: translateY(-1px); }
+    .btn-l-start:hover { opacity: .75; transform: translateY(-2px); }
 
     /* ── Mobile ── */
     @media (max-width: 700px) {
-      .l-hero {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
-        padding: 20px 28px;
-        gap: 24px;
-      }
-      .l-prose-left  { text-align: center; padding-right: 0; order: 2; }
-      .l-prose-right { text-align: center; padding-left:  0; order: 3; }
-      .l-center      { margin: 0 auto; order: 1; }
+      .l-main-title { font-size: clamp(40px, 12vw, 64px); letter-spacing: -1px; }
+      .l-rolling-text { font-size: 13px; }
     }
   </style>
 </head>
@@ -615,56 +585,21 @@
 <!-- ═══ 랜딩 메인 화면 (Monte-style) ═══ -->
 <div id="landing">
 
-  <!-- 헤더 -->
-  <header class="l-header">
-    <span class="l-logo">파라다이스 계산기</span>
-    <button class="l-start-sm" onclick="startOnboarding()">바로 시작하기 →</button>
-  </header>
+  <!-- 배경 비디오 -->
+  <video id="l-bg-video" autoplay muted loop playsinline
+    src="https://cdn.midjourney.com/video/110cd6b5-8978-4268-bcd1-4f6e61e46ba3/2.mp4">
+  </video>
 
-  <!-- 히어로 -->
-  <div class="l-hero">
-
-    <!-- 수평 스크롤 배경 텍스트 -->
-    <div class="l-marquee" aria-hidden="true">
-      <div class="l-marquee-row">How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp;</div>
-      <div class="l-marquee-row">How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp;</div>
+  <!-- 중앙 그룹: 디스플레이 타이틀 → 롤링 서브타이틀 → 버튼 -->
+  <div class="l-content">
+    <h1 class="l-main-title">How to go to<br>the Paradise</h1>
+    <div class="l-rolling-wrap">
+      <span class="l-rolling-text" id="l-roll"></span>
     </div>
-
-    <!-- 왼쪽 텍스트 -->
-    <div class="l-prose l-prose-left">
-      <p>지금 이대로</p>
-      <p>영원히 일만 할 건가요?</p>
-      <br/>
-      <p><strong>원하는 삶을</strong></p>
-      <p><strong>먼저 그리세요.</strong></p>
-      <br/>
-      <p>숫자는 나중에</p>
-      <p>따라옵니다.</p>
-    </div>
-
-    <!-- 중앙 파라다이스 이모지 -->
-    <div class="l-center">🌴</div>
-
-    <!-- 오른쪽 텍스트 -->
-    <div class="l-prose l-prose-right">
-      <p>월 300만원으로</p>
-      <p>50세에 은퇴하려면</p>
-      <p>지금 얼마를 모아야 할까요?</p>
-      <br/>
-      <p><strong>희망 생활비와</strong></p>
-      <p><strong>은퇴 나이를 입력하면</strong></p>
-      <br/>
-      <p>역산으로 답이 나옵니다.</p>
-    </div>
-
-  </div>
-
-  <!-- 시작 버튼 -->
-  <footer class="l-footer">
     <button class="btn-l-start" onclick="startOnboarding()">
       시작하기 →
     </button>
-  </footer>
+  </div>
 
 </div><!-- /#landing -->
 
@@ -1048,6 +983,32 @@ function goToDashboard() {
   }, 600); /* 600ms per DESIGN_SPEC §4-6 */
 }
 
+/* ── 롤링 텍스트 ── */
+const ROLL_TEXTS = [
+  '지금 이대로 영원히 일만 할 건가요?',
+  '원하는 삶을 먼저 그리세요.',
+  '숫자는 나중에 따라옵니다.',
+  '월 300만원으로 50세에 은퇴하려면?',
+  '희망 생활비와 은퇴 나이를 입력하면',
+  '역산으로 월 저축 목표가 계산됩니다.',
+];
+let rollIdx = 0;
+
+function startRolling() {
+  const el = $('l-roll');
+  el.textContent = ROLL_TEXTS[0];
+  setInterval(() => {
+    el.classList.add('out');
+    setTimeout(() => {
+      rollIdx = (rollIdx + 1) % ROLL_TEXTS.length;
+      el.classList.add('in');
+      el.textContent = ROLL_TEXTS[rollIdx];
+      void el.offsetWidth; // reflow
+      el.classList.remove('out', 'in');
+    }, 360);
+  }, 2000);
+}
+
 /* ── 랜딩 → 온보딩 전환 ── */
 function startOnboarding() {
   $('landing').classList.add('hide');
@@ -1063,6 +1024,7 @@ function startOnboarding() {
 function init() {
   bindFields();
   updatePreview();
+  startRolling();
 }
 
 document.addEventListener('DOMContentLoaded', init);
