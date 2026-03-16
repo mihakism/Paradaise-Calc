@@ -473,6 +473,138 @@
       .persona-grid   { grid-template-columns: 1fr; }
       .btn-cta  { padding: 16px 36px; font-size: 15px; }
     }
+
+    /* ══════════════════════════════════════════
+       Landing Screen  (Monte-style)
+    ══════════════════════════════════════════ */
+    #landing {
+      position: fixed; inset: 0; z-index: 300;
+      background: #FFFFFF;
+      color: #000;
+      display: flex; flex-direction: column;
+      opacity: 1;
+      transition: opacity .55s ease;
+    }
+    #landing.hide {
+      opacity: 0; pointer-events: none;
+    }
+
+    /* ── Landing header ── */
+    .l-header {
+      padding: 28px 44px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .l-logo {
+      font-family: var(--ff-ko);
+      font-size: 17px; font-weight: 800;
+      letter-spacing: -.4px; color: #000;
+    }
+    .l-start-sm {
+      font-family: var(--ff-ko);
+      font-size: 13px; font-weight: 600;
+      color: #000; background: none; border: none;
+      cursor: pointer; letter-spacing: -.2px;
+      text-decoration: underline; text-underline-offset: 3px;
+      opacity: .5;
+    }
+    .l-start-sm:hover { opacity: 1; }
+
+    /* ── Hero ── */
+    .l-hero {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 0;
+      position: relative;
+      overflow: hidden;
+      padding: 0 72px;
+    }
+
+    /* Scrolling background marquee */
+    .l-marquee {
+      position: absolute;
+      inset: 0;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      pointer-events: none; overflow: hidden;
+      gap: 0;
+    }
+    .l-marquee-row {
+      white-space: nowrap;
+      font-family: var(--ff-en);
+      font-size: clamp(52px, 7.5vw, 96px);
+      font-weight: 900;
+      color: rgba(0,0,0,.055);
+      letter-spacing: -3px;
+      line-height: 1.05;
+      animation: lmarquee 22s linear infinite;
+    }
+    .l-marquee-row:nth-child(2) {
+      animation-direction: reverse;
+      animation-duration: 28s;
+      color: rgba(0,0,0,.035);
+    }
+    @keyframes lmarquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* Left / right prose */
+    .l-prose {
+      position: relative; z-index: 1;
+      font-family: var(--ff-ko);
+      font-size: 15px; line-height: 1.9;
+      color: #000;
+    }
+    .l-prose-left  { text-align: right; padding-right: 56px; }
+    .l-prose-right { text-align: left;  padding-left: 56px; }
+    .l-prose p { margin-bottom: .2em; }
+    .l-prose strong { font-weight: 800; }
+
+    /* Center emoji */
+    .l-center {
+      position: relative; z-index: 1;
+      width: clamp(160px, 18vw, 240px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0,0,0,.18);
+      display: flex; align-items: center; justify-content: center;
+      font-size: clamp(64px, 8vw, 100px);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    /* ── Landing footer ── */
+    .l-footer {
+      padding: 28px 44px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .btn-l-start {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 15px 52px;
+      background: #000; color: #fff;
+      font-family: var(--ff-ko); font-size: 16px; font-weight: 700;
+      border: none; border-radius: 999px; cursor: pointer;
+      transition: opacity .2s ease, transform .2s ease;
+      letter-spacing: -.2px;
+    }
+    .btn-l-start:hover { opacity: .8; transform: translateY(-1px); }
+
+    /* ── Mobile ── */
+    @media (max-width: 700px) {
+      .l-hero {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        padding: 20px 28px;
+        gap: 24px;
+      }
+      .l-prose-left  { text-align: center; padding-right: 0; order: 2; }
+      .l-prose-right { text-align: center; padding-left:  0; order: 3; }
+      .l-center      { margin: 0 auto; order: 1; }
+    }
   </style>
 </head>
 <body>
@@ -480,8 +612,64 @@
 <!-- Fade cover -->
 <div id="fade"></div>
 
-<!-- Header / progress bar -->
-<nav id="progress">
+<!-- ═══ 랜딩 메인 화면 (Monte-style) ═══ -->
+<div id="landing">
+
+  <!-- 헤더 -->
+  <header class="l-header">
+    <span class="l-logo">파라다이스 계산기</span>
+    <button class="l-start-sm" onclick="startOnboarding()">바로 시작하기 →</button>
+  </header>
+
+  <!-- 히어로 -->
+  <div class="l-hero">
+
+    <!-- 수평 스크롤 배경 텍스트 -->
+    <div class="l-marquee" aria-hidden="true">
+      <div class="l-marquee-row">How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp;</div>
+      <div class="l-marquee-row">How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp; How to go to the Paradise &nbsp;·&nbsp;</div>
+    </div>
+
+    <!-- 왼쪽 텍스트 -->
+    <div class="l-prose l-prose-left">
+      <p>지금 이대로</p>
+      <p>영원히 일만 할 건가요?</p>
+      <br/>
+      <p><strong>원하는 삶을</strong></p>
+      <p><strong>먼저 그리세요.</strong></p>
+      <br/>
+      <p>숫자는 나중에</p>
+      <p>따라옵니다.</p>
+    </div>
+
+    <!-- 중앙 파라다이스 이모지 -->
+    <div class="l-center">🌴</div>
+
+    <!-- 오른쪽 텍스트 -->
+    <div class="l-prose l-prose-right">
+      <p>월 300만원으로</p>
+      <p>50세에 은퇴하려면</p>
+      <p>지금 얼마를 모아야 할까요?</p>
+      <br/>
+      <p><strong>희망 생활비와</strong></p>
+      <p><strong>은퇴 나이를 입력하면</strong></p>
+      <br/>
+      <p>역산으로 답이 나옵니다.</p>
+    </div>
+
+  </div>
+
+  <!-- 시작 버튼 -->
+  <footer class="l-footer">
+    <button class="btn-l-start" onclick="startOnboarding()">
+      시작하기 →
+    </button>
+  </footer>
+
+</div><!-- /#landing -->
+
+<!-- Header / progress bar (온보딩 시작 후 표시) -->
+<nav id="progress" style="display:none">
   <span class="prog-logo">Paradise Calculator</span>
   <div class="prog-dots">
     <div class="dot active" data-i="0"></div>
@@ -496,12 +684,11 @@
 <!-- ─────────────────────────────
      Scroll container
 ───────────────────────────── -->
-<div id="scroller">
+<div id="scroller" style="display:none">
 
   <!-- ── S1 현재 나이 ── -->
   <section class="section" id="s1">
     <div class="content" id="c1">
-      <span class="step-lbl">01 / 05 &nbsp;·&nbsp; 현재 상황</span>
       <p class="question">지금 몇 살이세요?</p>
       <div class="input-block">
         <div class="num-row">
@@ -525,7 +712,6 @@
   <!-- ── S2 월 저축액 ── -->
   <section class="section" id="s2">
     <div class="content" id="c2">
-      <span class="step-lbl">02 / 05 &nbsp;·&nbsp; 저축 현황</span>
       <p class="question">매달 얼마를 저축하나요?</p>
       <div class="input-block">
         <div class="num-row">
@@ -548,7 +734,6 @@
   <!-- ── S3 은퇴 희망 나이 ── -->
   <section class="section" id="s3">
     <div class="content" id="c3">
-      <span class="step-lbl">03 / 05 &nbsp;·&nbsp; 목표 시점</span>
       <p class="question">언제 은퇴하고 싶으세요?</p>
       <div class="input-block">
         <div class="num-row">
@@ -571,7 +756,6 @@
   <!-- ── S4 희망 월 인출액 ── -->
   <section class="section" id="s4">
     <div class="content" id="c4">
-      <span class="step-lbl">04 / 05 &nbsp;·&nbsp; 원하는 삶</span>
       <p class="question">매달 얼마가 필요하세요?</p>
       <div class="input-block">
         <div class="num-row">
@@ -594,7 +778,6 @@
   <!-- ── S5 결과 프리뷰 + 페르소나 ── -->
   <section class="section" id="s5">
     <div class="content content-wide" id="c5">
-      <span class="step-lbl">05 / 05 &nbsp;·&nbsp; 내 낙원 미리보기</span>
 
       <p class="preview-headline">
         <span id="ph-age">35</span>세부터 시작하면<br/>
@@ -621,24 +804,6 @@
         </div>
       </div>
 
-      <!-- Persona selection -->
-      <div style="display:flex;flex-direction:column;gap:10px;width:100%">
-        <p class="persona-title">투자 성향을 선택하면 수익률이 자동 설정됩니다</p>
-        <div class="persona-grid">
-          <div class="pcard-sel" id="ps-stable" onclick="selectPersona('stable')">
-            <span class="ps-emoji">👩‍💼</span>
-            <span class="ps-name">이지현 · 안정형</span>
-            <span class="ps-type">연 4.5% · 채권혼합형</span>
-            <span class="ps-info">저축 증가율 2% · SWR 4%</span>
-          </div>
-          <div class="pcard-sel" id="ps-aggr" onclick="selectPersona('aggressive')">
-            <span class="ps-emoji">👨‍💻</span>
-            <span class="ps-name">박준혁 · 공격형</span>
-            <span class="ps-type">연 9% · 글로벌 ETF</span>
-            <span class="ps-info">저축 증가율 5% · SWR 3.5%</span>
-          </div>
-        </div>
-      </div>
 
       <!-- CTA — DESIGN_SPEC §7 -->
       <button class="btn-cta" id="btn-cta" onclick="goToDashboard()">
@@ -883,14 +1048,21 @@ function goToDashboard() {
   }, 600); /* 600ms per DESIGN_SPEC §4-6 */
 }
 
+/* ── 랜딩 → 온보딩 전환 ── */
+function startOnboarding() {
+  $('landing').classList.add('hide');
+  setTimeout(() => {
+    $('landing').style.display = 'none';
+    $('progress').style.display = '';
+    $('scroller').style.display = '';
+    setTimeout(() => $('c1').classList.add('in'), 80);
+  }, 560);
+}
+
 /* ── Init ── */
 function init() {
   bindFields();
   updatePreview();
-  /* Fade in first section */
-  setTimeout(() => {
-    $('c1').classList.add('in');
-  }, 180);
 }
 
 document.addEventListener('DOMContentLoaded', init);
