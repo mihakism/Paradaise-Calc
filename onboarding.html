@@ -210,6 +210,15 @@
     }
 
     /* Big display number — DESIGN_SPEC §3: accent, Inter 900 */
+    /* ── 숫자 마스크 (overflow clip) ── */
+    .num-mask {
+      overflow: hidden;
+      display: inline-block;
+      /* 위아래 조금 여유 — 슬라이드 끝단이 살짝 보이게 */
+      padding: 6px 0;
+      margin: -6px 0;
+    }
+
     .num-display {
       font-family: var(--ff-en);
       font-size: 84px;
@@ -217,8 +226,22 @@
       color: var(--color-accent);
       line-height: 1;
       letter-spacing: -0.045em;
+      display: block;
       transition: color .2s;
     }
+
+    /* 값 증가 → 아래에서 위로 */
+    @keyframes numSlideUp {
+      from { transform: translateY(55%); opacity: 0; }
+      to   { transform: translateY(0);   opacity: 1; }
+    }
+    /* 값 감소 → 위에서 아래로 */
+    @keyframes numSlideDown {
+      from { transform: translateY(-55%); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .num-display.flip-up   { animation: numSlideUp   .22s cubic-bezier(.4,0,.2,1) both; }
+    .num-display.flip-down { animation: numSlideDown .22s cubic-bezier(.4,0,.2,1) both; }
 
     .unit {
       font-family: var(--ff-en);
@@ -708,7 +731,7 @@
       <span class="hint">Enter 키 또는 버튼으로 다음 단계로 이동합니다</span>
       <div class="input-block">
         <div class="num-row">
-          <span class="num-display" id="ni1">35</span>
+          <div class="num-mask"><span class="num-display" id="ni1">35</span></div>
           <span class="unit">세</span>
         </div>
         <div class="slider-wrap">
@@ -731,7 +754,7 @@
       <span class="hint">투자·적금·예금 합산 금액을 입력하세요</span>
       <div class="input-block">
         <div class="num-row">
-          <span class="num-display" id="ni2">150</span>
+          <div class="num-mask"><span class="num-display" id="ni2">150</span></div>
           <span class="unit">만원</span>
         </div>
         <div class="slider-wrap">
@@ -753,7 +776,7 @@
       <span class="hint">일하지 않아도 되는 나이를 설정하세요</span>
       <div class="input-block">
         <div class="num-row">
-          <span class="num-display" id="ni3">50</span>
+          <div class="num-mask"><span class="num-display" id="ni3">50</span></div>
           <span class="unit">세</span>
         </div>
         <div class="slider-wrap">
@@ -775,7 +798,7 @@
       <span class="hint">은퇴 후 매달 원하는 생활비를 입력하세요</span>
       <div class="input-block">
         <div class="num-row">
-          <span class="num-display" id="ni4">300</span>
+          <div class="num-mask"><span class="num-display" id="ni4">300</span></div>
           <span class="unit">만원</span>
         </div>
         <div class="slider-wrap">
@@ -909,17 +932,32 @@ const FIELDS = [
   { ni: 'ni4', sl: 'sl4', key: 'targetWithdrawal',     fmt: v => v.toLocaleString('ko-KR') },
 ];
 
+/* ── 슬라이더 숫자 flip 애니메이션 ── */
+function flipNum(el, newText, dir) {
+  if (el.textContent === newText) return;
+  /* 이전 애니메이션 취소 후 즉시 재실행 */
+  el.classList.remove('flip-up', 'flip-down');
+  void el.offsetWidth;                          /* reflow → 애니메이션 리셋 */
+  el.textContent = newText;
+  el.classList.add(dir === 'up' ? 'flip-up' : 'flip-down');
+}
+
 function bindFields() {
   FIELDS.forEach(({ ni, sl, key, fmt }) => {
-    const numEl = $(ni);   /* span.num-display */
+    const numEl = $(ni);
     const slEl  = $(sl);
 
     fillSlider(slEl);
 
-    /* Slider → span 업데이트 */
+    let prevVal = +slEl.value;
+
+    /* Slider → span 업데이트 + flip 애니메이션 */
     slEl.addEventListener('input', () => {
-      D[key] = +slEl.value;
-      numEl.textContent = fmt(D[key]);
+      const newVal = +slEl.value;
+      const dir    = newVal >= prevVal ? 'up' : 'down';
+      D[key] = newVal;
+      flipNum(numEl, fmt(newVal), dir);
+      prevVal = newVal;
       fillSlider(slEl);
       if (cur === 4) updatePreview();
     });
