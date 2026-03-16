@@ -36,7 +36,7 @@
     html, body {
       height: 100%;
       overflow: hidden;
-      background: #FFFFFF;
+      background: #00592b;
       color: var(--text-primary);
       font-family: var(--ff-ko);
       -webkit-font-smoothing: antialiased;
@@ -69,7 +69,7 @@
       font-family: var(--ff-en);
       font-size: 15px;
       font-weight: 700;
-      color: rgba(0,0,0,.35);
+      color: rgba(255,255,255,.4);
       letter-spacing: -.2px;
     }
     .prog-back {
@@ -78,8 +78,8 @@
       font-size: 12px; font-weight: 700;
       letter-spacing: .04em;
       text-transform: uppercase;
-      color: rgba(0,0,0,.6);
-      background: rgba(0,0,0,.06);
+      color: rgba(255,255,255,.75);
+      background: rgba(255,255,255,.12);
       border: none;
       border-radius: 999px;
       padding: 8px 16px;
@@ -87,8 +87,8 @@
       transition: background .15s ease, color .15s ease;
     }
     .prog-back:hover {
-      background: rgba(0,0,0,.11);
-      color: rgba(0,0,0,.85);
+      background: rgba(255,255,255,.20);
+      color: rgba(255,255,255,1);
     }
     .prog-dots {
       display: flex;
@@ -98,7 +98,7 @@
     .dot {
       width: 6px; height: 6px;
       border-radius: 3px;
-      background: rgba(0,0,0,.12);
+      background: rgba(255,255,255,.20);
       transition: width .4s cubic-bezier(.4,0,.2,1),
                   background .4s cubic-bezier(.4,0,.2,1);
     }
@@ -120,21 +120,21 @@
       overflow: hidden;
     }
 
-    /* White theme sections */
-    #s1 { background: #FFFFFF; }
-    #s2 { background: #FDFCFF; }
-    #s3 { background: #FAF8FF; }
-    #s4 { background: #F7F4FF; }
-    #s5 { background: #F4F0FF; }
+    /* Dark green sections — 진행될수록 진해짐 */
+    #s1 { background: #00592b; }
+    #s2 { background: #004824; }
+    #s3 { background: #00391c; }
+    #s4 { background: #002b14; }
+    #s5 { background: #001d0d; }
 
-    /* ambient radial glow — subtle purple */
+    /* ambient radial glow — green center */
     .section::before {
       content: '';
       position: absolute;
       inset: 0;
       background: radial-gradient(
         ellipse 60% 50% at 50% 40%,
-        rgba(28,229,133,.06) 0%,
+        rgba(28,229,133,.10) 0%,
         transparent 70%
       );
       pointer-events: none;
