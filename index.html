@@ -17,9 +17,9 @@
       --border:         #E5E9F0;
       --border-light:   #D4DAE6;
 
-      --primary:        #10B981;
-      --primary-dim:    #059669;
-      --primary-glow:   rgba(16, 185, 129, 0.12);
+      --primary:        #6C47FF;
+      --primary-dim:    #5636E0;
+      --primary-glow:   rgba(108, 71, 255, 0.12);
 
       --gold:           #F59E0B;
       --gold-dim:       #D97706;
@@ -62,9 +62,6 @@
     /* ─── 헤더 ─── */
     .header {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
       padding: 16px 28px;
       display: flex; align-items: center; justify-content: space-between;
@@ -87,7 +84,7 @@
       font-size: 13px; font-weight: 600; cursor: pointer; border: none;
       transition: all var(--ease); white-space: nowrap; font-family: var(--font);
     }
-    .btn-primary { background: var(--primary); color: #04120a; }
+    .btn-primary { background: var(--primary); color: #fff; }
     .btn-primary:hover { background: #52e0a3; transform: translateY(-1px); }
     .btn-outline {
       background: transparent; color: var(--text-2);
@@ -172,8 +169,8 @@
       border-radius: var(--r-sm); cursor: pointer;
       transition: all var(--ease);
     }
-    .preset-card:hover { border-color: var(--primary); background: rgba(62,207,142,0.05); }
-    .preset-card.active { border-color: var(--primary); background: rgba(62,207,142,0.08); }
+    .preset-card:hover { border-color: var(--primary); background: rgba(108,71,255,0.05); }
+    .preset-card.active { border-color: var(--primary); background: rgba(108,71,255,0.08); }
     .preset-card.active-b { border-color: var(--violet); background: rgba(139,124,248,0.08); }
 
     .pc-top { display: flex; align-items: center; gap: 6px; }
@@ -207,11 +204,11 @@
       -webkit-appearance: none; appearance: none;
       width: 17px; height: 17px; border-radius: 50%;
       background: var(--primary); cursor: pointer;
-      box-shadow: 0 0 0 3px rgba(62,207,142,0.18);
+      box-shadow: 0 0 0 3px rgba(108,71,255,0.18);
       transition: box-shadow var(--ease);
     }
     input[type="range"]::-webkit-slider-thumb:hover {
-      box-shadow: 0 0 0 6px rgba(62,207,142,0.22);
+      box-shadow: 0 0 0 6px rgba(108,71,255,0.22);
     }
     input[type="range"].rb::-webkit-slider-thumb {
       background: var(--violet);
@@ -284,6 +281,7 @@
     /* ─── 인사 영역 ─── */
     .greeting-section {
       padding-top: 84px;
+      margin-bottom: 30px; /* gap 20px + 30px = 카드와 50px 간격 */
       display: flex; flex-direction: column; gap: 6px;
     }
     .greeting-title {
@@ -303,14 +301,6 @@
       position: relative; overflow: hidden; transition: all var(--ease);
       box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     }
-    .card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: var(--border); transition: background var(--ease);
-    }
-    .card.c-primary::before { background: var(--primary); }
-    .card.c-gold::before    { background: var(--gold); }
-    .card.c-violet::before  { background: var(--violet); }
-    .card.c-warn::before    { background: var(--warning); }
     .card:hover { background: var(--bg-card-hover); }
 
     .card-ico  { font-size: 22px; line-height: 1; }
@@ -351,7 +341,7 @@
     /* ─── 시나리오 비교 배너 ─── */
     .compare-banner {
       display: none; align-items: center; justify-content: space-between; gap: 12px;
-      background: linear-gradient(135deg, rgba(16,185,129,0.05), rgba(129,140,248,0.05));
+      background: linear-gradient(135deg, rgba(108,71,255,0.05), rgba(129,140,248,0.05));
       border: 1px solid var(--border-light);
       border-radius: var(--r-md); padding: 12px 18px;
     }
@@ -394,7 +384,7 @@
       display: inline-flex; align-items: center; padding: 2px 8px;
       border-radius: 99px; font-size: 10px; font-weight: 700;
     }
-    .badge-g { background: rgba(62,207,142,0.14); color: var(--primary); }
+    .badge-g { background: rgba(108,71,255,0.12); color: var(--primary); }
     .badge-v { background: rgba(139,124,248,0.14); color: var(--violet); }
 
     /* ─── 구분선 ─── */
@@ -439,8 +429,7 @@
 <!-- ═══ 헤더 ═══ -->
 <header class="header">
   <div class="logo">
-    <span class="logo-icon">🌴</span>
-    <div class="logo-title">파라다이스 계산기 <em>v2.0</em></div>
+    <div class="logo-title">파라다이스 계산기</div>
   </div>
   <div class="header-right">
     <a href="onboarding.html" class="btn btn-ghost" style="text-decoration:none">← 다시 입력</a>
@@ -755,7 +744,7 @@
         </div>
         <div class="legend" id="legend">
           <div class="leg-item">
-            <div class="leg-dot" style="background:#10B981"></div>
+            <div class="leg-dot" style="background:#6C47FF"></div>
             <span>현재 페이스 (A)</span>
           </div>
           <div class="leg-item">
@@ -1075,15 +1064,15 @@ function updateChart(resA, resB) {
   };
 
   const ptA = makePoints(resA.currentPace.points, resA.currentPace.retireAge, '#F59E0B');
-  const reqPts = makePoints(resA.requiredPace.points, resA.targetRetirementAge, '#10B981');
+  const reqPts = makePoints(resA.requiredPace.points, resA.targetRetirementAge, '#6C47FF');
 
   const datasets = [
     // 현재 페이스 A
     {
       label: '현재 페이스 (A)',
       data: resA.currentPace.points.map(p => p.assets),
-      borderColor: '#10B981',
-      backgroundColor: ctx => mkGradient(ctx, 16, 185, 129),
+      borderColor: '#6C47FF',
+      backgroundColor: ctx => mkGradient(ctx, 108, 71, 255),
       borderWidth: 2.5, tension: 0.4, fill: true,
       pointRadius: ptA.map(p => p.r),
       pointBackgroundColor: ptA.map(p => p.bg),
@@ -1102,7 +1091,7 @@ function updateChart(resA, resB) {
       tension: 0.4, fill: false,
       pointRadius: reqPts.map(p => p.r),
       pointBackgroundColor: reqPts.map(p => p.bg),
-      pointBorderColor: '#10B981',
+      pointBorderColor: '#6C47FF',
       pointBorderWidth: reqPts.map(p => p.bw),
       pointHoverRadius: 5,
     },
@@ -1145,7 +1134,7 @@ function updateChart(resA, resB) {
 
   // 수직선: 목표 은퇴 나이
   const vertTargets = [
-    { age: resA.targetRetirementAge, color: 'rgba(62,207,142,0.4)', dash: [6, 4] },
+    { age: resA.targetRetirementAge, color: 'rgba(108,71,255,0.4)', dash: [6, 4] },
   ];
   if (resB && resB.targetRetirementAge !== resA.targetRetirementAge) {
     vertTargets.push({ age: resB.targetRetirementAge, color: 'rgba(139,124,248,0.35)', dash: [6,4] });
@@ -1336,7 +1325,7 @@ function fmtVal(field, raw) {
 function fillSlider(sl, sc) {
   const min = parseFloat(sl.min), max = parseFloat(sl.max), val = parseFloat(sl.value);
   const pct = ((val - min) / (max - min)) * 100;
-  const col = sc === 'b' ? '#8b7cf8' : '#3ecf8e';
+  const col = sc === 'b' ? '#8b7cf8' : '#6C47FF';
   sl.style.background = `linear-gradient(to right, ${col} ${pct}%, #161e30 ${pct}%)`;
 }
 
