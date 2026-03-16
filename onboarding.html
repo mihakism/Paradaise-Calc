@@ -72,6 +72,16 @@
       color: rgba(0,0,0,.35);
       letter-spacing: -.2px;
     }
+    .prog-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--ff-en);
+      font-size: 13px; font-weight: 600;
+      color: rgba(0,0,0,.4);
+      background: none; border: none; cursor: pointer;
+      padding: 0;
+      transition: color .15s ease;
+    }
+    .prog-back:hover { color: rgba(0,0,0,.75); }
     .prog-dots {
       display: flex;
       align-items: center;
@@ -207,7 +217,6 @@
       font-size: 12px;
       font-weight: 500;
       color: rgba(0,0,0,.22);
-      margin-bottom: 14px;
     }
 
     input[type="range"] {
@@ -223,23 +232,23 @@
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 24px; height: 24px;
+      width: 5px; height: 5px;
       border-radius: 50%;
       background: var(--color-accent);
       cursor: pointer;
       box-shadow:
-        0 0 0 4px rgba(108,71,255,.16),
-        0 0 18px rgba(108,71,255,.28);
+        0 0 0 2px rgba(108,71,255,.18),
+        0 0 6px rgba(108,71,255,.24);
       transition: box-shadow .2s ease, transform .15s ease;
     }
     input[type="range"]::-webkit-slider-thumb:hover {
       box-shadow:
-        0 0 0 7px rgba(108,71,255,.20),
-        0 0 28px rgba(108,71,255,.40);
-      transform: scale(1.08);
+        0 0 0 3px rgba(108,71,255,.22),
+        0 0 10px rgba(108,71,255,.36);
+      transform: scale(1.2);
     }
     input[type="range"]::-moz-range-thumb {
-      width: 24px; height: 24px;
+      width: 5px; height: 5px;
       border-radius: 50%; border: none;
       background: var(--color-accent);
       cursor: pointer;
@@ -292,22 +301,18 @@
     .btn-prev {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
       padding: 14px 20px;
       border-radius: 12px;
       background: transparent;
       color: rgba(0,0,0,.35);
-      border: 1px solid rgba(0,0,0,.12);
+      border: none;
       font-family: var(--ff-ko);
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      transition: all 200ms ease;
+      transition: color 200ms ease;
     }
-    .btn-prev:hover {
-      border-color: rgba(0,0,0,.28);
-      color: rgba(0,0,0,.65);
-    }
+    .btn-prev:hover { color: rgba(0,0,0,.65); }
 
     /* Shake animation */
     @keyframes shake {
@@ -655,7 +660,7 @@
 
 <!-- Header / progress bar (온보딩 시작 후 표시) -->
 <nav id="progress" style="display:none">
-  <span class="prog-logo">Paradise Calculator</span>
+  <button class="prog-back" onclick="goToLanding()">← Back</button>
   <div class="prog-dots">
     <div class="dot active" data-i="0"></div>
     <div class="dot" data-i="1"></div>
@@ -663,7 +668,7 @@
     <div class="dot" data-i="3"></div>
     <div class="dot" data-i="4"></div>
   </div>
-  <span style="width:120px"></span><!-- 좌우 균형용 -->
+  <span style="width:80px"></span><!-- 좌우 균형용 -->
 </nav>
 
 <!-- ─────────────────────────────
@@ -710,7 +715,7 @@
         <span class="hint">투자·적금·예금 합산 금액을 입력하세요</span>
       </div>
       <div class="nav-row">
-        <button class="btn-prev" onclick="prev()">← 이전</button>
+        <button class="btn-prev" onclick="prev()">이전</button>
         <button class="btn-next" onclick="next()">다음 <span class="arrow">→</span></button>
       </div>
     </div>
@@ -732,7 +737,7 @@
         <span class="hint">일하지 않아도 되는 나이를 설정하세요</span>
       </div>
       <div class="nav-row">
-        <button class="btn-prev" onclick="prev()">← 이전</button>
+        <button class="btn-prev" onclick="prev()">이전</button>
         <button class="btn-next" onclick="next()">다음 <span class="arrow">→</span></button>
       </div>
     </div>
@@ -754,7 +759,7 @@
         <span class="hint">은퇴 후 매달 원하는 생활비를 입력하세요</span>
       </div>
       <div class="nav-row">
-        <button class="btn-prev" onclick="prev()">← 이전</button>
+        <button class="btn-prev" onclick="prev()">이전</button>
         <button class="btn-next" onclick="next()">결과 미리보기 <span class="arrow">→</span></button>
       </div>
     </div>
@@ -1068,6 +1073,26 @@ function startOnboarding() {
     $('scroller').style.display = '';
     setTimeout(() => $('c1').classList.add('in'), 80);
   }, 560);
+}
+
+/* ── 메인 랜딩으로 돌아가기 ── */
+function goToLanding() {
+  /* 모든 섹션 fade-out 후 랜딩 복원 */
+  const allContents = document.querySelectorAll('.content');
+  allContents.forEach(c => c.classList.remove('in'));
+
+  $('progress').style.display = 'none';
+  $('scroller').style.display = 'none';
+
+  const landing = $('landing');
+  landing.style.display = '';
+  /* 다음 프레임에 hide 제거 → fade-in */
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => landing.classList.remove('hide'));
+  });
+
+  /* 첫 섹션으로 리셋 */
+  goTo(0);
 }
 
 /* ── Init ── */
