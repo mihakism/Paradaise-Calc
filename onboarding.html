@@ -982,6 +982,25 @@ function updatePreview() {
 }
 
 /* ── Go to section ── */
+/* ── 카운트업 애니메이션 ── */
+function countUp(el, target, fmt, duration) {
+  const start     = performance.now();
+  const startVal  = 0;
+  /* easeOutCubic: 빠르게 올라오다 부드럽게 착지 */
+  const ease = t => 1 - Math.pow(1 - t, 3);
+
+  /* 천 단위 쉼표가 필요한 경우를 위해 raw 숫자로 보간 */
+  function tick(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const current = Math.round(startVal + (target - startVal) * ease(progress));
+    el.textContent = fmt(current);
+    if (progress < 1) requestAnimationFrame(tick);
+    else el.textContent = fmt(target); /* 최종값 보정 */
+  }
+  requestAnimationFrame(tick);
+}
+
 function goTo(idx) {
   cur = idx;
 
@@ -993,14 +1012,21 @@ function goTo(idx) {
     d.classList.toggle('done',   i < idx);
   });
 
-  /* fade in content after scroll */
+  /* fade in content + 카운트업 */
   setTimeout(() => {
     const c = $(`c${idx + 1}`);
     if (c) c.classList.add('in');
 
-    /* 슬라이더 포커스 */
+    /* 숫자 카운트업 (S1~S4) */
     if (idx < 4) {
-      const sl = $(`sl${idx + 1}`);
+      const f = FIELDS[idx];
+      const el = $(f.ni);
+      const target = +$(f.sl).value;
+      /* 카드 floatIn(0.7s)과 맞춰 0.65s 동안 카운트 */
+      countUp(el, target, f.fmt, 650);
+
+      /* 슬라이더 포커스 */
+      const sl = $(f.sl);
       if (sl) sl.focus();
     }
   }, 420);
@@ -1096,7 +1122,11 @@ function startOnboarding() {
     $('landing').style.display = 'none';
     $('progress').style.display = '';
     $('scroller').style.display = '';
-    setTimeout(() => $('c1').classList.add('in'), 80);
+    setTimeout(() => {
+      $('c1').classList.add('in');
+      const f = FIELDS[0];
+      countUp($(f.ni), +$(f.sl).value, f.fmt, 650);
+    }, 80);
   }, 560);
 }
 
