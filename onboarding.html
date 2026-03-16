@@ -211,14 +211,13 @@
 
     /* Big display number — DESIGN_SPEC §3: accent, Inter 900 */
     /* ── 숫자 마스크 (overflow clip) ── */
+    /* ── 숫자 행 래퍼 (가로 클리핑 없음) ── */
     .num-mask {
-      overflow: hidden;
-      display: inline-block;
-      /* 위아래 조금 여유 — 슬라이드 끝단이 살짝 보이게 */
-      padding: 6px 0;
-      margin: -6px 0;
+      display: inline-flex;
+      align-items: baseline;
     }
 
+    /* ── 숫자 표시 (자릿수 span들의 flex 컨테이너) ── */
     .num-display {
       font-family: var(--ff-en);
       font-size: 84px;
@@ -226,22 +225,33 @@
       color: var(--color-accent);
       line-height: 1;
       letter-spacing: -0.045em;
-      display: block;
+      display: inline-flex;
+      align-items: flex-end;
       transition: color .2s;
     }
 
-    /* 값 증가 → 아래에서 위로 */
-    @keyframes numSlideUp {
-      from { transform: translateY(55%); opacity: 0; }
-      to   { transform: translateY(0);   opacity: 1; }
+    /* 정적 자릿수 (변하지 않은 숫자·쉼표) */
+    .d-char { display: inline-block; }
+
+    /* 변하는 자릿수 — 개별 overflow 마스크 */
+    .d-anim-wrap {
+      display: inline-block;
+      overflow: hidden;      /* 이 자릿수만 세로 클리핑 */
+      height: 1em;           /* 정확히 한 글자 높이 */
+      vertical-align: bottom;
     }
-    /* 값 감소 → 위에서 아래로 */
-    @keyframes numSlideDown {
-      from { transform: translateY(-55%); opacity: 0; }
+    .d-anim { display: block; line-height: 1; }
+
+    @keyframes numSlideUp {
+      from { transform: translateY(100%); opacity: 0; }
       to   { transform: translateY(0);    opacity: 1; }
     }
-    .num-display.flip-up   { animation: numSlideUp   .22s cubic-bezier(.4,0,.2,1) both; }
-    .num-display.flip-down { animation: numSlideDown .22s cubic-bezier(.4,0,.2,1) both; }
+    @keyframes numSlideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0);     opacity: 1; }
+    }
+    .d-anim.flip-up   { animation: numSlideUp   .22s cubic-bezier(.4,0,.2,1) both; }
+    .d-anim.flip-down { animation: numSlideDown .22s cubic-bezier(.4,0,.2,1) both; }
 
     .unit {
       font-family: var(--ff-en);
@@ -932,14 +942,47 @@ const FIELDS = [
   { ni: 'ni4', sl: 'sl4', key: 'targetWithdrawal',     fmt: v => v.toLocaleString('ko-KR') },
 ];
 
-/* ── 슬라이더 숫자 flip 애니메이션 ── */
+/* ── 자릿수별 플립 렌더링 ── */
+function renderDigits(numEl, newText, dir, oldText) {
+  const old = oldText || '';
+
+  /* 오른쪽 정렬 비교: 뒤에서부터 자릿수 일치 여부 확인 */
+  const changedIdx = new Set();
+  let oi = old.length - 1;
+  for (let ni = newText.length - 1; ni >= 0; ni--, oi--) {
+    const nch = newText[ni];
+    const och = oi >= 0 ? old[oi] : null;
+    if (/\d/.test(nch) && nch !== och) changedIdx.add(ni);
+  }
+
+  numEl.innerHTML = '';
+  [...newText].forEach((ch, i) => {
+    if (changedIdx.has(i)) {
+      /* 변한 자릿수 → 개별 마스크 + 슬라이드 애니메이션 */
+      const wrap  = document.createElement('span');
+      wrap.className = 'd-anim-wrap';
+      const inner = document.createElement('span');
+      inner.className = `d-anim flip-${dir}`;
+      inner.textContent = ch;
+      wrap.appendChild(inner);
+      numEl.appendChild(wrap);
+    } else {
+      /* 그대로인 자릿수·쉼표 → 정적 */
+      const span = document.createElement('span');
+      span.className = 'd-char';
+      span.textContent = ch;
+      numEl.appendChild(span);
+    }
+  });
+
+  numEl.dataset.val = newText;
+}
+
+/* ── 슬라이더 숫자 flip 진입점 ── */
 function flipNum(el, newText, dir) {
-  if (el.textContent === newText) return;
-  /* 이전 애니메이션 취소 후 즉시 재실행 */
-  el.classList.remove('flip-up', 'flip-down');
-  void el.offsetWidth;                          /* reflow → 애니메이션 리셋 */
-  el.textContent = newText;
-  el.classList.add(dir === 'up' ? 'flip-up' : 'flip-down');
+  const oldText = el.dataset.val || el.textContent.trim();
+  if (oldText === newText) return;
+  renderDigits(el, newText, dir, oldText);
 }
 
 function bindFields() {
@@ -1034,7 +1077,10 @@ function countUp(el, target, fmt, duration) {
     const current = Math.round(startVal + (target - startVal) * ease(progress));
     el.textContent = fmt(current);
     if (progress < 1) requestAnimationFrame(tick);
-    else el.textContent = fmt(target); /* 최종값 보정 */
+    else {
+      el.textContent = fmt(target);        /* 최종값 보정 */
+      el.dataset.val  = fmt(target);       /* flipNum 비교 기준 세팅 */
+    }
   }
   requestAnimationFrame(tick);
 }
