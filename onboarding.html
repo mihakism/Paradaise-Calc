@@ -568,16 +568,88 @@
       text-transform: uppercase;
       margin-top: 48px;
     }
-    .btn-l-start:hover { opacity: .75; transform: translateY(-2px); }
+    .btn-l-start:hover { opacity: .85; }
 
     /* ── Mobile ── */
     @media (max-width: 700px) {
       .l-main-title { font-size: clamp(40px, 12vw, 64px); letter-spacing: -1px; }
       .l-rolling-text { font-size: 13px; }
     }
+
+    /* ══ Custom Cursor (MoMoney style) ══ */
+    body.custom-cursor-active * { cursor: none !important; }
+
+    #cursor-dot {
+      position: fixed;
+      width: 8px; height: 8px;
+      background: #000;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width .2s ease, height .2s ease, background .2s ease, opacity .3s ease;
+      will-change: transform;
+    }
+
+    #cursor-ring {
+      position: fixed;
+      width: 44px; height: 44px;
+      border: 1.5px solid rgba(0,0,0,.75);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      will-change: transform;
+      transition: width .35s cubic-bezier(.25,.46,.45,.94),
+                  height .35s cubic-bezier(.25,.46,.45,.94),
+                  background .35s ease,
+                  border-color .35s ease,
+                  opacity .3s ease;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+
+    #cursor-ring .cursor-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #fff;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity .2s ease;
+      pointer-events: none;
+    }
+
+    /* hover on CTA button → big filled ring with label */
+    #cursor-ring.on-btn {
+      width: 92px; height: 92px;
+      background: #000;
+      border-color: #000;
+    }
+    #cursor-ring.on-btn .cursor-label { opacity: 1; }
+    #cursor-ring.on-btn ~ #cursor-dot { opacity: 0; }
+
+    /* hover on any other link/interactive → slightly enlarged outline */
+    #cursor-ring.on-link {
+      width: 64px; height: 64px;
+      border-color: rgba(0,0,0,.5);
+    }
+
+    /* landing hidden → fade out cursors */
+    #cursor-dot.hidden, #cursor-ring.hidden { opacity: 0; }
+
+    @media (hover: none) and (pointer: coarse) {
+      #cursor-dot, #cursor-ring { display: none; }
+    }
   </style>
 </head>
 <body>
+
+<!-- Custom Cursor -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"><span class="cursor-label">시작하기</span></div>
 
 <!-- Fade cover -->
 <div id="fade"></div>
@@ -1019,6 +1091,67 @@ function startOnboarding() {
     setTimeout(() => $('c1').classList.add('in'), 80);
   }, 560);
 }
+
+/* ══ Custom Cursor (MoMoney style) ══ */
+(function() {
+  const isTouchOnly = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  if (isTouchOnly) return;
+
+  const dot  = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  if (!dot || !ring) return;
+
+  document.body.classList.add('custom-cursor-active');
+
+  let mx = -200, my = -200; // actual mouse position
+  let rx = -200, ry = -200; // ring lerp position
+  const LERP = 0.12;        // ring smoothing factor (lower = more lag)
+
+  /* Move dot instantly, ring with lerp */
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX;
+    my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top  = my + 'px';
+  });
+
+  /* Lerp ring on rAF */
+  (function loop() {
+    rx += (mx - rx) * LERP;
+    ry += (my - ry) * LERP;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(loop);
+  })();
+
+  /* Hover states */
+  document.addEventListener('mouseover', e => {
+    const el = e.target;
+    if (el.closest('.btn-l-start')) {
+      ring.classList.add('on-btn');
+      ring.classList.remove('on-link');
+    } else if (el.closest('a, button, [role="button"], .dot, .preset-card')) {
+      ring.classList.add('on-link');
+      ring.classList.remove('on-btn');
+    }
+  });
+  document.addEventListener('mouseout', e => {
+    const el = e.target;
+    if (el.closest('.btn-l-start')) {
+      ring.classList.remove('on-btn');
+    } else if (el.closest('a, button, [role="button"], .dot, .preset-card')) {
+      ring.classList.remove('on-link');
+    }
+  });
+
+  /* Hide on landing exit */
+  const origStart = window.startOnboarding;
+  window.startOnboarding = function() {
+    dot.classList.add('hidden');
+    ring.classList.add('hidden');
+    if (origStart) origStart();
+  };
+})();
 
 /* ── Init ── */
 function init() {
