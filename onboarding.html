@@ -509,31 +509,59 @@
       padding: 0 24px;
     }
 
-    /* ── 히어로 아이콘 (scaling_video_small) ── */
-    .l-hero-icon {
-      width: clamp(160px, 22vw, 300px);
-      aspect-ratio: 1;
-      object-fit: contain;
-      margin-bottom: 48px;
-      animation: heroScale 1.1s cubic-bezier(.16,1,.3,1) both;
-      transform-origin: center bottom;
-    }
-    @keyframes heroScale {
-      from { opacity: 0; transform: scale(.6); }
-      to   { opacity: 1; transform: scale(1); }
+    /* ══ Hero — 헤드라인 + 장식 이미지 오버랩 ══ */
+    .l-hero {
+      position: relative;           /* 장식 이미지의 기준점 */
+      text-align: center;
+      margin-bottom: 40px;
+      /* 두 줄 사이 공간을 이미지 크기의 절반만큼 확보 */
+      --deco-w: clamp(96px, 13vw, 172px);
     }
 
-    /* ── 메인 디스플레이 타이틀 (MoMoney style) ── */
-    .l-main-title {
+    /* 두 타이틀 줄 공통 스타일 */
+    .l-title-top,
+    .l-title-btm {
+      display: block;
       font-family: 'Playfair Display', Georgia, serif;
       font-size: clamp(52px, 9.5vw, 128px);
       font-weight: 900;
       font-style: italic;
-      line-height: 0.95;
+      line-height: 0.92;
       letter-spacing: -2px;
       color: #000;
       text-transform: uppercase;
-      margin: 0 0 40px;
+      position: relative;
+      z-index: 1;           /* 텍스트는 이미지 뒤 */
+    }
+
+    /* 첫 줄 아래에 이미지가 앉을 공간 확보 */
+    .l-title-top {
+      padding-bottom: calc(var(--deco-w) * 0.55);
+    }
+
+    /* ── 장식 이미지 (절대 배치, 두 줄 중앙 겹침) ── */
+    .l-deco {
+      position: absolute;
+      /* 수직: 첫 줄 하단 ~ 두 번째 줄 상단 사이 중앙 */
+      top: calc(50% - calc(var(--deco-w) * 0.55 * 0.5));
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: var(--deco-w);
+      height: var(--deco-w);
+      object-fit: contain;
+      pointer-events: none;   /* 클릭 이벤트 통과 */
+      z-index: 2;             /* 텍스트 위에 렌더링 */
+      animation: decoIn 1.2s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    @keyframes decoIn {
+      from { opacity: 0; transform: translate(-50%, -50%) scale(.55); }
+      to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+
+    /* ── Mobile ─ deco 크기 축소 ── */
+    @media (max-width: 700px) {
+      .l-hero { --deco-w: clamp(72px, 20vw, 100px); }
     }
 
     /* ── 롤링 서브타이틀 ── */
@@ -582,8 +610,8 @@
 
     /* ── Mobile ── */
     @media (max-width: 700px) {
-      .l-main-title { font-size: clamp(40px, 12vw, 64px); letter-spacing: -1px; }
-      .l-hero-icon { width: clamp(120px, 36vw, 180px); margin-bottom: 32px; }
+      .l-title-top,
+      .l-title-btm { font-size: clamp(38px, 12vw, 64px); letter-spacing: -1px; }
       .l-rolling-text { font-size: 13px; }
     }
 
@@ -602,13 +630,22 @@
     src="https://cdn.midjourney.com/video/110cd6b5-8978-4268-bcd1-4f6e61e46ba3/2.mp4">
   </video>
 
-  <!-- 중앙 그룹: 디스플레이 타이틀 → 히어로 아이콘 → 롤링 서브타이틀 → 버튼 -->
+  <!-- 중앙 그룹 -->
   <div class="l-content">
-    <h1 class="l-main-title">How to go to<br>the Paradise</h1>
-    <img class="l-hero-icon" src="assets/paradise-icon.png" alt="Paradise" />
+
+    <!-- ── Hero: 헤드라인 텍스트 + 장식 이미지 겹침 ── -->
+    <h1 class="l-hero">
+      <span class="l-title-top">How to go to</span>
+      <!-- 장식 이미지: position absolute, pointer-events none -->
+      <img class="l-deco" src="assets/paradise-icon.png" alt="" />
+      <span class="l-title-btm">the Paradise</span>
+    </h1>
+
+    <!-- 롤링 서브타이틀 -->
     <div class="l-rolling-wrap">
       <span class="l-rolling-text" id="l-roll"></span>
     </div>
+
     <button class="btn-l-start" onclick="startOnboarding()">
       시작하기 →
     </button>
