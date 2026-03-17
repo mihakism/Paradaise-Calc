@@ -370,34 +370,27 @@
     /* ─── 차트 컨테이너 ─── */
     .chart-box {
       background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--r-lg); padding: 28px 28px 20px; flex: 1;
+      border-radius: var(--r-lg); padding: 22px; flex: 1; min-height: 360px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     }
 
-    /* Mathical-style 차트 헤더 */
     .chart-hd {
       display: flex; align-items: flex-start; justify-content: space-between;
-      margin-bottom: 22px;
-      flex-wrap: wrap; gap: 12px;
+      margin-bottom: 18px;
     }
-    .chart-title { font-size: 17px; font-weight: 700; color: var(--text-1); }
-    .chart-sub   { font-size: 12px; color: var(--text-3); margin-top: 3px; }
+    .chart-title { font-size: 15px; font-weight: 700; }
+    .chart-sub   { font-size: 12px; color: var(--text-3); margin-top: 2px; }
 
-    /* 범례 — Mathical 스타일: 색상 블록 */
-    .legend { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
-    .leg-item {
-      display: flex; align-items: center; gap: 7px;
-      font-size: 12px; font-weight: 500; color: var(--text-2);
-    }
-    .leg-block {
-      width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0;
-    }
-    .leg-dash {
-      width: 18px; height: 2px; border-radius: 1px; flex-shrink: 0;
-      background: repeating-linear-gradient(90deg, var(--gold) 0 4px, transparent 4px 7px);
+    .legend { display: flex; gap: 14px; flex-wrap: wrap; }
+    .leg-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-2); }
+    .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .leg-line { width: 20px; height: 2px; border-radius: 1px; }
+    .leg-dashed {
+      width: 20px; height: 2px;
+      background: repeating-linear-gradient(90deg, var(--gold) 0 5px, transparent 5px 9px);
     }
 
-    .chart-wrap { position: relative; height: 340px; }
+    .chart-wrap { position: relative; height: 290px; }
 
     /* ─── 뱃지 ─── */
     .badge {
@@ -764,23 +757,15 @@
         </div>
         <div class="legend" id="legend">
           <div class="leg-item">
-            <div class="leg-block" style="background:rgba(108,71,255,0.20)"></div>
-            <span>초기 자산</span>
+            <div class="leg-dot" style="background:#6C47FF"></div>
+            <span>현재 페이스 (A)</span>
           </div>
           <div class="leg-item">
-            <div class="leg-block" style="background:rgba(108,71,255,0.45)"></div>
-            <span>저축 원금</span>
-          </div>
-          <div class="leg-item">
-            <div class="leg-block" style="background:rgba(108,71,255,0.75)"></div>
-            <span>투자 수익</span>
-          </div>
-          <div class="leg-item">
-            <div class="leg-dash"></div>
-            <span>FIRE 목표</span>
+            <div class="leg-dashed" style="background:repeating-linear-gradient(90deg,#F59E0B 0 5px,transparent 5px 9px)"></div>
+            <span>목표 페이스 (A)</span>
           </div>
           <div class="leg-item" id="leg-b" style="display:none">
-            <div class="leg-block" style="background:#818CF8"></div>
+            <div class="leg-dot" style="background:#818CF8"></div>
             <span>시나리오 B</span>
           </div>
         </div>
@@ -1024,69 +1009,48 @@ function initChart() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      animation: { duration: 260, easing: 'easeInOutQuart' },
+      animation: { duration: 180 },
       interaction: { mode: 'index', intersect: false },
       plugins: {
         legend: { display: false },
         vertLine: { targets: [] },
         tooltip: {
-          backgroundColor: '#ffffff',
-          borderColor: 'rgba(0,0,0,0.09)',
+          backgroundColor: 'rgba(17,24,39,0.92)',
+          borderColor: '#374151',
           borderWidth: 1,
-          padding: { top: 12, bottom: 12, left: 16, right: 16 },
-          titleColor: '#6B7280',
-          bodyColor: '#111827',
-          footerColor: '#374151',
-          titleFont: { size: 11, weight: '500', family: "'Pretendard', sans-serif" },
+          padding: 13,
+          titleColor: '#9CA3AF',
+          bodyColor: '#F9FAFB',
+          titleFont: { size: 12, weight: '600' },
           bodyFont: { size: 13, weight: '700', family: "'Pretendard', sans-serif" },
-          footerFont: { size: 12, weight: '700', family: "'Pretendard', sans-serif" },
-          cornerRadius: 10,
-          boxPadding: 5,
           callbacks: {
             title: items => `${items[0].label}세`,
             label: item => {
-              const layers = chart._layers;
-              if (!layers) return null;
-              const i = item.dataIndex;
-              if (item.datasetIndex === 0) return ` 초기 자산  ${fmtShort(layers.l1[i])}`;
-              if (item.datasetIndex === 1) return ` 저축 원금  ${fmtShort(Math.max(0, layers.l2[i] - layers.l1[i]))}`;
-              if (item.datasetIndex === 2) return ` 투자 수익  ${fmtShort(Math.max(0, layers.l3[i] - layers.l2[i]))}`;
-              return null;
-            },
-            footer: items => {
-              const layers = chart._layers;
-              if (!layers) return '';
-              const i = items[0].dataIndex;
-              return `합계  ${fmtShort(layers.l3[i])}`;
+              if (item.raw === null || item.raw === undefined) return null;
+              return ` ${item.dataset.label}: ${fmtShort(item.raw)}`;
             },
           },
         },
       },
       scales: {
         x: {
-          grid: { display: false },
+          grid: { color: 'rgba(0,0,0,0.055)' },
           ticks: {
-            color: '#9CA3AF',
-            font: { size: 11, family: "'Pretendard', sans-serif" },
+            color: '#9CA3AF', font: { size: 11 },
             callback: function(v) { return this.getLabelForValue(v) + '세'; },
-            maxTicksLimit: 10,
+            maxTicksLimit: 12,
           },
           border: { display: false },
         },
         y: {
           min: 0,
-          grid: {
-            color: 'rgba(0,0,0,0.045)',
-            drawTicks: false,
-          },
+          grid: { color: 'rgba(0,0,0,0.055)' },
           ticks: {
-            color: '#9CA3AF',
-            font: { size: 11, family: "'Pretendard', sans-serif" },
+            color: '#9CA3AF', font: { size: 11 },
             callback: v => fmtShort(v),
             maxTicksLimit: 6,
-            padding: 10,
           },
-          border: { display: false, dash: [4, 4] },
+          border: { display: false },
         },
       },
     },
@@ -1094,122 +1058,99 @@ function initChart() {
 }
 
 function updateChart(resA, resB) {
-  const pts    = resA.currentPace.points;
-  const labels = pts.map(p => p.age);
+  const labels = resA.currentPace.points.map(p => p.age);
 
-  // ── 자산 3레이어 분해 (Mathical 스타일) ──────────────────────────
-  // Layer 1: 초기 자산만 복리 성장했을 때 (저축 없음)
-  // Layer 2: Layer1 + 누적 저축 원금 (복리 미적용 순수 납입액)
-  // Layer 3: 실제 전체 자산 (차이 = 투자 수익)
-  const startAge = S.a.currentAge;
-  const rr       = resA.r;                   // 실질 연수익률 (인플레 보정 포함)
-  const ms       = S.a.monthlySavings;       // 현재 월 저축액 (만원)
+  const mkGradient = (ctx, r, g, b) => {
+    const grad = ctx.chart.ctx.createLinearGradient(0, 0, 0, 290);
+    grad.addColorStop(0, `rgba(${r},${g},${b},0.14)`);
+    grad.addColorStop(1, `rgba(${r},${g},${b},0.00)`);
+    return grad;
+  };
 
-  const l1 = pts.map(p => {
-    const t = p.age - startAge;
-    return S.a.currentAssets * Math.pow(1 + rr, t);
-  });
-  const l2 = pts.map((p, i) => {
-    const t = p.age - startAge;
-    return l1[i] + ms * 12 * t;             // 초기성장 + 저축 원금 누적
-  });
-  const l3 = pts.map(p => Math.max(0, p.assets));
+  // 은퇴 시점 포인트
+  const makePoints = (points, retireAge, color) => {
+    return points.map(p => ({
+      r:  p.age === retireAge ? 7 : 0,
+      bg: p.age === retireAge ? color : 'transparent',
+      bw: p.age === retireAge ? 2 : 0,
+    }));
+  };
 
-  // l2가 l3를 초과하는 엣지케이스 보정
-  const l2clamped = l2.map((v, i) => Math.min(v, l3[i]));
-  const l1clamped = l1.map((v, i) => Math.min(v, l2clamped[i]));
-
-  // 툴팁에서 접근하기 위해 chart 객체에 저장
-  chart._layers = { l1: l1clamped, l2: l2clamped, l3 };
-
-  // ── 색상 ─────────────────────────────────────────────────────────
-  const C1 = 'rgba(108,71,255,0.18)';
-  const C2 = 'rgba(108,71,255,0.40)';
-  const C3 = 'rgba(108,71,255,0.68)';
+  const ptA = makePoints(resA.currentPace.points, resA.currentPace.retireAge, '#F59E0B');
+  const reqPts = makePoints(resA.requiredPace.points, resA.targetRetirementAge, '#6C47FF');
 
   const datasets = [
-    // 레이어 1 — 초기 자산 성장 (바닥)
+    // 현재 페이스 A
     {
-      label: '초기 자산',
-      data: l1clamped,
-      borderColor: 'transparent',
-      backgroundColor: C1,
-      borderWidth: 0,
-      tension: 0.45,
-      fill: 'origin',
-      pointRadius: 0, pointHoverRadius: 0,
-    },
-    // 레이어 2 — 저축 원금 누적
-    {
-      label: '저축 원금',
-      data: l2clamped,
-      borderColor: 'transparent',
-      backgroundColor: C2,
-      borderWidth: 0,
-      tension: 0.45,
-      fill: '-1',
-      pointRadius: 0, pointHoverRadius: 0,
-    },
-    // 레이어 3 — 투자 수익 (상단, 실선 보더)
-    {
-      label: '투자 수익',
-      data: l3,
+      label: '현재 페이스 (A)',
+      data: resA.currentPace.points.map(p => p.assets),
       borderColor: '#6C47FF',
-      backgroundColor: C3,
-      borderWidth: 2,
-      tension: 0.45,
-      fill: '-1',
-      pointRadius: labels.map(age => age === resA.currentPace.retireAge ? 6 : 0),
-      pointBackgroundColor: '#6C47FF',
-      pointBorderColor: '#fff',
-      pointBorderWidth: 2,
+      backgroundColor: ctx => mkGradient(ctx, 108, 71, 255),
+      borderWidth: 2.5, tension: 0.4, fill: true,
+      pointRadius: ptA.map(p => p.r),
+      pointBackgroundColor: ptA.map(p => p.bg),
+      pointBorderColor: '#F59E0B',
+      pointBorderWidth: ptA.map(p => p.bw),
       pointHoverRadius: 5,
     },
-    // FIRE 목표 수평 점선
+    // 목표 페이스 A (필요 저축액 적용)
+    {
+      label: '목표 페이스 (A)',
+      data: resA.requiredPace.points.map(p => p.assets),
+      borderColor: 'rgba(245,158,11,0.8)',
+      borderDash: [7, 4],
+      borderWidth: 2,
+      backgroundColor: 'transparent',
+      tension: 0.4, fill: false,
+      pointRadius: reqPts.map(p => p.r),
+      pointBackgroundColor: reqPts.map(p => p.bg),
+      pointBorderColor: '#6C47FF',
+      pointBorderWidth: reqPts.map(p => p.bw),
+      pointHoverRadius: 5,
+    },
+    // FIRE 목표선 A
     {
       label: 'FIRE 목표',
       data: labels.map(() => resA.fireNumber),
-      borderColor: 'rgba(245,158,11,0.55)',
-      borderDash: [5, 4],
-      borderWidth: 1.5,
-      backgroundColor: 'transparent',
-      tension: 0, fill: false,
+      borderColor: 'rgba(245,158,11,0.25)',
+      borderDash: [4, 4], borderWidth: 1.5,
+      backgroundColor: 'transparent', tension: 0, fill: false,
       pointRadius: 0, pointHoverRadius: 0,
     },
   ];
 
-  // ── 시나리오 B (단순 비교 라인) ──────────────────────────────────
+  // 시나리오 B
   if (resB) {
-    const bPts = resB.currentPace.points;
     const bData = labels.map(age => {
-      const pt = bPts.find(p => p.age === age);
-      return pt ? Math.max(0, pt.assets) : null;
+      const pt = resB.currentPace.points.find(p => p.age === age);
+      return pt ? pt.assets : null;
     });
+    const ptB = makePoints(resB.currentPace.points, resB.currentPace.retireAge, '#818CF8');
+
     datasets.push({
-      label: '시나리오 B',
+      label: '현재 페이스 (B)',
       data: bData,
       borderColor: '#818CF8',
-      backgroundColor: 'transparent',
-      borderWidth: 2,
-      borderDash: [6, 3],
-      tension: 0.45, fill: false,
-      pointRadius: labels.map(age => age === resB.currentPace.retireAge ? 6 : 0),
-      pointBackgroundColor: '#818CF8',
-      pointBorderColor: '#fff',
-      pointBorderWidth: 2,
+      backgroundColor: ctx => mkGradient(ctx, 129, 140, 248),
+      borderWidth: 2.5, tension: 0.4, fill: true,
+      pointRadius: labels.map((age, i) => {
+        const pt = resB.currentPace.points.find(p => p.age === age);
+        return pt && pt.age === resB.currentPace.retireAge ? 7 : 0;
+      }),
+      pointBackgroundColor: labels.map(age =>
+        age === resB.currentPace.retireAge ? '#c4b5fd' : 'transparent'),
+      pointBorderColor: '#818CF8',
+      pointBorderWidth: labels.map(age => age === resB.currentPace.retireAge ? 2 : 0),
       pointHoverRadius: 5,
     });
-    $('leg-b').style.display = '';
-  } else {
-    $('leg-b').style.display = 'none';
   }
 
-  // ── 수직선: 목표 은퇴 나이 ─────────────────────────────────────
+  // 수직선: 목표 은퇴 나이
   const vertTargets = [
-    { age: resA.targetRetirementAge, color: 'rgba(108,71,255,0.3)', dash: [6, 4] },
+    { age: resA.targetRetirementAge, color: 'rgba(108,71,255,0.4)', dash: [6, 4] },
   ];
   if (resB && resB.targetRetirementAge !== resA.targetRetirementAge) {
-    vertTargets.push({ age: resB.targetRetirementAge, color: 'rgba(139,124,248,0.28)', dash: [6, 4] });
+    vertTargets.push({ age: resB.targetRetirementAge, color: 'rgba(139,124,248,0.35)', dash: [6,4] });
   }
 
   chart.data.labels   = labels;
