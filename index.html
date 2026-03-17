@@ -18,16 +18,16 @@
       --border:         #E5E9F0;
       --border-light:   #D4DAE6;
 
-      --primary:        #6C47FF;
-      --primary-dim:    #5636E0;
-      --primary-glow:   rgba(108, 71, 255, 0.12);
+      --primary:        #374151;
+      --primary-dim:    #1F2937;
+      --primary-glow:   rgba(55, 65, 81, 0.08);
 
       --gold:           #F59E0B;
       --gold-dim:       #D97706;
       --gold-glow:      rgba(245, 158, 11, 0.12);
 
-      --violet:         #818CF8;
-      --violet-glow:    rgba(129, 140, 248, 0.12);
+      --violet:         #6B7280;
+      --violet-glow:    rgba(107, 114, 128, 0.08);
 
       --danger:         #EF4444;
       --success:        #22C55E;
@@ -113,7 +113,7 @@
       transition: all var(--ease); white-space: nowrap; font-family: var(--font);
     }
     .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: #52e0a3; transform: translateY(-1px); }
+    .btn-primary:hover { background: var(--primary-dim); transform: translateY(-1px); }
     .btn-outline {
       background: transparent; color: var(--text-2);
       border: 1px solid var(--border-light);
@@ -206,9 +206,9 @@
       border-radius: var(--r-sm); cursor: pointer;
       transition: all var(--ease);
     }
-    .preset-card:hover { border-color: var(--primary); background: rgba(108,71,255,0.05); }
-    .preset-card.active { border-color: var(--primary); background: rgba(108,71,255,0.08); }
-    .preset-card.active-b { border-color: var(--violet); background: rgba(139,124,248,0.08); }
+    .preset-card:hover { border-color: var(--border-light); background: var(--bg-card); }
+    .preset-card.active { border-color: var(--primary); background: var(--primary-glow); }
+    .preset-card.active-b { border-color: var(--violet); background: var(--violet-glow); }
 
     .pc-top { display: flex; align-items: center; gap: 6px; }
     .pc-emoji { font-size: 18px; }
@@ -241,15 +241,15 @@
       -webkit-appearance: none; appearance: none;
       width: 17px; height: 17px; border-radius: 50%;
       background: var(--primary); cursor: pointer;
-      box-shadow: 0 0 0 3px rgba(108,71,255,0.18);
+      box-shadow: 0 0 0 3px rgba(55,65,81,0.15);
       transition: box-shadow var(--ease);
     }
     input[type="range"]::-webkit-slider-thumb:hover {
-      box-shadow: 0 0 0 6px rgba(108,71,255,0.22);
+      box-shadow: 0 0 0 6px rgba(55,65,81,0.18);
     }
     input[type="range"].rb::-webkit-slider-thumb {
       background: var(--violet);
-      box-shadow: 0 0 0 3px rgba(139,124,248,0.18);
+      box-shadow: 0 0 0 3px rgba(107,114,128,0.18);
     }
 
     /* ─── 토글 ─── */
@@ -415,8 +415,8 @@
     /* ─── 시나리오 비교 배너 ─── */
     .compare-banner {
       display: none; align-items: center; justify-content: space-between; gap: 12px;
-      background: linear-gradient(135deg, rgba(108,71,255,0.05), rgba(129,140,248,0.05));
-      border: 1px solid var(--border-light);
+      background: var(--bg-input);
+      border: 1px solid var(--border);
       border-radius: var(--r-md); padding: 12px 18px;
     }
     .compare-banner.vis { display: flex; }
@@ -458,8 +458,8 @@
       display: inline-flex; align-items: center; padding: 2px 8px;
       border-radius: 99px; font-size: 10px; font-weight: 700;
     }
-    .badge-g { background: rgba(108,71,255,0.12); color: var(--primary); }
-    .badge-v { background: rgba(139,124,248,0.14); color: var(--violet); }
+    .badge-g { background: rgba(55,65,81,0.08); color: var(--primary); }
+    .badge-v { background: rgba(107,114,128,0.10); color: var(--violet); }
 
     /* ─── 구분선 ─── */
     .hr { height: 1px; background: var(--border); }
@@ -775,11 +775,11 @@
 
 // ─── 인원 컬러 팔레트 ───
 const PERSON_COLORS = [
-  { line: '#6C47FF', r: 108, g:  71, b: 255 },
+  { line: '#374151', r:  55, g:  65, b:  81 },
   { line: '#F59E0B', r: 245, g: 158, b:  11 },
   { line: '#10B981', r:  16, g: 185, b: 129 },
   { line: '#EF4444', r: 239, g:  68, b:  68 },
-  { line: '#8B5CF6', r: 139, g:  92, b: 246 },
+  { line: '#6B7280', r: 107, g: 114, b: 128 },
 ];
 
 const DEFAULT_PERSON = () => ({
@@ -1071,7 +1071,7 @@ function updateChart(results) {
   const milestones = [
     { val: 10000,  label: '1억원',  color: 'rgba(245,158,11,0.20)' },
     { val: 50000,  label: '5억원',  color: 'rgba(16,185,129,0.20)' },
-    { val: 100000, label: '10억원', color: 'rgba(108,71,255,0.20)' },
+    { val: 100000, label: '10억원', color: 'rgba(55,65,81,0.20)' },
   ];
   milestones.forEach(m => {
     datasets.push({
@@ -1651,7 +1651,7 @@ function bindShareButtons() {
       navigator.clipboard.writeText(location.href).then(() => {
         const orig = btnShare.innerHTML;
         btnShare.innerHTML = '<span class="ico ms">check_circle</span><span class="btn-text"> 복사됨!</span>';
-        btnShare.style.color = 'var(--primary)';
+        btnShare.style.color = 'var(--success)';
         setTimeout(() => { btnShare.innerHTML = orig; btnShare.style.color = ''; }, 2000);
       });
     });
