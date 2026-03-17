@@ -819,41 +819,6 @@
     </div>
 
     <!-- ═══ 제안 영역 ═══ -->
-    <div class="suggest-area">
-      <div class="suggest-chips">
-        <button class="suggest-chip" onclick="toggleSidebar()">
-          <span class="ms">tune</span>조정하기
-        </button>
-        <button class="suggest-chip" id="sc-b" onclick="addPerson()">
-          <span class="ms">person_add</span>인원 추가
-        </button>
-        <button class="suggest-chip" id="sc-share">
-          <span class="ms">share</span>공유하기
-        </button>
-        <button class="suggest-chip" id="sc-dl">
-          <span class="ms">photo_camera</span>이미지 저장
-        </button>
-      </div>
-      <div class="suggest-list">
-        <div class="suggest-item" onclick="toggleSidebar()">
-          나는 <strong>더 이른 나이</strong>에 은퇴하고 싶어요 →
-        </div>
-        <div class="suggest-item" onclick="toggleSidebar()">
-          나는 <strong>월 지출을 늘려도</strong> 되는지 알고 싶어요 →
-        </div>
-        <div class="suggest-item"
-          onclick="document.querySelector('.chart-box').scrollIntoView({behavior:'smooth'})">
-          나는 <strong>자산 성장 그래프</strong>를 확인하고 싶어요 →
-        </div>
-      </div>
-      <div class="suggest-box">
-        <span class="suggest-box-text">나는...</span>
-        <div class="suggest-box-actions">
-          <span class="ms" style="font-size:19px;color:var(--text-3);cursor:pointer">mic</span>
-          <span class="ms" style="font-size:19px;color:var(--primary);cursor:pointer">send</span>
-        </div>
-      </div>
-    </div>
 
 </main>
 
@@ -1766,10 +1731,6 @@ function bindShareButtons() {
       btnDl.disabled = false;
     });
   }
-  const scShare = $('sc-share');
-  const scDl    = $('sc-dl');
-  if (scShare && btnShare) scShare.addEventListener('click', () => btnShare.click());
-  if (scDl && btnDl)       scDl.addEventListener('click',   () => btnDl.click());
 }
 
 // ─── 초기화 ───
