@@ -514,6 +514,70 @@
     .gap-ok  { background: rgba(74,222,128,0.14); color: var(--success); }
     .gap-bad { background: rgba(248,113,113,0.14); color: var(--danger); }
 
+    /* ─── 인원 탭 (사이드바) ─── */
+    .person-tabs {
+      display: flex; gap: 4px; flex-wrap: wrap; align-items: center;
+      padding-bottom: 14px; border-bottom: 1px solid var(--border);
+    }
+    .ptab {
+      display: flex; align-items: center; gap: 5px;
+      padding: 5px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      border: 1.5px solid transparent; transition: all var(--ease);
+      background: var(--bg-input); color: var(--text-2);
+      user-select: none; position: relative;
+    }
+    .ptab:hover { border-color: var(--border-light); color: var(--text-1); }
+    .ptab.active { background: var(--bg-card); border-color: var(--border-light);
+      color: var(--text-1); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .ptab-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .ptab-del {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: transparent; border: none; cursor: pointer;
+      color: var(--text-3); font-size: 10px; font-weight: 700;
+      display: none; align-items: center; justify-content: center;
+      transition: all var(--ease); margin-left: 1px; padding: 0;
+      font-family: var(--font);
+    }
+    .ptab:hover .ptab-del { display: flex; }
+    .ptab-del:hover { background: var(--danger); color: #fff; }
+    .ptab-name {
+      outline: none; border: none; background: transparent;
+      font-size: 12px; font-weight: 600; color: inherit;
+      font-family: var(--font); width: 60px; cursor: text;
+    }
+    .ptab-add {
+      display: flex; align-items: center; gap: 3px;
+      padding: 5px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      border: 1.5px dashed var(--border-light);
+      background: transparent; color: var(--text-3);
+      transition: all var(--ease); font-family: var(--font);
+    }
+    .ptab-add:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* ─── 인원 패널 (사이드바 동적 섹션) ─── */
+    .person-panel { display: flex; flex-direction: column; gap: 14px; }
+
+    /* ─── 차트 모드 토글 ─── */
+    .chart-mode-toggle {
+      display: flex; gap: 2px;
+      background: var(--bg-input); border-radius: var(--r-sm); padding: 2px;
+    }
+    .cmt-btn {
+      padding: 4px 10px; border-radius: 5px;
+      font-size: 11px; font-weight: 600; border: none;
+      background: transparent; color: var(--text-3);
+      cursor: pointer; transition: all var(--ease); font-family: var(--font);
+    }
+    .cmt-btn.active {
+      background: var(--bg-card); color: var(--text-1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    /* ─── 차트 범례 (동적) ─── */
+    #legend { flex-wrap: wrap; }
+
     /* ─── 반응형 ─── */
     @media (max-width: 1100px) {
       .cards   { grid-template-columns: repeat(2, 1fr); }
@@ -568,219 +632,44 @@
     <button class="sidebar-close-btn" onclick="closeSidebar()">✕ 닫기</button>
   </div>
 
-    <!-- 프리셋 -->
-    <div class="section">
-      <div class="section-hd"><span class="ms">manage_accounts</span> 페르소나 프리셋</div>
-      <div class="preset-row">
-        <div class="preset-card" id="pc-jeehyun" onclick="applyPreset('jeehyun', 'a')">
-          <div class="pc-top"><span class="pc-emoji ms">person</span><span class="pc-name">이지현</span></div>
-          <div class="pc-type">안정형</div>
-          <div class="pc-age">40세 · 4.5% · 채권혼합</div>
-        </div>
-        <div class="preset-card" id="pc-junhyuk" onclick="applyPreset('junhyuk', 'a')">
-          <div class="pc-top"><span class="pc-emoji ms">laptop_mac</span><span class="pc-name">박준혁</span></div>
-          <div class="pc-type">공격형</div>
-          <div class="pc-age">35세 · 9% · 글로벌 ETF</div>
-        </div>
+  <!-- 인원 탭 (JS 동적 생성) -->
+  <div class="person-tabs" id="person-tabs"></div>
+  <!-- 인원별 슬라이더 패널 (JS 동적 생성) -->
+  <div class="person-panel" id="person-panel"></div>
+  <div class="hr"></div>
+  <!-- 공통 설정 -->
+  <div class="section">
+    <div class="section-hd"><span class="ms">settings</span> 설정</div>
+
+    <div class="toggle" id="tog-inf" onclick="toggleInf()">
+      <div class="toggle-info">
+        <span class="toggle-title">인플레이션 반영</span>
+        <span class="toggle-desc">실질 구매력 표시 (기본 2.5%)</span>
       </div>
+      <div class="sw"></div>
     </div>
 
-    <div class="hr"></div>
-
-    <!-- 원하는 삶 -->
-    <div class="section">
-      <div class="section-hd"><span class="ms">favorite</span> 원하는 삶</div>
-
-      <div class="sg" data-f="targetWithdrawal" data-s="a">
-        <div class="sg-hd">
-          <span class="sg-label">희망 월 인출액</span>
-          <div class="sg-val-wrap"><span class="sg-val" id="v-a-targetWithdrawal">300</span><span class="sg-unit">만원</span></div>
-        </div>
-        <input type="range" id="sl-a-targetWithdrawal" min="50" max="1000" value="300" step="10" />
-      </div>
-
-      <div class="sg" data-f="targetRetirementAge" data-s="a">
-        <div class="sg-hd">
-          <span class="sg-label">은퇴 희망 나이</span>
-          <div class="sg-val-wrap"><span class="sg-val" id="v-a-targetRetirementAge">55</span><span class="sg-unit">세</span></div>
-        </div>
-        <input type="range" id="sl-a-targetRetirementAge" min="40" max="70" value="55" step="1" />
-      </div>
+    <div class="inf-row" id="inf-row">
+      <span class="inf-label">인플레이션율</span>
+      <input type="number" class="inf-input" id="inf-val" value="2.5" min="0" max="10" step="0.1" />
+      <span style="font-size:12px;color:var(--text-3)">%</span>
     </div>
 
-    <div class="hr"></div>
-
-    <!-- 현재 상황 -->
-    <div class="section">
-      <div class="section-hd"><span class="ms">bar_chart</span> 현재 상황</div>
-
-      <div class="sg" data-f="currentAge" data-s="a">
-        <div class="sg-hd">
-          <span class="sg-label">현재 나이</span>
-          <div class="sg-val-wrap"><span class="sg-val" id="v-a-currentAge">35</span><span class="sg-unit">세</span></div>
-        </div>
-        <input type="range" id="sl-a-currentAge" min="20" max="65" value="35" step="1" />
+    <div class="toggle" id="tog-delay" onclick="toggleDelay()">
+      <div class="toggle-info">
+        <span class="toggle-title">지연 시작 비교</span>
+        <span class="toggle-desc">"지금 vs N년 후 시작" 효과</span>
       </div>
-
-      <div class="sg" data-f="currentAssets" data-s="a">
-        <div class="sg-hd">
-          <span class="sg-label">현재 자산</span>
-          <div class="sg-val-wrap"><span class="sg-val" id="v-a-currentAssets">5,000</span><span class="sg-unit">만원</span></div>
-        </div>
-        <input type="range" id="sl-a-currentAssets" min="0" max="100000" value="5000" step="500" />
-      </div>
-
-      <div class="sg" data-f="monthlySavings" data-s="a">
-        <div class="sg-hd">
-          <span class="sg-label">현재 월 저축액</span>
-          <div class="sg-val-wrap"><span class="sg-val" id="v-a-monthlySavings">150</span><span class="sg-unit">만원</span></div>
-        </div>
-        <input type="range" id="sl-a-monthlySavings" min="10" max="1000" value="150" step="10" />
-      </div>
+      <div class="sw"></div>
     </div>
 
-    <div class="hr"></div>
-
-    <!-- 수익률 설정 -->
-    <div class="section">
-      <div class="section-hd"><span class="ms">trending_up</span> 수익률 설정</div>
-
-      <div class="sg" data-f="annualReturn" data-s="a">
-        <div class="sg-hd">
-          <span class="sg-label">연 수익률</span>
-          <div class="sg-val-wrap"><span class="sg-val" id="v-a-annualReturn">7.0</span><span class="sg-unit">%</span></div>
-        </div>
-        <input type="range" id="sl-a-annualReturn" min="1" max="20" value="7" step="0.5" />
-      </div>
-
-      <div class="sg" data-f="savingsGrowth" data-s="a">
-        <div class="sg-hd">
-          <span class="sg-label">저축 증가율 (연)</span>
-          <div class="sg-val-wrap"><span class="sg-val" id="v-a-savingsGrowth">3.0</span><span class="sg-unit">%</span></div>
-        </div>
-        <input type="range" id="sl-a-savingsGrowth" min="0" max="15" value="3" step="0.5" />
-      </div>
-
-      <div class="sg" data-f="safeRate" data-s="a">
-        <div class="sg-hd">
-          <span class="sg-label">안전 인출률 (SWR)</span>
-          <div class="sg-val-wrap"><span class="sg-val" id="v-a-safeRate">4.0</span><span class="sg-unit">%</span></div>
-        </div>
-        <input type="range" id="sl-a-safeRate" min="2" max="8" value="4" step="0.5" />
-      </div>
+    <div class="delay-row" id="delay-row">
+      <span class="delay-label">몇 년 뒤 시작:</span>
+      <input type="range" id="sl-delay" min="1" max="10" value="3" step="1" style="flex:1" />
+      <span class="delay-val" id="v-delay">3</span>
+      <span style="font-size:12px;color:var(--text-3)">년</span>
     </div>
-
-    <div class="hr"></div>
-
-    <!-- 설정 -->
-    <div class="section">
-      <div class="section-hd"><span class="ms">settings</span> 설정</div>
-
-      <div class="toggle" id="tog-inf" onclick="toggleInf()">
-        <div class="toggle-info">
-          <span class="toggle-title">인플레이션 반영</span>
-          <span class="toggle-desc">실질 구매력 표시 (기본 2.5%)</span>
-        </div>
-        <div class="sw"></div>
-      </div>
-
-      <div class="inf-row" id="inf-row">
-        <span class="inf-label">인플레이션율</span>
-        <input type="number" class="inf-input" id="inf-val" value="2.5" min="0" max="10" step="0.1" />
-        <span style="font-size:12px;color:var(--text-3)">%</span>
-      </div>
-
-      <div class="toggle" id="tog-delay" onclick="toggleDelay()">
-        <div class="toggle-info">
-          <span class="toggle-title">지연 시작 비교</span>
-          <span class="toggle-desc">"지금 vs N년 후 시작" 효과</span>
-        </div>
-        <div class="sw"></div>
-      </div>
-
-      <div class="delay-row" id="delay-row">
-        <span class="delay-label">몇 년 뒤 시작:</span>
-        <input type="range" id="sl-delay" min="1" max="10" value="3" step="1" style="flex:1" />
-        <span class="delay-val" id="v-delay">3</span>
-        <span style="font-size:12px;color:var(--text-3)">년</span>
-      </div>
-
-      <div class="toggle" id="tog-b" onclick="toggleB()">
-        <div class="toggle-info">
-          <span class="toggle-title">시나리오 B 비교</span>
-          <span class="toggle-desc">두 시나리오를 동시에 비교</span>
-        </div>
-        <div class="sw"></div>
-      </div>
-    </div>
-
-    <!-- 시나리오 B 입력 -->
-    <div class="panel-b" id="panel-b">
-      <div class="hr"></div>
-      <div class="section-hd" style="color:var(--violet)"><span class="ms">compare_arrows</span> 시나리오 B <span class="badge badge-v" style="margin-left:6px">비교</span></div>
-
-      <div class="preset-row">
-        <div class="preset-card" id="pc-b-jeehyun" onclick="applyPreset('jeehyun', 'b')">
-          <div class="pc-top"><span class="pc-emoji ms">person</span><span class="pc-name">이지현</span></div>
-          <div class="pc-type">안정형</div>
-        </div>
-        <div class="preset-card" id="pc-b-junhyuk" onclick="applyPreset('junhyuk', 'b')">
-          <div class="pc-top"><span class="pc-emoji ms">laptop_mac</span><span class="pc-name">박준혁</span></div>
-          <div class="pc-type">공격형</div>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="sg" data-f="targetWithdrawal" data-s="b">
-          <div class="sg-hd"><span class="sg-label">희망 월 인출액</span>
-            <div class="sg-val-wrap"><span class="sg-val" id="v-b-targetWithdrawal">300</span><span class="sg-unit">만원</span></div>
-          </div>
-          <input type="range" class="rb" id="sl-b-targetWithdrawal" min="50" max="1000" value="300" step="10" />
-        </div>
-        <div class="sg" data-f="targetRetirementAge" data-s="b">
-          <div class="sg-hd"><span class="sg-label">은퇴 희망 나이</span>
-            <div class="sg-val-wrap"><span class="sg-val" id="v-b-targetRetirementAge">55</span><span class="sg-unit">세</span></div>
-          </div>
-          <input type="range" class="rb" id="sl-b-targetRetirementAge" min="40" max="70" value="55" step="1" />
-        </div>
-        <div class="sg" data-f="currentAge" data-s="b">
-          <div class="sg-hd"><span class="sg-label">현재 나이</span>
-            <div class="sg-val-wrap"><span class="sg-val" id="v-b-currentAge">35</span><span class="sg-unit">세</span></div>
-          </div>
-          <input type="range" class="rb" id="sl-b-currentAge" min="20" max="65" value="35" step="1" />
-        </div>
-        <div class="sg" data-f="currentAssets" data-s="b">
-          <div class="sg-hd"><span class="sg-label">현재 자산</span>
-            <div class="sg-val-wrap"><span class="sg-val" id="v-b-currentAssets">5,000</span><span class="sg-unit">만원</span></div>
-          </div>
-          <input type="range" class="rb" id="sl-b-currentAssets" min="0" max="100000" value="5000" step="500" />
-        </div>
-        <div class="sg" data-f="monthlySavings" data-s="b">
-          <div class="sg-hd"><span class="sg-label">현재 월 저축액</span>
-            <div class="sg-val-wrap"><span class="sg-val" id="v-b-monthlySavings">200</span><span class="sg-unit">만원</span></div>
-          </div>
-          <input type="range" class="rb" id="sl-b-monthlySavings" min="10" max="1000" value="200" step="10" />
-        </div>
-        <div class="sg" data-f="annualReturn" data-s="b">
-          <div class="sg-hd"><span class="sg-label">연 수익률</span>
-            <div class="sg-val-wrap"><span class="sg-val" id="v-b-annualReturn">7.0</span><span class="sg-unit">%</span></div>
-          </div>
-          <input type="range" class="rb" id="sl-b-annualReturn" min="1" max="20" value="7" step="0.5" />
-        </div>
-        <div class="sg" data-f="savingsGrowth" data-s="b">
-          <div class="sg-hd"><span class="sg-label">저축 증가율 (연)</span>
-            <div class="sg-val-wrap"><span class="sg-val" id="v-b-savingsGrowth">3.0</span><span class="sg-unit">%</span></div>
-          </div>
-          <input type="range" class="rb" id="sl-b-savingsGrowth" min="0" max="15" value="3" step="0.5" />
-        </div>
-        <div class="sg" data-f="safeRate" data-s="b">
-          <div class="sg-hd"><span class="sg-label">안전 인출률 (SWR)</span>
-            <div class="sg-val-wrap"><span class="sg-val" id="v-b-safeRate">4.0</span><span class="sg-unit">%</span></div>
-          </div>
-          <input type="range" class="rb" id="sl-b-safeRate" min="2" max="8" value="4" step="0.5" />
-        </div>
-      </div>
-    </div>
+  </div>
 
 </div><!-- /#sidebar -->
 
@@ -913,25 +802,19 @@
       <div class="chart-hd">
         <div>
           <div class="chart-title">자산 성장 시뮬레이션</div>
-          <div class="chart-sub">현재 페이스 vs 목표 달성 필요 페이스</div>
+          <div class="chart-sub" id="chart-sub-txt">인원별 FIRE 목표 달성 궤적</div>
         </div>
-        <div class="legend" id="legend">
-          <div class="leg-item">
-            <div class="leg-dot" style="background:#6C47FF"></div>
-            <span>현재 페이스 (A)</span>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="chart-mode-toggle">
+            <button class="cmt-btn active" id="cmt-line" onclick="setChartMode('line')">궤적</button>
+            <button class="cmt-btn" id="cmt-bar" onclick="setChartMode('bar')">비교</button>
           </div>
-          <div class="leg-item">
-            <div class="leg-dashed" style="background:repeating-linear-gradient(90deg,#F59E0B 0 5px,transparent 5px 9px)"></div>
-            <span>목표 페이스 (A)</span>
-          </div>
-          <div class="leg-item" id="leg-b" style="display:none">
-            <div class="leg-dot" style="background:#818CF8"></div>
-            <span>시나리오 B</span>
-          </div>
+          <div class="legend" id="legend"></div>
         </div>
       </div>
-      <div class="chart-wrap">
+      <div class="chart-wrap" id="chart-wrap">
         <canvas id="chart"></canvas>
+        <canvas id="chart-bar" style="display:none"></canvas>
       </div>
     </div>
 
@@ -941,8 +824,8 @@
         <button class="suggest-chip" onclick="toggleSidebar()">
           <span class="ms">tune</span>조정하기
         </button>
-        <button class="suggest-chip" id="sc-b" onclick="toggleB()">
-          <span class="ms">compare_arrows</span>시나리오 B 비교
+        <button class="suggest-chip" id="sc-b" onclick="addPerson()">
+          <span class="ms">person_add</span>인원 추가
         </button>
         <button class="suggest-chip" id="sc-share">
           <span class="ms">share</span>공유하기
@@ -982,59 +865,38 @@
 //  파라다이스 계산기 v2.0  —  역산 FIRE 시뮬레이터
 // ═══════════════════════════════════════════════════════════════
 
+// ─── 인원 컬러 팔레트 ───
+const PERSON_COLORS = [
+  { line: '#6C47FF', r: 108, g:  71, b: 255 },
+  { line: '#F59E0B', r: 245, g: 158, b:  11 },
+  { line: '#10B981', r:  16, g: 185, b: 129 },
+  { line: '#EF4444', r: 239, g:  68, b:  68 },
+  { line: '#8B5CF6', r: 139, g:  92, b: 246 },
+];
+
+const DEFAULT_PERSON = () => ({
+  name: '나',
+  targetWithdrawal:    300,
+  targetRetirementAge: 55,
+  currentAge:          35,
+  currentAssets:       5000,
+  monthlySavings:      150,
+  annualReturn:        7.0,
+  savingsGrowth:       3.0,
+  safeRate:            4.0,
+});
+
 // ─── 상태 ───
 const S = {
-  a: {
-    targetWithdrawal:    300,   // 만원/월
-    targetRetirementAge: 55,    // 세
-    currentAge:          35,    // 세
-    currentAssets:       5000,  // 만원
-    monthlySavings:      150,   // 만원/월
-    annualReturn:        7.0,   // %
-    savingsGrowth:       3.0,   // %
-    safeRate:            4.0,   // %
-  },
-  b: {
-    targetWithdrawal:    300,
-    targetRetirementAge: 55,
-    currentAge:          35,
-    currentAssets:       5000,
-    monthlySavings:      200,
-    annualReturn:        7.0,
-    savingsGrowth:       3.0,
-    safeRate:            4.0,
-  },
+  people:       [DEFAULT_PERSON()],
+  activePerson: 0,
+  chartMode:    'line',
   showInf:     false,
   infRate:     2.5,
   showDelay:   false,
   delayYears:  3,
-  showB:       false,
   maxAge:      90,
 };
-
-// ─── 프리셋 ───
-const PRESETS = {
-  jeehyun: {
-    targetWithdrawal: 250, targetRetirementAge: 60,
-    currentAge: 40, currentAssets: 8000, monthlySavings: 200,
-    annualReturn: 4.5, savingsGrowth: 2.0, safeRate: 4.0,
-  },
-  junhyuk: {
-    targetWithdrawal: 350, targetRetirementAge: 50,
-    currentAge: 35, currentAssets: 3000, monthlySavings: 150,
-    annualReturn: 9.0, savingsGrowth: 5.0, safeRate: 3.5,
-  },
-};
-
-// ─── 유틸 ───
-const $ = id => document.getElementById(id);
-
-function fmtShort(만원) {
-  if (만원 >= 100000000) return (만원 / 100000000).toFixed(1).replace(/\.0$/, '') + '조원';
-  if (만원 >= 10000)     return (만원 / 10000).toFixed(1).replace(/\.0$/, '') + '억원';
-  return Math.round(만원).toLocaleString('ko-KR') + '만원';
-}
-
 // ─── FIRE 계산 엔진 ───
 function calcFIRE(p) {
   const {
@@ -1257,8 +1119,12 @@ function initChart() {
   });
 }
 
-function updateChart(resA, resB) {
-  const labels = resA.currentPace.points.map(p => p.age);
+function updateChart(results) {
+  if (S.chartMode === 'bar') { buildBarChart(results); return; }
+
+  const allAges = new Set();
+  results.forEach(r => r.currentPace.points.forEach(p => allAges.add(p.age)));
+  const labels = Array.from(allAges).sort((a, b) => a - b);
 
   const mkGradient = (ctx, r, g, b) => {
     const grad = ctx.chart.ctx.createLinearGradient(0, 0, 0, 290);
@@ -1267,91 +1133,67 @@ function updateChart(resA, resB) {
     return grad;
   };
 
-  // 은퇴 시점 포인트
-  const makePoints = (points, retireAge, color) => {
-    return points.map(p => ({
-      r:  p.age === retireAge ? 7 : 0,
-      bg: p.age === retireAge ? color : 'transparent',
-      bw: p.age === retireAge ? 2 : 0,
-    }));
-  };
+  const datasets = [];
 
-  const ptA = makePoints(resA.currentPace.points, resA.currentPace.retireAge, '#F59E0B');
-  const reqPts = makePoints(resA.requiredPace.points, resA.targetRetirementAge, '#6C47FF');
+  results.forEach((res, i) => {
+    const col  = PERSON_COLORS[i % PERSON_COLORS.length];
+    const name = S.people[i].name;
+    const retireAge = res.currentPace.retireAge;
 
-  const datasets = [
-    // 현재 페이스 A
-    {
-      label: '현재 페이스 (A)',
-      data: resA.currentPace.points.map(p => p.assets),
-      borderColor: '#6C47FF',
-      backgroundColor: ctx => mkGradient(ctx, 108, 71, 255),
-      borderWidth: 2.5, tension: 0.4, fill: true,
-      pointRadius: ptA.map(p => p.r),
-      pointBackgroundColor: ptA.map(p => p.bg),
-      pointBorderColor: '#F59E0B',
-      pointBorderWidth: ptA.map(p => p.bw),
-      pointHoverRadius: 5,
-    },
-    // 목표 페이스 A (필요 저축액 적용)
-    {
-      label: '목표 페이스 (A)',
-      data: resA.requiredPace.points.map(p => p.assets),
-      borderColor: 'rgba(245,158,11,0.8)',
-      borderDash: [7, 4],
-      borderWidth: 2,
-      backgroundColor: 'transparent',
-      tension: 0.4, fill: false,
-      pointRadius: reqPts.map(p => p.r),
-      pointBackgroundColor: reqPts.map(p => p.bg),
-      pointBorderColor: '#6C47FF',
-      pointBorderWidth: reqPts.map(p => p.bw),
-      pointHoverRadius: 5,
-    },
-    // FIRE 목표선 A
-    {
-      label: 'FIRE 목표',
-      data: labels.map(() => resA.fireNumber),
-      borderColor: 'rgba(245,158,11,0.25)',
-      borderDash: [4, 4], borderWidth: 1.5,
-      backgroundColor: 'transparent', tension: 0, fill: false,
-      pointRadius: 0, pointHoverRadius: 0,
-    },
-  ];
-
-  // 시나리오 B
-  if (resB) {
-    const bData = labels.map(age => {
-      const pt = resB.currentPace.points.find(p => p.age === age);
-      return pt ? pt.assets : null;
-    });
-    const ptB = makePoints(resB.currentPace.points, resB.currentPace.retireAge, '#818CF8');
+    // point styling
+    const pRadii = labels.map(age => age === retireAge ? 7 : 0);
+    const pBg    = labels.map(age => age === retireAge ? col.line : 'transparent');
+    const pBw    = labels.map(age => age === retireAge ? 2 : 0);
 
     datasets.push({
-      label: '현재 페이스 (B)',
-      data: bData,
-      borderColor: '#818CF8',
-      backgroundColor: ctx => mkGradient(ctx, 129, 140, 248),
-      borderWidth: 2.5, tension: 0.4, fill: true,
-      pointRadius: labels.map((age, i) => {
-        const pt = resB.currentPace.points.find(p => p.age === age);
-        return pt && pt.age === resB.currentPace.retireAge ? 7 : 0;
+      label: name,
+      data: labels.map(age => {
+        const pt = res.currentPace.points.find(p => p.age === age);
+        return pt ? pt.assets : null;
       }),
-      pointBackgroundColor: labels.map(age =>
-        age === resB.currentPace.retireAge ? '#c4b5fd' : 'transparent'),
-      pointBorderColor: '#818CF8',
-      pointBorderWidth: labels.map(age => age === resB.currentPace.retireAge ? 2 : 0),
-      pointHoverRadius: 5,
+      borderColor: col.line,
+      backgroundColor: ctx => mkGradient(ctx, col.r, col.g, col.b),
+      borderWidth: 2.5, tension: 0.4, fill: true, spanGaps: true,
+      pointRadius: pRadii, pointBackgroundColor: pBg,
+      pointBorderColor: col.line, pointBorderWidth: pBw, pointHoverRadius: 5,
+    });
+  });
+
+  // FIRE 목표 마일스톤 수평선 (1억, 5억, 10억)
+  const milestones = [
+    { val: 10000,  label: '1억원',  color: 'rgba(245,158,11,0.20)' },
+    { val: 50000,  label: '5억원',  color: 'rgba(16,185,129,0.20)' },
+    { val: 100000, label: '10억원', color: 'rgba(108,71,255,0.20)' },
+  ];
+  milestones.forEach(m => {
+    datasets.push({
+      label: m.label,
+      data: labels.map(() => m.val),
+      borderColor: m.color, borderDash: [5, 5], borderWidth: 1.5,
+      backgroundColor: 'transparent', tension: 0, fill: false,
+      pointRadius: 0, pointHoverRadius: 0,
+    });
+  });
+
+  // 활성 인원의 FIRE 목표선
+  const active = results[S.activePerson];
+  if (active) {
+    datasets.push({
+      label: 'FIRE 목표',
+      data: labels.map(() => active.fireNumber),
+      borderColor: 'rgba(239,68,68,0.45)', borderDash: [7, 4], borderWidth: 2,
+      backgroundColor: 'transparent', tension: 0, fill: false,
+      pointRadius: 0, pointHoverRadius: 0,
     });
   }
 
-  // 수직선: 목표 은퇴 나이
-  const vertTargets = [
-    { age: resA.targetRetirementAge, color: 'rgba(108,71,255,0.4)', dash: [6, 4] },
-  ];
-  if (resB && resB.targetRetirementAge !== resA.targetRetirementAge) {
-    vertTargets.push({ age: resB.targetRetirementAge, color: 'rgba(139,124,248,0.35)', dash: [6,4] });
-  }
+  const vertTargets = results.map((res, i) => ({
+    age: res.targetRetirementAge,
+    color: PERSON_COLORS[i % PERSON_COLORS.length].line + '55',
+    dash: [6, 4],
+  }));
+
+  rebuildLegend(results);
 
   chart.data.labels   = labels;
   chart.data.datasets = datasets;
@@ -1359,8 +1201,108 @@ function updateChart(resA, resB) {
   chart.update('active');
 }
 
+function buildBarChart(results) {
+  const wrap = document.getElementById('chart-wrap');
+  const lineCanvas = document.getElementById('chart');
+  let barCanvas = document.getElementById('chart-bar');
+  lineCanvas.style.display = 'none';
+  barCanvas.style.display  = 'block';
+
+  const yr = new Date().getFullYear();
+  const labels = S.people.map((p, i) => p.name);
+  const yearsData = results.map((r, i) => {
+    const age = r.currentPace.retireAge;
+    return age ? age - S.people[i].currentAge : S.maxAge;
+  });
+
+  if (window._barChart) {
+    window._barChart.destroy();
+    window._barChart = null;
+  }
+
+  window._barChart = new Chart(barCanvas.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'FIRE까지 남은 년수',
+        data: yearsData,
+        backgroundColor: S.people.map((_, i) => PERSON_COLORS[i % PERSON_COLORS.length].line + 'aa'),
+        borderColor:      S.people.map((_, i) => PERSON_COLORS[i % PERSON_COLORS.length].line),
+        borderWidth: 2,
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const yrs = ctx.raw;
+              const res = results[ctx.dataIndex];
+              const retireAge = res ? res.currentPace.retireAge : null;
+              return [
+                `FIRE까지: ${yrs}년`,
+                retireAge ? `은퇴 나이: ${retireAge}세 (${yr + yrs}년)` : '90세+ (목표 미달)',
+                `FIRE 목표: ${fmtShort(res.fireNumber)}`,
+              ];
+            },
+          },
+          backgroundColor: '#fff', titleColor: '#111', bodyColor: '#555',
+          borderColor: 'rgba(0,0,0,0.09)', borderWidth: 1, padding: 12, cornerRadius: 8,
+        },
+      },
+      scales: {
+        x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { font: { size: 11 } }, title: { display: true, text: '년수' } },
+        y: { grid: { display: false }, ticks: { font: { size: 12, weight: '600' } } },
+      },
+    },
+  });
+}
+
+function rebuildLegend(results) {
+  const leg = document.getElementById('legend');
+  if (!leg) return;
+  leg.innerHTML = '';
+  results.forEach((res, i) => {
+    const col  = PERSON_COLORS[i % PERSON_COLORS.length];
+    const name = S.people[i].name;
+    const item = document.createElement('div');
+    item.className = 'leg-item';
+    item.style.cursor = 'pointer';
+    item.innerHTML = `<div class="leg-dot" style="background:${col.line}"></div><span>${name}</span>`;
+    item.addEventListener('click', () => setActivePerson(i));
+    leg.appendChild(item);
+  });
+}
+
+function setChartMode(mode) {
+  S.chartMode = mode;
+  document.getElementById('cmt-line').classList.toggle('active', mode === 'line');
+  document.getElementById('cmt-bar').classList.toggle('active', mode === 'bar');
+
+  const lineCanvas = document.getElementById('chart');
+  const barCanvas  = document.getElementById('chart-bar');
+
+  if (mode === 'line') {
+    lineCanvas.style.display = 'block';
+    barCanvas.style.display  = 'none';
+    if (window._barChart) { window._barChart.destroy(); window._barChart = null; }
+    updateFull();
+  } else {
+    updateFull();
+  }
+}
+
+
 // ─── 카드 업데이트 ───
-function updateCards(resA, resB) {
+function updateCards(results) {
+  const resA = results[S.activePerson];
+  if (!resA) return;
+  const p  = S.people[S.activePerson];
   const yr = new Date().getFullYear();
   const N  = resA.yearsLeft;
 
@@ -1370,7 +1312,7 @@ function updateCards(resA, resB) {
     $('c-retire-yr').textContent = `${yr + N}년 (${resA.targetRetirementAge}세) 목표`;
   } else if (N === 0) {
     $('c-countdown').textContent = '지금!';
-    $('c-retire-yr').textContent = '은퇴 목표 연도입니다 🎉';
+    $('c-retire-yr').textContent = '은퇴 목표 연도입니다';
   } else {
     $('c-countdown').textContent = '재설정 필요';
     $('c-retire-yr').textContent = '현재 나이 ≥ 은퇴 희망 나이';
@@ -1383,7 +1325,7 @@ function updateCards(resA, resB) {
 
   // 월 필요 저축액 (역산)
   const req = resA.requiredMonthlySavings;
-  const cur = S.a.monthlySavings;
+  const cur = p.monthlySavings;
   const gap = cur - req;
 
   if (req <= 0) {
@@ -1404,7 +1346,7 @@ function updateCards(resA, resB) {
     if (gap >= 0) {
       gb.textContent = `+${Math.round(gap).toLocaleString()}만원 여유`;
       gb.className = 'gap-badge gap-ok';
-      gt.textContent = '목표 초과 저축 중 👍';
+      gt.textContent = '목표 초과 저축 중';
     } else {
       gb.textContent = `${Math.round(gap).toLocaleString()}만원 부족`;
       gb.className = 'gap-badge gap-bad';
@@ -1423,13 +1365,12 @@ function updateCards(resA, resB) {
     $('c-pace').className = diff <= 0 ? 'card-val cv-success' : 'card-val cv-danger';
     $('card-pace').className = diff <= 0 ? 'card c-primary' : 'card c-warn';
 
-    if (diff === 0) {
+    if (diff === 0)
       $('c-pace-sub').textContent = `${paceYr}년 — 목표와 정확히 일치`;
-    } else if (diff < 0) {
+    else if (diff < 0)
       $('c-pace-sub').textContent = `${paceYr}년 — 목표보다 ${Math.abs(diff)}년 빠름`;
-    } else {
+    else
       $('c-pace-sub').textContent = `${paceYr}년 — 목표보다 ${diff}년 늦음`;
-    }
   } else {
     $('c-pace').textContent = '90세+';
     $('c-pace').className = 'card-val cv-danger';
@@ -1437,40 +1378,17 @@ function updateCards(resA, resB) {
     $('c-pace-sub').textContent = '저축액을 늘려보세요';
   }
 
-  // 시나리오 비교 배너
+  // 비교 배너 숨기기 (다중 인원은 차트 범례로 표시)
   const cb = $('compare-banner');
-  if (resB) {
-    cb.classList.add('vis');
-    const ageA = resA.currentPace.retireAge;
-    const ageB = resB.currentPace.retireAge;
-    const yrA  = ageA ? `${yr + (ageA - resA.currentAge)}년 (${ageA}세)` : '90세+';
-    const yrB  = ageB ? `${yr + (ageB - resB.currentAge)}년 (${ageB}세)` : '90세+';
-    $('cb-a-yr').textContent = yrA;
-    $('cb-b-yr').textContent = yrB;
+  if (cb) cb.classList.remove('vis');
 
-    const left = $('cb-left');
-    if (ageA && ageB) {
-      const diffA = ageA - resA.currentAge;
-      const diffB = ageB - resB.currentAge;
-      const d = diffA - diffB;
-      if (d > 0)      left.innerHTML = `시나리오 B가 <span class="diff pos">${d}년</span> 더 빠릅니다`;
-      else if (d < 0) left.innerHTML = `시나리오 A가 <span class="diff pos">${Math.abs(d)}년</span> 더 빠릅니다`;
-      else            left.innerHTML = `두 시나리오의 은퇴 시점이 <span class="diff pos">동일</span>합니다`;
-    } else {
-      left.textContent = '시나리오 비교 중...';
-    }
-  } else {
-    cb.classList.remove('vis');
-  }
-
-  // ─── Row 2: 입력 컨텍스트 카드 업데이트 ───
+  // Row 2: 입력 컨텍스트 카드
   const nc = n => Math.round(n).toLocaleString('ko-KR');
-  $('ci-assets').textContent     = nc(S.a.currentAssets);
-  $('ci-savings').textContent    = nc(S.a.monthlySavings);
-  $('ci-return').textContent     = S.a.annualReturn.toFixed(1) + '%';
-  $('ci-withdrawal').textContent = nc(S.a.targetWithdrawal);
+  $('ci-assets').textContent     = nc(p.currentAssets);
+  $('ci-savings').textContent    = nc(p.monthlySavings);
+  $('ci-return').textContent     = p.annualReturn.toFixed(1) + '%';
+  $('ci-withdrawal').textContent = nc(p.targetWithdrawal);
 }
-
 // ─── 인플레이션 배너 ───
 function updateInfBanner(p) {
   const banner = $('inf-banner');
@@ -1513,68 +1431,201 @@ function updateDelayBanner(p) {
   }
 }
 
-// ─── 메인 업데이트 ───
-function update() {
-  const resA = calcFIRE(S.a);
-  const resB = S.showB ? calcFIRE(S.b) : null;
-
-  updateCards(resA, resB);
-  updateChart(resA, resB);
-  updateInfBanner(S.a);
-  updateDelayBanner(S.a);
-  updateURL();
-}
-
-// ─── Debounce ───
-let timer = null;
-function sched() { clearTimeout(timer); timer = setTimeout(update, 300); }
-
-// ─── 슬라이더 바인딩 ───
+// ─── 상수 ───
 const FIELDS = [
   'targetWithdrawal', 'targetRetirementAge', 'currentAge',
   'currentAssets', 'monthlySavings', 'annualReturn', 'savingsGrowth', 'safeRate',
 ];
+const PRESETS = {
+  jeehyun: { name:'이지현', targetWithdrawal:250, targetRetirementAge:60,
+    currentAge:40, currentAssets:8000, monthlySavings:200,
+    annualReturn:4.5, savingsGrowth:2.0, safeRate:4.0 },
+  junhyuk: { name:'박준혁', targetWithdrawal:350, targetRetirementAge:50,
+    currentAge:35, currentAssets:3000, monthlySavings:150,
+    annualReturn:9.0, savingsGrowth:5.0, safeRate:3.5 },
+};
+const $ = id => document.getElementById(id);
+
+function fmtShort(manwon) {
+  if (manwon >= 100000000) return (manwon / 100000000).toFixed(1).replace(/\.0$/, '') + '조원';
+  if (manwon >= 10000)     return (manwon / 10000).toFixed(1).replace(/\.0$/, '') + '억원';
+  return Math.round(manwon).toLocaleString('ko-KR') + '만원';
+}
 
 function fmtVal(field, raw) {
   if (field === 'currentAssets')   return Math.round(raw).toLocaleString('ko-KR');
-  if (field === 'annualReturn' || field === 'savingsGrowth' || field === 'safeRate')
+  if (['annualReturn', 'savingsGrowth', 'safeRate'].includes(field))
     return parseFloat(raw).toFixed(1);
   return Math.round(raw).toLocaleString('ko-KR');
 }
 
-function fillSlider(sl, sc) {
+function fillSlider(sl, idx) {
   const min = parseFloat(sl.min), max = parseFloat(sl.max), val = parseFloat(sl.value);
   const pct = ((val - min) / (max - min)) * 100;
-  const col = sc === 'b' ? '#8b7cf8' : '#6C47FF';
-  sl.style.background = `linear-gradient(to right, ${col} ${pct}%, #161e30 ${pct}%)`;
+  const col = PERSON_COLORS[idx % PERSON_COLORS.length].line;
+  sl.style.background = `linear-gradient(to right, ${col} ${pct}%, #e5e7eb ${pct}%)`;
 }
 
-function bindSliders() {
-  ['a', 'b'].forEach(sc => {
-    FIELDS.forEach(f => {
-      const sl  = $(`sl-${sc}-${f}`);
-      const vel = $(`v-${sc}-${f}`);
-      if (!sl) return;
+// ─── Debounce ───
+let timer = null;
+function sched() { clearTimeout(timer); timer = setTimeout(updateFull, 250); }
 
-      sl.addEventListener('input', () => {
-        const raw = parseFloat(sl.value);
-        S[sc][f]  = raw;
-        vel.textContent = fmtVal(f, raw);
-        fillSlider(sl, sc);
-        sched();
-      });
-      fillSlider(sl, sc);
+// ─── 메인 업데이트 ───
+function updateFull() {
+  const results = S.people.map(p => calcFIRE(p));
+  updateCards(results);
+  updateChart(results);
+  updateInfBanner(S.people[S.activePerson]);
+  updateDelayBanner(S.people[S.activePerson]);
+  updateURL();
+}
+
+// alias for legacy
+function update() { updateFull(); }
+
+// ─── 인원 관리 ───
+function addPerson() {
+  if (S.people.length >= PERSON_COLORS.length) {
+    alert(`최대 ${PERSON_COLORS.length}명까지 추가할 수 있습니다.`);
+    return;
+  }
+  const d = DEFAULT_PERSON();
+  d.name = `인원 ${S.people.length + 1}`;
+  S.people.push(d);
+  S.activePerson = S.people.length - 1;
+  rebuildPersonTabs();
+  buildPersonPanel(S.activePerson);
+  bindPersonSliders(S.activePerson);
+  updateFull();
+}
+
+function removePerson(idx, e) {
+  if (e) { e.stopPropagation(); }
+  if (S.people.length <= 1) return;
+  S.people.splice(idx, 1);
+  if (S.activePerson >= S.people.length) S.activePerson = S.people.length - 1;
+  rebuildPersonTabs();
+  buildPersonPanel(S.activePerson);
+  bindPersonSliders(S.activePerson);
+  updateFull();
+}
+
+function setActivePerson(idx) {
+  S.activePerson = idx;
+  rebuildPersonTabs();
+  buildPersonPanel(idx);
+  bindPersonSliders(idx);
+  updateFull();
+}
+
+function rebuildPersonTabs() {
+  const tabs = $('person-tabs');
+  if (!tabs) return;
+  tabs.innerHTML = '';
+  S.people.forEach((p, i) => {
+    const col = PERSON_COLORS[i % PERSON_COLORS.length];
+    const tab = document.createElement('div');
+    tab.className = 'ptab' + (i === S.activePerson ? ' active' : '');
+    tab.onclick = () => setActivePerson(i);
+    tab.innerHTML = `
+      <div class="ptab-dot" style="background:${col.line}"></div>
+      <input class="ptab-name" value="${p.name.replace(/"/g,'&quot;')}" maxlength="10" />
+      ${S.people.length > 1 ? `<button class="ptab-del">✕</button>` : ''}
+    `;
+    const inp = tab.querySelector('.ptab-name');
+    const delBtn = tab.querySelector('.ptab-del');
+    inp.addEventListener('click', e => e.stopPropagation());
+    inp.addEventListener('input', function() { S.people[i].name = this.value; });
+    inp.addEventListener('change', function() { updateFull(); });
+    if (delBtn) delBtn.addEventListener('click', e => removePerson(i, e));
+    tab.addEventListener('click', (e) => { if (e.target !== inp && e.target !== delBtn) setActivePerson(i); });
+    tabs.appendChild(tab);
+  });
+  // 인원 추가 버튼
+  const addBtn = document.createElement('button');
+  addBtn.className = 'ptab-add';
+  addBtn.innerHTML = '+ 인원 추가';
+  addBtn.onclick = addPerson;
+  tabs.appendChild(addBtn);
+}
+
+function buildPersonPanel(idx) {
+  const panel = $('person-panel');
+  if (!panel) return;
+  const p   = S.people[idx];
+  const col = PERSON_COLORS[idx % PERSON_COLORS.length].line;
+
+  panel.innerHTML = `
+    <div class="section">
+      <div class="section-hd"><span class="ms">manage_accounts</span> 페르소나 프리셋</div>
+      <div class="preset-row">
+        <div class="preset-card" id="pc-p${idx}-jeehyun" onclick="applyPreset('jeehyun',${idx})">
+          <div class="pc-top"><span class="pc-emoji ms">person</span><span class="pc-name">이지현</span></div>
+          <div class="pc-type">안정형</div><div class="pc-age">40세 · 4.5%</div>
+        </div>
+        <div class="preset-card" id="pc-p${idx}-junhyuk" onclick="applyPreset('junhyuk',${idx})">
+          <div class="pc-top"><span class="pc-emoji ms">laptop_mac</span><span class="pc-name">박준혁</span></div>
+          <div class="pc-type">공격형</div><div class="pc-age">35세 · 9%</div>
+        </div>
+      </div>
+    </div>
+    <div class="hr"></div>
+    <div class="section">
+      <div class="section-hd"><span class="ms">favorite</span> 원하는 삶</div>
+      ${sliderHtml(idx,'targetWithdrawal', 50,1000, p.targetWithdrawal, 10, '희망 월 인출액','만원')}
+      ${sliderHtml(idx,'targetRetirementAge',40,70, p.targetRetirementAge,1,'은퇴 희망 나이','세')}
+    </div>
+    <div class="hr"></div>
+    <div class="section">
+      <div class="section-hd"><span class="ms">bar_chart</span> 현재 상황</div>
+      ${sliderHtml(idx,'currentAge',20,65, p.currentAge,1,'현재 나이','세')}
+      ${sliderHtml(idx,'currentAssets',0,100000, p.currentAssets,500,'현재 자산','만원')}
+      ${sliderHtml(idx,'monthlySavings',10,1000, p.monthlySavings,10,'월 저축액','만원')}
+    </div>
+    <div class="hr"></div>
+    <div class="section">
+      <div class="section-hd"><span class="ms">trending_up</span> 수익률 설정</div>
+      ${sliderHtml(idx,'annualReturn',1,20, p.annualReturn,0.5,'연 수익률','%')}
+      ${sliderHtml(idx,'savingsGrowth',0,15, p.savingsGrowth,0.5,'저축 증가율','%')}
+      ${sliderHtml(idx,'safeRate',2,8, p.safeRate,0.5,'안전 인출률','%')}
+    </div>
+  `;
+  // Fix slider fill colors
+  FIELDS.forEach(f => {
+    const sl = $(`sl-p${idx}-${f}`);
+    if (sl) fillSlider(sl, idx);
+  });
+}
+
+function sliderHtml(idx, field, min, max, val, step, label, unit) {
+  const id  = `sl-p${idx}-${field}`;
+  const vid = `v-p${idx}-${field}`;
+  const fv  = fmtVal(field, val);
+  return `
+    <div class="sg" data-f="${field}" data-pi="${idx}">
+      <div class="sg-hd">
+        <span class="sg-label">${label}</span>
+        <div class="sg-val-wrap"><span class="sg-val" id="${vid}">${fv}</span><span class="sg-unit">${unit}</span></div>
+      </div>
+      <input type="range" id="${id}" min="${min}" max="${max}" value="${val}" step="${step}" />
+    </div>`;
+}
+
+function bindPersonSliders(idx) {
+  FIELDS.forEach(f => {
+    const sl  = $(`sl-p${idx}-${f}`);
+    const vel = $(`v-p${idx}-${f}`);
+    if (!sl || !vel) return;
+    sl.oninput = null;
+    sl.addEventListener('input', () => {
+      const raw = parseFloat(sl.value);
+      S.people[idx][f] = raw;
+      vel.textContent  = fmtVal(f, raw);
+      fillSlider(sl, idx);
+      sched();
     });
+    fillSlider(sl, idx);
   });
-
-  // 지연 슬라이더
-  $('sl-delay').addEventListener('input', e => {
-    S.delayYears = parseInt(e.target.value);
-    $('v-delay').textContent = S.delayYears;
-    fillSlider($('sl-delay'), 'a');
-    sched();
-  });
-  fillSlider($('sl-delay'), 'a');
 }
 
 // ─── 토글 ───
@@ -1592,58 +1643,33 @@ function toggleDelay() {
   sched();
 }
 
-function toggleB() {
-  S.showB = !S.showB;
-  $('tog-b').classList.toggle('on-b', S.showB);
-  $('panel-b').classList.toggle('vis', S.showB);
-  $('leg-b').style.display = S.showB ? 'flex' : 'none';
-  sched();
-}
-
-$('inf-val').addEventListener('input', e => {
-  S.infRate = parseFloat(e.target.value) || 2.5;
-  sched();
-});
-
 // ─── 프리셋 ───
-function applyPreset(key, sc) {
-  const p = PRESETS[key];
-  if (!p) return;
-  Object.assign(S[sc], p);
-  syncSliders();
-
-  // 활성 프리셋 표시
-  if (sc === 'a') {
-    document.querySelectorAll('#pc-jeehyun, #pc-junhyuk').forEach(el => el.classList.remove('active'));
-    $(`pc-${key === 'jeehyun' ? 'jeehyun' : 'junhyuk'}`).classList.add('active');
-  } else {
-    document.querySelectorAll('#pc-b-jeehyun, #pc-b-junhyuk').forEach(el => el.classList.remove('active-b'));
-    $(`pc-b-${key === 'jeehyun' ? 'jeehyun' : 'junhyuk'}`).classList.add('active-b');
-  }
-  update();
+function applyPreset(key, idx) {
+  const pr = PRESETS[key];
+  if (!pr) return;
+  const { name, ...params } = pr;
+  Object.assign(S.people[idx], params);
+  buildPersonPanel(idx);
+  bindPersonSliders(idx);
+  updateFull();
 }
 
-function syncSliders() {
-  ['a', 'b'].forEach(sc => {
-    FIELDS.forEach(f => {
-      const sl  = $(`sl-${sc}-${f}`);
-      const vel = $(`v-${sc}-${f}`);
-      if (!sl) return;
-      sl.value = S[sc][f];
-      vel.textContent = fmtVal(f, S[sc][f]);
-      fillSlider(sl, sc);
-    });
-  });
+// ─── 슬라이더 초기화 ───
+function initPersonPanels() {
+  rebuildPersonTabs();
+  buildPersonPanel(0);
+  bindPersonSliders(0);
 }
 
 // ─── URL 공유 ───
 function updateURL() {
   const p = new URLSearchParams();
-  FIELDS.forEach(f => p.set(`a_${f}`, S.a[f]));
-  if (S.showB) {
-    FIELDS.forEach(f => p.set(`b_${f}`, S.b[f]));
-    p.set('b', '1');
-  }
+  S.people.forEach((person, i) => {
+    FIELDS.forEach(f => p.set(`p${i}_${f}`, person[f]));
+    if (person.name !== 'DEFAULT') p.set(`p${i}_name`, encodeURIComponent(person.name));
+  });
+  p.set('n', S.people.length);
+  p.set('ap', S.activePerson);
   if (S.showInf)   p.set('inf',   S.infRate);
   if (S.showDelay) p.set('delay', S.delayYears);
   history.replaceState(null, '', `${location.pathname}?${p}`);
@@ -1651,51 +1677,47 @@ function updateURL() {
 
 function loadURL() {
   const p = new URLSearchParams(location.search);
-  let loaded = false;
-  FIELDS.forEach(f => {
-    if (p.has(`a_${f}`)) { S.a[f] = parseFloat(p.get(`a_${f}`)); loaded = true; }
-  });
-  if (p.has('b')) {
-    S.showB = true;
-    FIELDS.forEach(f => { if (p.has(`b_${f}`)) S.b[f] = parseFloat(p.get(`b_${f}`)); });
+  const n = parseInt(p.get('n')) || 0;
+  if (n > 0) {
+    S.people = [];
+    for (let i = 0; i < Math.min(n, PERSON_COLORS.length); i++) {
+      const person = DEFAULT_PERSON();
+      FIELDS.forEach(f => { if (p.has(`p${i}_${f}`)) person[f] = parseFloat(p.get(`p${i}_${f}`)); });
+      if (p.has(`p${i}_name`)) person.name = decodeURIComponent(p.get(`p${i}_name`));
+      S.people.push(person);
+    }
+    S.activePerson = parseInt(p.get('ap')) || 0;
   }
-  if (p.has('inf'))   { S.showInf   = true; S.infRate   = parseFloat(p.get('inf'));   }
+  // Legacy single-person URL (backward compat)
+  if (n === 0 && p.has('a_currentAge')) {
+    FIELDS.forEach(f => { if (p.has(`a_${f}`)) S.people[0][f] = parseFloat(p.get(`a_${f}`)); });
+  }
+  if (p.has('inf'))   { S.showInf   = true; S.infRate    = parseFloat(p.get('inf'));   }
   if (p.has('delay')) { S.showDelay = true; S.delayYears = parseInt(p.get('delay')); }
-  if (loaded) syncSliders();
-  if (S.showB)    { $('tog-b').classList.add('on-b');    $('panel-b').classList.add('vis'); $('leg-b').style.display = 'flex'; }
   if (S.showInf)  { $('tog-inf').classList.add('on');   $('inf-row').classList.add('vis'); }
   if (S.showDelay){ $('tog-delay').classList.add('on'); $('delay-row').classList.add('vis'); }
 }
 
-// ─── 공유 ───
-$('btn-share').addEventListener('click', () => {
-  update();
-  navigator.clipboard.writeText(location.href).then(() => {
-    const btn = $('btn-share');
-    const orig = btn.innerHTML;
-    btn.innerHTML = '<span class="ico ms">check_circle</span><span class="btn-text"> 복사됨!</span>';
-    btn.style.color = 'var(--primary)';
-    setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
-  });
-});
-
-// ─── 이미지 저장 ───
-$('btn-dl').addEventListener('click', async () => {
-  const btn = $('btn-dl');
-  btn.innerHTML = '<span class="ico">⏳</span><span class="btn-text"> 저장 중...</span>';
-  btn.disabled = true;
-  try {
-    const canvas = await html2canvas($('capture-area'), {
-      backgroundColor: '#F4F6F9', scale: 2, logging: false,
+// ─── 지연 슬라이더 ───
+function bindCommonSliders() {
+  const slDelay = $('sl-delay');
+  if (slDelay) {
+    slDelay.addEventListener('input', e => {
+      S.delayYears = parseInt(e.target.value);
+      $('v-delay').textContent = S.delayYears;
+      fillSlider(slDelay, 0);
+      sched();
     });
-    const a = document.createElement('a');
-    a.download = `파라다이스_${new Date().toISOString().slice(0,10)}.png`;
-    a.href = canvas.toDataURL('image/png');
-    a.click();
-  } catch { alert('이미지 저장 중 오류가 발생했습니다.'); }
-  btn.innerHTML = '<span class="ico">📷</span><span class="btn-text"> 이미지 저장</span>';
-  btn.disabled = false;
-});
+    fillSlider(slDelay, 0);
+  }
+  const infVal = $('inf-val');
+  if (infVal) {
+    infVal.addEventListener('input', e => {
+      S.infRate = parseFloat(e.target.value) || 2.5;
+      sched();
+    });
+  }
+}
 
 // ─── 사이드바 ───
 function toggleSidebar() {
@@ -1712,20 +1734,53 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeSidebar();
 });
 
+// ─── 공유 ───
+function bindShareButtons() {
+  const btnShare = $('btn-share');
+  if (btnShare) {
+    btnShare.addEventListener('click', () => {
+      updateFull();
+      navigator.clipboard.writeText(location.href).then(() => {
+        const orig = btnShare.innerHTML;
+        btnShare.innerHTML = '<span class="ico ms">check_circle</span><span class="btn-text"> 복사됨!</span>';
+        btnShare.style.color = 'var(--primary)';
+        setTimeout(() => { btnShare.innerHTML = orig; btnShare.style.color = ''; }, 2000);
+      });
+    });
+  }
+  const btnDl = $('btn-dl');
+  if (btnDl) {
+    btnDl.addEventListener('click', async () => {
+      btnDl.innerHTML = '<span class="ico ms">hourglass_empty</span><span class="btn-text"> 저장 중...</span>';
+      btnDl.disabled = true;
+      try {
+        const canvas = await html2canvas($('capture-area'), {
+          backgroundColor: '#F4F6F9', scale: 2, logging: false,
+        });
+        const a = document.createElement('a');
+        a.download = `파라다이스_${new Date().toISOString().slice(0,10)}.png`;
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+      } catch { alert('이미지 저장 중 오류가 발생했습니다.'); }
+      btnDl.innerHTML = '<span class="ico ms">photo_camera</span><span class="btn-text"> 이미지 저장</span>';
+      btnDl.disabled = false;
+    });
+  }
+  const scShare = $('sc-share');
+  const scDl    = $('sc-dl');
+  if (scShare && btnShare) scShare.addEventListener('click', () => btnShare.click());
+  if (scDl && btnDl)       scDl.addEventListener('click',   () => btnDl.click());
+}
+
 // ─── 초기화 ───
 function init() {
   initChart();
   loadURL();
-  bindSliders();
-  update();
-
-  // 제안 칩 — share / dl 연결
-  const scShare = $('sc-share');
-  const scDl    = $('sc-dl');
-  if (scShare) scShare.addEventListener('click', () => $('btn-share').click());
-  if (scDl)    scDl.addEventListener('click',    () => $('btn-dl').click());
+  initPersonPanels();
+  bindCommonSliders();
+  bindShareButtons();
+  updateFull();
 }
-
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>

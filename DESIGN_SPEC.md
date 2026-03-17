@@ -1,4 +1,5 @@
 # 파라다이스 계산기 v2.0 — DESIGN SPEC
+
 > Cursor 구현 지시서 · 2026.03
 > 이 문서는 PRD.md와 함께 사용합니다.
 
@@ -6,13 +7,15 @@
 
 ## 0. 레퍼런스 사이트
 
-| 사이트 | URL | 참고할 요소 |
-|--------|-----|-------------|
-| savor.it | https://www.savor.it/ | 온보딩 구조 — 풀스크린 섹션마다 배경이 전환되는 스크롤 경험 |
-| ProjectionLab | https://projectionlab.app/ | 대시보드 레이아웃 — 왼쪽 입력 패널 + 오른쪽 그래프 고정 2-column 구조 |
-| Linear.app | https://linear.app/ | 전체 무드 — 다크 배경, 절제된 UI, 포인트 컬러 사용 방식 |
-| Stripe Dashboard | https://dashboard.stripe.com/ | 결과 카드 컴포넌트 — 숫자 크게 강조, 깔끔한 metric card 스타일 |
-| Robinhood | https://robinhood.com/ | 자산 성장 그래프 — 감성적인 라인 차트, 호버 인터랙션 |
+
+| 사이트              | URL                                                            | 참고할 요소                                        |
+| ---------------- | -------------------------------------------------------------- | --------------------------------------------- |
+| savor.it         | [https://www.savor.it/](https://www.savor.it/)                 | 온보딩 구조 — 풀스크린 섹션마다 배경이 전환되는 스크롤 경험            |
+| ProjectionLab    | [https://projectionlab.app/](https://projectionlab.app/)       | 대시보드 레이아웃 — 왼쪽 입력 패널 + 오른쪽 그래프 고정 2-column 구조 |
+|                  |                                                                |                                               |
+| Stripe Dashboard | [https://dashboard.stripe.com/](https://dashboard.stripe.com/) | 결과 카드 컴포넌트 — 숫자 크게 강조, 깔끔한 metric card 스타일    |
+| Robinhood        | [https://robinhood.com/](https://robinhood.com/)               | 자산 성장 그래프 — 감성적인 라인 차트, 호버 인터랙션               |
+
 
 ---
 
@@ -76,6 +79,7 @@ font-weight: 400;
 ## 4. 온보딩 페이지
 
 ### 4-1. 전체 구조
+
 - 5개 섹션, 각 섹션 height: 100vh
 - **스크롤은 시각적 효과만** / 실제 진행은 버튼 또는 Enter 키
 - 마우스 휠·터치 스와이프로는 섹션 이동 불가 → `wheel` 이벤트 `preventDefault()` 처리
@@ -93,6 +97,7 @@ Section 5  결과 프리뷰     배경: #0FAD77 → #1E4FBF  (도달)
 각 섹션 중앙에 질문 텍스트 + 슬라이더 + 숫자 입력 필드 배치
 
 ### 4-3. 진행 방식
+
 - 값 입력 후 **Enter 키** 또는 **"다음 →" 버튼** 클릭 → 다음 섹션으로 이동
 - 섹션 이동: `scrollIntoView({ behavior: 'smooth' })` duration 800ms, ease-in-out
 - 입력값 없이 다음 클릭 시 → 입력 필드 shake 애니메이션 (Framer Motion)
@@ -100,11 +105,13 @@ Section 5  결과 프리뷰     배경: #0FAD77 → #1E4FBF  (도달)
 - 각 섹션 진입 시 입력 필드 자동 포커스 (autoFocus)
 
 ### 4-4. 배경 전환 애니메이션
+
 - Framer Motion `AnimatePresence` 사용
 - 배경: opacity + scale 크로스페이드 (duration 600ms)
 - 콘텐츠: y: 20 → 0, opacity: 0 → 1 (duration 500ms, ease-out)
 
 ### 4-5. Section 5 결과 프리뷰
+
 ```
 "35세부터 시작하면 50세에 낙원 도달 가능 🌴"
 
@@ -117,6 +124,7 @@ Section 5  결과 프리뷰     배경: #0FAD77 → #1E4FBF  (도달)
 ```
 
 ### 4-6. 온보딩 → 대시보드 전환
+
 - CTA 클릭 시 전체 페이지 페이드아웃 후 대시보드 페이드인 (duration 600ms)
 
 ---
@@ -124,6 +132,7 @@ Section 5  결과 프리뷰     배경: #0FAD77 → #1E4FBF  (도달)
 ## 5. 대시보드 페이지
 
 ### 5-1. 레이아웃 (데스크탑)
+
 ```
 ┌──────────────────────────────────────────────────┐
 │  Header: 로고 + "내 낙원까지 D-17년"  +  ⚙️ 설정  │
@@ -140,11 +149,13 @@ Section 5  결과 프리뷰     배경: #0FAD77 → #1E4FBF  (도달)
 ```
 
 ### 5-2. 레이아웃 (모바일)
+
 ```
 그래프 → 결과 카드 3종 (세로 스택) → 시나리오 비교
 ```
 
 ### 5-3. 결과 카드 스펙
+
 - 대시보드 첫 진입 시 카드 3종 순차 페이드인 (stagger 0.15초)
 - 숫자 카운트업 애니메이션: `react-countup`, duration 1.2초, 0에서 목표값까지
 - 카드 구성:
@@ -161,6 +172,7 @@ Section 5  결과 프리뷰     배경: #0FAD77 → #1E4FBF  (도달)
 ```
 
 ### 5-4. 그래프 스펙 (Recharts 기준)
+
 ```jsx
 // 진입 애니메이션
 isAnimationActive={true}
@@ -187,10 +199,12 @@ animationEasing="ease-out"
 ## 6. 설정 모달
 
 ### 6-1. 진입
+
 - 대시보드 우상단 ⚙️ 버튼 클릭
 - 배경 블러 (`backdrop-filter: blur(8px)`) + 모달 슬라이드인 (y: 40 → 0, duration 400ms)
 
 ### 6-2. 구성
+
 ```
 기본 설정
   • 현재 나이
@@ -211,11 +225,13 @@ animationEasing="ease-out"
 ## 7. 공통 컴포넌트 스펙
 
 ### 슬라이더
+
 - 슬라이더 + 숫자 직접 입력 병행
 - 드래그 시 숫자 카운터 애니메이션 (react-countup)
 - 주요 입력값에 추천 기본값 툴팁 표시
 
 ### 버튼
+
 ```css
 /* Primary CTA */
 background: var(--color-accent);
@@ -228,6 +244,7 @@ transition: all 200ms ease;
 ```
 
 ### 카드
+
 ```css
 background: var(--bg-card);
 border: 1px solid var(--border);

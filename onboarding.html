@@ -7,7 +7,19 @@
   <meta name="description" content="원하는 삶에서 출발하는 역산 FIRE 시뮬레이터" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300&family=Inter:wght@400;500;600;700;800;900&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&display=swap" rel="stylesheet" />
+  <style>
+    .ms {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal; font-style: normal;
+      font-size: inherit; line-height: 1;
+      letter-spacing: normal; text-transform: none;
+      display: inline-block; white-space: nowrap;
+      vertical-align: middle;
+      font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.min.css" />
 
   <style>
@@ -17,15 +29,15 @@
     :root {
       --bg-primary:    #FFFFFF;
       --bg-card:       #F7F7FC;
-      --color-primary: #1ce585;
-      --color-accent:  #1ce585;
+      --color-primary: #0a0a0a;
+      --color-accent:  #0a0a0a;
       --color-warning: #F59E0B;
       --text-primary:  #111827;
       --text-sub:      #6B7280;
       --border:        #E5E8F0;
 
-      --accent-dim:    #0fad77;
-      --accent-glow:   rgba(28, 229, 133, 0.14);
+      --accent-dim:    #2a2a2a;
+      --accent-glow:   rgba(0, 0, 0, 0.12);
 
       --ff-ko: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
       --ff-en: 'Inter', sans-serif;
@@ -73,7 +85,7 @@
       letter-spacing: -.2px;
     }
     .prog-back {
-      display: inline-flex; align-items: center; gap: 5px;
+      display: inline-flex; align-items: center; gap: 4px;
       font-family: var(--ff-en);
       font-size: 12px; font-weight: 700;
       letter-spacing: .04em;
@@ -102,8 +114,8 @@
       transition: width .4s cubic-bezier(.4,0,.2,1),
                   background .4s cubic-bezier(.4,0,.2,1);
     }
-    .dot.active { width: 24px; background: var(--color-accent); }
-    .dot.done   { background: rgba(28,229,133,.35); }
+    .dot.active { width: 24px; background: #ffffff; }
+    .dot.done   { background: rgba(255,255,255,.60); }
     /* prog-step 제거됨 */
 
     /* ══════════════════════════════════════════
@@ -120,21 +132,21 @@
       overflow: hidden;
     }
 
-    /* Dark green sections — 진행될수록 진해짐 */
-    #s1 { background: #00592b; }
+    /* 섹션별 배경 (accent는 :root 블랙 공통 사용) */
+    #s1 { background: #8CAD35; }
     #s2 { background: #004824; }
     #s3 { background: #00391c; }
     #s4 { background: #002b14; }
     #s5 { background: #001d0d; }
 
-    /* ambient radial glow — green center */
+    /* ambient radial glow — 섹션 accent 색 반영 */
     .section::before {
       content: '';
       position: absolute;
       inset: 0;
       background: radial-gradient(
         ellipse 60% 50% at 50% 40%,
-        rgba(28,229,133,.10) 0%,
+        var(--accent-glow) 0%,
         transparent 70%
       );
       pointer-events: none;
@@ -152,8 +164,8 @@
       /* card 속성 (대시보드 통일) */
       background: #FFFFFF;
       border: 1px solid #E5E9F0;
-      border-radius: 16px;
-      padding: 40px 36px;
+      border-radius: 24px;
+      padding: 48px 64px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
       /* 두둥실 등장 — 기본 상태 (숨김) */
       opacity: 0;
@@ -217,7 +229,7 @@
       align-items: baseline;
     }
 
-    /* ── 숫자 표시 (자릿수 span들의 flex 컨테이너) ── */
+    /* ── 숫자 표시 ── */
     .num-display {
       font-family: var(--ff-en);
       font-size: 84px;
@@ -225,33 +237,15 @@
       color: var(--color-accent);
       line-height: 1;
       letter-spacing: -0.045em;
-      display: inline-flex;
-      align-items: flex-end;
-      transition: color .2s;
-    }
-
-    /* 정적 자릿수 (변하지 않은 숫자·쉼표) */
-    .d-char { display: inline-block; }
-
-    /* 변하는 자릿수 — 개별 overflow 마스크 */
-    .d-anim-wrap {
       display: inline-block;
-      overflow: hidden;      /* 이 자릿수만 세로 클리핑 */
-      height: 1em;           /* 정확히 한 글자 높이 */
-      vertical-align: bottom;
+      opacity: 1;
+      transform: translateY(0);
     }
-    .d-anim { display: block; line-height: 1; }
 
-    @keyframes numSlideUp {
-      from { transform: translateY(100%); opacity: 0; }
-      to   { transform: translateY(0);    opacity: 1; }
+    /* 숫자 opacity transition — 인라인 style 제거 시 자동 복원 */
+    .num-display {
+      transition: opacity .12s ease, transform .12s ease, color .2s;
     }
-    @keyframes numSlideDown {
-      from { transform: translateY(-100%); opacity: 0; }
-      to   { transform: translateY(0);     opacity: 1; }
-    }
-    .d-anim.flip-up   { animation: numSlideUp   .22s cubic-bezier(.4,0,.2,1) both; }
-    .d-anim.flip-down { animation: numSlideDown .22s cubic-bezier(.4,0,.2,1) both; }
 
     .unit {
       font-family: var(--ff-en);
@@ -286,23 +280,23 @@
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 8px; height: 8px;
+      width: 16px; height: 16px;
       border-radius: 50%;
       background: var(--color-accent);
       cursor: pointer;
       box-shadow:
-        0 0 0 2px rgba(28,229,133,.20),
-        0 0 8px rgba(28,229,133,.28);
+        0 0 0 3px var(--accent-glow),
+        0 0 10px var(--accent-glow);
       transition: box-shadow .2s ease, transform .15s ease;
     }
     input[type="range"]::-webkit-slider-thumb:hover {
       box-shadow:
-        0 0 0 4px rgba(28,229,133,.24),
-        0 0 12px rgba(28,229,133,.40);
-      transform: scale(1.2);
+        0 0 0 6px var(--accent-glow),
+        0 0 16px var(--accent-glow);
+      transform: scale(1.15);
     }
     input[type="range"]::-moz-range-thumb {
-      width: 8px; height: 8px;
+      width: 16px; height: 16px;
       border-radius: 50%; border: none;
       background: var(--color-accent);
       cursor: pointer;
@@ -330,35 +324,62 @@
     .btn-next {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 4px;
       padding: 15px 34px;
-      border-radius: 12px;
+      border-radius: 100px;
       background: var(--color-accent);
-      color: #022b1a;
+      color: #ffffff;
       font-family: var(--ff-ko);
       font-size: 16px;
       font-weight: 700;
       border: none;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(28,229,133,.22);
+      box-shadow: 0 4px 20px var(--accent-glow);
       transition: transform 200ms ease,
                   box-shadow 200ms ease,
                   background 150ms ease;
     }
     .btn-next:hover {
       transform: translateY(-1px);
-      box-shadow: 0 0 20px rgba(28,229,133,.40);
+      box-shadow: 0 0 28px var(--accent-glow);
     }
     .btn-next:active { transform: translateY(0); }
-    .btn-next .arrow { font-size: 16px; transition: transform .2s; }
-    .btn-next:hover .arrow { transform: translateX(4px); }
+    /* ── 공통 arrow 아이콘 (SVG) ── */
+    .arrow {
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+      line-height: 1;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .arrow svg { display: block; }
+    /* btn-next / btn-l-start / prog-back: arrow 항상 보이되 hover에 슬라이드 */
+    .btn-next .arrow,
+    .btn-l-start .arrow,
+    .prog-back .arrow  { opacity: 1; transform: translateX(0); }
+
+    .btn-next:hover .arrow,
+    .btn-l-start:hover .arrow { transform: translateX(4px); }
+
+    .prog-back:hover .arrow  { transform: translateX(-4px); }
+
+    /* btn-prev: arrow 기본 숨김 → hover 시 왼쪽에 등장 */
+    .btn-prev .arrow {
+      opacity: 0;
+      transform: translateX(6px);
+    }
+    .btn-prev:hover .arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
 
     /* Ghost prev button */
     .btn-prev {
       display: inline-flex;
       align-items: center;
+      gap: 4px;
       padding: 14px 20px;
-      border-radius: 12px;
+      border-radius: 100px;
       background: transparent;
       color: rgba(0,0,0,.35);
       border: none;
@@ -466,15 +487,15 @@
       gap: 4px;
     }
     .pcard-sel:hover {
-      border-color: rgba(28,229,133,.4);
-      background: rgba(28,229,133,.04);
+      border-color: rgba(0,0,0,.25);
+      background: rgba(0,0,0,.03);
       transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(28,229,133,.10);
+      box-shadow: 0 4px 20px rgba(0,0,0,.08);
     }
     .pcard-sel.selected {
       border-color: var(--color-accent);
-      background: rgba(28,229,133,.07);
-      box-shadow: 0 0 20px rgba(28,229,133,.16);
+      background: rgba(0,0,0,.05);
+      box-shadow: 0 0 20px rgba(0,0,0,.10);
     }
     .ps-emoji { font-size: 20px; margin-bottom: 4px; }
     .ps-name  { font-size: 14px; font-weight: 700; color: var(--text-primary); }
@@ -489,19 +510,19 @@
       padding: 18px 52px;
       border-radius: 12px;
       background: var(--color-accent);
-      color: #022b1a;
+      color: #ffffff;
       font-family: var(--ff-ko);
       font-size: 17px;
       font-weight: 700;
       border: none;
       cursor: pointer;
-      box-shadow: 0 4px 24px rgba(28,229,133,.26);
+      box-shadow: 0 4px 24px rgba(0,0,0,.18);
       transition: transform 200ms ease,
                   box-shadow 200ms ease;
     }
     .btn-cta:hover {
       transform: translateY(-1px);
-      box-shadow: 0 0 24px rgba(28,229,133,.42);
+      box-shadow: 0 0 24px rgba(0,0,0,.28);
     }
     .btn-cta:active { transform: translateY(0); }
     .cta-arrow { font-size: 18px; transition: transform .2s; }
@@ -523,7 +544,7 @@
     ══════════════════════════════════════════ */
     @media (max-width: 560px) {
       #progress { padding: 20px 20px; }
-      .content  { padding: 28px 20px; }
+      .content  { padding: 36px 24px; }
       .question { font-size: 26px; }
       .input-block { margin-top: 28px; }
       .nav-row     { margin-top: 28px; }
@@ -534,86 +555,82 @@
     }
 
     /* ══════════════════════════════════════════
-       Landing Screen  (Monte-style)
+       Landing Screen
     ══════════════════════════════════════════ */
     #landing {
       position: fixed; inset: 0; z-index: 300;
-      background: #000;
-      color: #000;
+      background: #8CAD35;          /* 올리브 그린 배경 */
       display: flex; align-items: center; justify-content: center;
       opacity: 1;
       transition: opacity .55s ease;
     }
-    #landing.hide {
-      opacity: 0; pointer-events: none;
-    }
+    #landing.hide { opacity: 0; pointer-events: none; }
 
-    /* 배경 비디오 */
-    #l-bg-video {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      object-fit: cover;
-      z-index: 0;
-    }
-    /* 비디오 위 오버레이 (텍스트 가독성) */
-    #landing::after {
-      content: '';
-      position: absolute; inset: 0; z-index: 0;
-      background: rgba(255,255,255,.95);
-    }
+    /* 비디오 숨김 — 솔리드 컬러 사용 */
+    #l-bg-video { display: none; }
+    #landing::after { display: none; }
 
-    /* ── 중앙 콘텐츠 그룹 ── */
+    /* ── 전체 콘텐츠 중앙 컬럼 ── */
     .l-content {
       position: relative; z-index: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      padding: 0 24px;
+      padding: 0 32px;
+      width: 100%;
+      max-width: 860px;
     }
 
-    /* ══ Hero — 헤드라인 + 장식 이미지 오버랩 ══ */
+    /* ── Eyebrow 레이블 ── */
+    .l-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.75);
+      margin-bottom: 28px;
+    }
+
+    /* ══ Hero — Inria Sans 헤드라인 + 장식 이미지 ══ */
     .l-hero {
-      position: relative;           /* 장식 이미지의 기준점 */
+      position: relative;
       text-align: center;
-      margin-bottom: 40px;
-      /* 두 줄 사이 공간을 이미지 크기의 절반만큼 확보 */
-      --deco-w: clamp(96px, 13vw, 172px);
+      margin-bottom: 36px;
+      --deco-w: clamp(88px, 12vw, 148px);
     }
 
-    /* 두 타이틀 줄 공통 스타일 */
     .l-title-top,
     .l-title-btm {
       display: block;
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 84px;
-      font-weight: 900;
-      font-style: italic;
-      line-height: 0.92;
-      letter-spacing: -2px;
-      color: #000;
+      font-family: 'Inria Sans', sans-serif;
+      font-size: 120px;
+      font-weight: 300;             /* Light */
+      font-style: normal;
+      line-height: 0.95;
+      letter-spacing: -.05em;
+      color: #0c1a06;
       text-transform: uppercase;
       position: relative;
-      z-index: 1;           /* 텍스트는 이미지 뒤 */
+      z-index: 1;
     }
 
-    /* 첫 줄 아래에 이미지가 앉을 공간 확보 */
-    .l-title-top {
-      padding-bottom: 12px;
-    }
+    .l-title-top { padding-bottom: 10px; }
 
-    /* ── 장식 이미지 (절대 배치, 두 줄 중앙 겹침) ── */
+    /* 장식 이미지 — 첫 줄 "TO GO" 사이 위치 */
     .l-deco {
       position: absolute;
-      /* 수직: 첫 줄 하단 ~ 두 번째 줄 상단 사이 중앙 */
-      top: calc(50% - calc(var(--deco-w) * 0.55 * 0.5));
+      top: 60px;                    /* 120px 타이틀의 수직 중앙 */
       left: 50%;
       transform: translate(-50%, -50%);
       width: var(--deco-w);
       height: var(--deco-w);
       object-fit: contain;
-      pointer-events: none;   /* 클릭 이벤트 통과 */
-      z-index: 2;             /* 텍스트 위에 렌더링 */
+      pointer-events: none;
+      z-index: 2;
+      mix-blend-mode: overlay;
+      opacity: .3;
       animation: decoIn 1.2s cubic-bezier(.16,1,.3,1) both;
     }
 
@@ -622,60 +639,60 @@
       to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     }
 
-    /* ── Mobile ─ deco 크기 축소 ── */
-    @media (max-width: 700px) {
-      .l-hero { --deco-w: clamp(72px, 20vw, 100px); }
-    }
-
     /* ── 롤링 서브타이틀 ── */
     .l-rolling-wrap {
-      height: 28px;
+      height: 24px;
       overflow: hidden;
       position: relative;
-      margin-bottom: 0;
     }
     .l-rolling-text {
       display: block;
       text-align: center;
       font-family: 'Inter', sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      color: rgba(0,0,0,.65);
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(12,26,6,.55);
       white-space: nowrap;
       opacity: 1;
       transform: translateY(0);
       transition: opacity .35s ease, transform .35s ease;
       letter-spacing: .01em;
     }
-    .l-rolling-text.out {
-      opacity: 0;
-      transform: translateY(-14px);
-    }
-    .l-rolling-text.in {
-      opacity: 0;
-      transform: translateY(14px);
-      transition: none;
-    }
+    .l-rolling-text.out { opacity: 0; transform: translateY(-12px); }
+    .l-rolling-text.in  { opacity: 0; transform: translateY(12px); transition: none; }
 
+    /* ── 시작 버튼 ── */
     .btn-l-start {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 16px 56px;
-      background: #000; color: #fff;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 15px 40px;
+      background: #0c1a06; color: #fff;
       font-family: 'Inter', sans-serif;
-      font-size: 15px; font-weight: 700;
-      border: none; border-radius: 999px; cursor: pointer;
+      font-size: 14px; font-weight: 700;
+      border: none; border-radius: 100px; cursor: pointer;
       transition: opacity .2s ease, transform .2s ease;
-      letter-spacing: .04em;
+      letter-spacing: .05em;
       text-transform: uppercase;
-      margin-top: 48px;
+      margin-top: 40px;
     }
-    .btn-l-start:hover { opacity: .8; transform: translateY(-2px); }
+    .btn-l-start:hover { opacity: .8; transform: translateY(-1px); }
 
     /* ── Mobile ── */
     @media (max-width: 700px) {
+      .l-hero { --deco-w: clamp(64px, 18vw, 96px); }
       .l-title-top,
-      .l-title-btm { font-size: clamp(36px, 11vw, 60px); letter-spacing: -1px; }
+      .l-title-btm { font-size: clamp(40px, 14vw, 80px); }
+      .l-deco { top: calc(clamp(40px, 14vw, 80px) * 0.5); }
       .l-rolling-text { font-size: 13px; }
+    }
+
+    /* ── 동전 낙하 캔버스 ── */
+    #coin-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
     }
 
   </style>
@@ -693,13 +710,18 @@
     src="https://cdn.midjourney.com/video/110cd6b5-8978-4268-bcd1-4f6e61e46ba3/2.mp4">
   </video>
 
+  <!-- 동전 낙하 캔버스 -->
+  <canvas id="coin-canvas"></canvas>
+
   <!-- 중앙 그룹 -->
   <div class="l-content">
 
-    <!-- ── Hero: 헤드라인 텍스트 + 장식 이미지 겹침 ── -->
+    <!-- Eyebrow 레이블 -->
+    <p class="l-eyebrow">Money Plan Calculator</p>
+
+    <!-- Hero: 헤드라인 + 장식 이미지 -->
     <h1 class="l-hero">
       <span class="l-title-top">How to go to</span>
-      <!-- 장식 이미지: position absolute, pointer-events none -->
       <img class="l-deco" src="assets/paradise-icon.png" alt="" />
       <span class="l-title-btm">the Paradise</span>
     </h1>
@@ -710,7 +732,7 @@
     </div>
 
     <button class="btn-l-start" onclick="startOnboarding()">
-      시작하기 →
+      시작하기 <span class="arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </button>
   </div>
 
@@ -718,7 +740,7 @@
 
 <!-- Header / progress bar (온보딩 시작 후 표시) -->
 <nav id="progress" style="display:none">
-  <button class="prog-back" onclick="goToLanding()">← Back</button>
+  <button class="prog-back" onclick="goToLanding()"><span class="arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Back</button>
   <div class="prog-dots">
     <div class="dot active" data-i="0"></div>
     <div class="dot" data-i="1"></div>
@@ -751,7 +773,7 @@
       </div>
       <div class="nav-row">
         <button class="btn-next" id="btn1" onclick="next()">
-          다음 <span class="arrow">→</span>
+          다음 <span class="arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </button>
       </div>
     </div>
@@ -773,8 +795,8 @@
         </div>
       </div>
       <div class="nav-row">
-        <button class="btn-prev" onclick="prev()">이전</button>
-        <button class="btn-next" onclick="next()">다음 <span class="arrow">→</span></button>
+        <button class="btn-prev" onclick="prev()"><span class="arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> 이전</button>
+        <button class="btn-next" onclick="next()">다음 <span class="arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
       </div>
     </div>
   </section>
@@ -795,8 +817,8 @@
         </div>
       </div>
       <div class="nav-row">
-        <button class="btn-prev" onclick="prev()">이전</button>
-        <button class="btn-next" onclick="next()">다음 <span class="arrow">→</span></button>
+        <button class="btn-prev" onclick="prev()"><span class="arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> 이전</button>
+        <button class="btn-next" onclick="next()">다음 <span class="arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
       </div>
     </div>
   </section>
@@ -817,8 +839,8 @@
         </div>
       </div>
       <div class="nav-row">
-        <button class="btn-prev" onclick="prev()">이전</button>
-        <button class="btn-next" onclick="next()">결과 미리보기 <span class="arrow">→</span></button>
+        <button class="btn-prev" onclick="prev()"><span class="arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> 이전</button>
+        <button class="btn-next" onclick="next()">결과 미리보기 <span class="arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
       </div>
     </div>
   </section>
@@ -829,7 +851,7 @@
 
       <p class="preview-headline">
         <span id="ph-age">35</span>세부터 시작하면<br/>
-        <span class="hl" id="ph-retire">50</span>세에 낙원 도달 가능 🌴
+        <span class="hl" id="ph-retire">50</span>세에 낙원 도달 가능 <span class="ms" style="font-size:20px;vertical-align:middle">park</span>
       </p>
 
       <!-- Preview cards — DESIGN_SPEC §7 card spec -->
@@ -943,46 +965,25 @@ const FIELDS = [
 ];
 
 /* ── 자릿수별 플립 렌더링 ── */
-function renderDigits(numEl, newText, dir, oldText) {
-  const old = oldText || '';
+/* ── 슬라이더 숫자 업데이트 ── */
+function flipNum(el, newText) {
+  /* 진행 중인 countUp 취소 */
+  _cuGen[el.id] = (_cuGen[el.id] || 0) + 1;
 
-  /* 오른쪽 정렬 비교: 뒤에서부터 자릿수 일치 여부 확인 */
-  const changedIdx = new Set();
-  let oi = old.length - 1;
-  for (let ni = newText.length - 1; ni >= 0; ni--, oi--) {
-    const nch = newText[ni];
-    const och = oi >= 0 ? old[oi] : null;
-    if (/\d/.test(nch) && nch !== och) changedIdx.add(ni);
-  }
+  const s = String(newText);
+  if (el.dataset.val === s) return;
 
-  numEl.innerHTML = '';
-  [...newText].forEach((ch, i) => {
-    if (changedIdx.has(i)) {
-      /* 변한 자릿수 → 개별 마스크 + 슬라이드 애니메이션 */
-      const wrap  = document.createElement('span');
-      wrap.className = 'd-anim-wrap';
-      const inner = document.createElement('span');
-      inner.className = `d-anim flip-${dir}`;
-      inner.textContent = ch;
-      wrap.appendChild(inner);
-      numEl.appendChild(wrap);
-    } else {
-      /* 그대로인 자릿수·쉼표 → 정적 */
-      const span = document.createElement('span');
-      span.className = 'd-char';
-      span.textContent = ch;
-      numEl.appendChild(span);
-    }
+  /* 1) 텍스트 즉시 설정 — 항상 표시 보장 */
+  el.textContent = s;
+  el.dataset.val = s;
+
+  /* 2) 짧은 opacity pulse (transition 활용) */
+  el.style.opacity   = '0.35';
+  el.style.transform = 'translateY(6px)';
+  requestAnimationFrame(() => {
+    el.style.opacity   = '';   /* 인라인 제거 → CSS 기본값(1)으로 transition */
+    el.style.transform = '';
   });
-
-  numEl.dataset.val = newText;
-}
-
-/* ── 슬라이더 숫자 flip 진입점 ── */
-function flipNum(el, newText, dir) {
-  const oldText = el.dataset.val || el.textContent.trim();
-  if (oldText === newText) return;
-  renderDigits(el, newText, dir, oldText);
 }
 
 function bindFields() {
@@ -994,12 +995,11 @@ function bindFields() {
 
     let prevVal = +slEl.value;
 
-    /* Slider → span 업데이트 + flip 애니메이션 */
+    /* Slider → 숫자 업데이트 */
     slEl.addEventListener('input', () => {
       const newVal = +slEl.value;
-      const dir    = newVal >= prevVal ? 'up' : 'down';
       D[key] = newVal;
-      flipNum(numEl, fmt(newVal), dir);
+      flipNum(numEl, fmt(newVal));
       prevVal = newVal;
       fillSlider(slEl);
       if (cur === 4) updatePreview();
@@ -1064,22 +1064,26 @@ function updatePreview() {
 
 /* ── Go to section ── */
 /* ── 카운트업 애니메이션 ── */
-function countUp(el, target, fmt, duration) {
-  const start     = performance.now();
-  const startVal  = 0;
-  /* easeOutCubic: 빠르게 올라오다 부드럽게 착지 */
-  const ease = t => 1 - Math.pow(1 - t, 3);
+/* 요소별 countUp 세대 번호 — flipNum 호출 시 이전 countUp 취소 */
+const _cuGen = {};
 
-  /* 천 단위 쉼표가 필요한 경우를 위해 raw 숫자로 보간 */
+function countUp(el, target, fmt, duration) {
+  const id  = el.id;
+  const gen = (_cuGen[id] = (_cuGen[id] || 0) + 1);
+  const start = performance.now();
+  const ease  = t => 1 - Math.pow(1 - t, 3);
+
   function tick(now) {
-    const elapsed = now - start;
+    if (_cuGen[id] !== gen) return;          /* 취소됨 — 즉시 종료 */
+    const elapsed  = now - start;
     const progress = Math.min(elapsed / duration, 1);
-    const current = Math.round(startVal + (target - startVal) * ease(progress));
+    const current  = Math.round(target * ease(progress));
     el.textContent = fmt(current);
-    if (progress < 1) requestAnimationFrame(tick);
-    else {
-      el.textContent = fmt(target);        /* 최종값 보정 */
-      el.dataset.val  = fmt(target);       /* flipNum 비교 기준 세팅 */
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      el.textContent = fmt(target);
+      el.dataset.val  = fmt(target);
     }
   }
   requestAnimationFrame(tick);
@@ -1239,9 +1243,202 @@ function init() {
   bindFields();
   updatePreview();
   startRolling();
+  initCoinRain();
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+/* ═══════════════════════════════════════════════
+   동전 낙하 · 쌓기 애니메이션
+   ─ requestAnimationFrame 기반 순수 Canvas 구현 ─
+═══════════════════════════════════════════════ */
+function initCoinRain() {
+  const canvas = document.getElementById('coin-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  /* ── 설정 상수 ── */
+  const R          = 13;      // 동전 반지름 px
+  const GRAVITY    = 0.38;    // 중력 가속도
+  const RESTITUTION = 0.44;   // 바운스 반발 계수 (0=흡수, 1=완전 탄성)
+  const VY_SETTLE  = 0.65;    // 이 이하 속도면 정착
+  const MAX_COINS  = 60;      // 최대 동전 수
+  const SPAWN_MS   = 700;     // 새 동전 생성 주기 (ms)
+  const RECYCLE_MS = 5000;    // 정착 후 재낙하 대기 시간 (ms)
+  const MAX_FALLING = 6;      // 동시 낙하 최대 수
+  const BUCKET     = 3;       // 바닥 맵 x 해상도 (px)
+
+  let coins    = [];
+  let floorMap = [];
+  let lastSpawn = 0;
+
+  /* ── 캔버스 크기 동기화 ── */
+  function resize() {
+    canvas.width  = canvas.offsetWidth  || window.innerWidth;
+    canvas.height = canvas.offsetHeight || window.innerHeight;
+    rebuildFloor();
+  }
+
+  /* ── 바닥 높이 맵 (x 위치별 현재 "쌓인 높이") ── */
+  function initFloor() {
+    const len = Math.ceil(canvas.width / BUCKET) + 2;
+    floorMap = new Array(len).fill(canvas.height);
+  }
+
+  function rebuildFloor() {
+    initFloor();
+    coins.filter(c => c.settled).forEach(c => stampFloor(c.x, c.y));
+  }
+
+  function readFloor(x) {
+    const b = Math.max(0, Math.min(Math.floor(x / BUCKET), floorMap.length - 1));
+    return floorMap[b];
+  }
+
+  /* 정착한 동전의 위치로 바닥 맵 갱신 */
+  function stampFloor(x, y) {
+    const s = Math.floor((x - R) / BUCKET);
+    const e = Math.ceil ((x + R) / BUCKET);
+    for (let b = s; b <= e; b++) {
+      if (b >= 0 && b < floorMap.length) {
+        const top = y - R * 0.55;  // 살짝 겹쳐 쌓임감 표현
+        if (top < floorMap[b]) floorMap[b] = top;
+      }
+    }
+  }
+
+  /* ── 동전 클래스 ── */
+  class Coin {
+    constructor() { this.reset(); }
+
+    reset() {
+      const w    = Math.max(1, canvas.width - R * 6);
+      this.x     = R * 3 + Math.random() * w;
+      this.y     = -R - Math.random() * 140;   // 랜덤 높이에서 출발
+      this.vy    = 1.5 + Math.random() * 2.5;
+      this.vx    = (Math.random() - 0.5) * 1.8;
+      this.rot   = Math.random() * Math.PI * 2;
+      this.rotV  = (Math.random() - 0.5) * 0.22;
+      this.settled   = false;
+      this.settledAt = 0;
+    }
+
+    update(ts) {
+      if (this.settled) return;
+
+      this.vy  += GRAVITY;
+      this.y   += this.vy;
+      this.x   += this.vx;
+      this.rot += this.rotV;
+
+      /* 좌우 벽 반사 */
+      if (this.x < R)                { this.x = R;                this.vx =  Math.abs(this.vx) * 0.5; }
+      if (this.x > canvas.width - R) { this.x = canvas.width - R; this.vx = -Math.abs(this.vx) * 0.5; }
+
+      /* 바닥 / 쌓인 동전 충돌 */
+      const floor = readFloor(this.x);
+      if (this.y + R >= floor) {
+        this.y   = floor - R;
+        this.vy  = -this.vy * RESTITUTION;
+        this.vx *= 0.72;
+        this.rotV *= 0.55;
+
+        if (Math.abs(this.vy) < VY_SETTLE) {
+          this.settled   = true;
+          this.vy = this.vx = this.rotV = 0;
+          this.settledAt = ts;
+          stampFloor(this.x, this.y);
+        }
+      }
+    }
+
+    draw() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rot);
+
+      /* 그림자 */
+      ctx.beginPath();
+      ctx.arc(2, 4, R, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.18)';
+      ctx.fill();
+
+      /* 동전 본체 — 방사형 그라디언트 */
+      const g = ctx.createRadialGradient(-R * 0.3, -R * 0.35, R * 0.05, 0, 0, R);
+      g.addColorStop(0,   '#FFE87A');
+      g.addColorStop(0.5, '#D4A017');
+      g.addColorStop(1,   '#8A6000');
+      ctx.beginPath();
+      ctx.arc(0, 0, R, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
+
+      /* 바깥 테두리 */
+      ctx.beginPath();
+      ctx.arc(0, 0, R - 0.5, 0, Math.PI * 2);
+      ctx.strokeStyle = '#7A5200';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      /* 안쪽 링 */
+      ctx.beginPath();
+      ctx.arc(0, 0, R * 0.68, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255,235,100,0.4)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      /* ₩ 심볼 */
+      ctx.fillStyle = '#7A5200';
+      ctx.font = `bold ${Math.round(R * 1.15)}px Inter, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('₩', 0, 1);
+
+      ctx.restore();
+    }
+  }
+
+  /* ── 스폰 / 재활용 ── */
+  function spawnOrRecycle(ts) {
+    if (coins.length < MAX_COINS) {
+      coins.push(new Coin());
+      return;
+    }
+    /* MAX 도달 시 가장 오래된 정착 동전을 재낙하 */
+    const oldest = coins
+      .filter(c => c.settled && ts - c.settledAt > RECYCLE_MS)
+      .sort((a, b) => a.settledAt - b.settledAt)[0];
+    if (oldest) {
+      rebuildFloor();   // 재활용 전 바닥 맵 재계산
+      oldest.reset();
+    }
+  }
+
+  /* ── RAF 루프 ── */
+  function loop(ts) {
+    const landing = document.getElementById('landing');
+    const visible = landing && !landing.classList.contains('hide');
+
+    if (visible) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const falling = coins.filter(c => !c.settled).length;
+      if (ts - lastSpawn > SPAWN_MS && falling < MAX_FALLING) {
+        spawnOrRecycle(ts);
+        lastSpawn = ts;
+      }
+
+      coins.forEach(c => { c.update(ts); c.draw(); });
+    }
+
+    requestAnimationFrame(loop);
+  }
+
+  /* ── 초기화 ── */
+  resize();
+  window.addEventListener('resize', () => { coins = []; resize(); });
+  requestAnimationFrame(loop);
+}
 </script>
 </body>
 </html>
