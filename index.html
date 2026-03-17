@@ -60,23 +60,78 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 3px; }
 
-    /* ─── 헤더 ─── */
-    .header {
-      position: sticky; top: 0; z-index: 100;
+    /* ─── 앱 셸 레이아웃 ─── */
+    .app-shell { display: flex; min-height: 100vh; }
+
+    /* ─── 탑바 (full-width sticky) ─── */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 56px; background: var(--bg-card);
       border-bottom: 1px solid var(--border);
-      padding: 16px 28px;
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center;
+    }
+    .topbar-logo {
+      width: 52px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      align-self: stretch;
+      border-right: 1px solid var(--border);
+      font-size: 20px; color: var(--text-2); user-select: none;
+    }
+    .topbar-inner {
+      flex: 1; display: flex; align-items: center; gap: 12px;
+      padding: 0 20px;
+    }
+    .topbar-search {
+      display: flex; align-items: center; gap: 7px;
+      height: 34px; width: 220px; flex-shrink: 0;
+      background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: var(--r-sm); padding: 0 12px;
+      font-size: 13px; color: var(--text-3); cursor: text;
+    }
+    .topbar-search .ms { font-size: 15px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-right { display: flex; align-items: center; gap: 4px; }
+    .topbar-icon-btn {
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: var(--r-sm); font-size: 19px;
+      color: var(--text-3); cursor: pointer;
+      transition: all var(--ease); background: transparent; border: none;
+      font-family: var(--font);
+    }
+    .topbar-icon-btn:hover { background: var(--bg-input); color: var(--text-1); }
+    .avatar {
+      width: 32px; height: 32px; margin-left: 4px;
+      background: var(--primary); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff; cursor: pointer;
     }
 
-    .logo { display: flex; align-items: center; gap: 11px; }
-    .logo-icon { font-size: 26px; line-height: 1; }
-    .logo-title {
-      font-size: 19px; font-weight: 800; letter-spacing: -0.5px;
+    /* ─── 좌측 아이콘 내비 ─── */
+    .nav-side {
+      width: 52px; position: fixed; left: 0; top: 56px; bottom: 0;
+      background: var(--bg-card); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 12px 0; z-index: 90; gap: 2px;
     }
-    .logo-title em { color: var(--primary); font-style: normal; }
-    .logo-sub { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+    .nav-icon {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 8px; font-size: 20px;
+      color: var(--text-3); cursor: pointer;
+      transition: all var(--ease); user-select: none;
+      text-decoration: none; border: none; background: transparent;
+      font-family: var(--font);
+    }
+    .nav-icon:hover { background: var(--bg-input); color: var(--text-1); }
+    .nav-icon.active { background: var(--primary-glow); color: var(--primary); }
+    .nav-spacer { flex: 1; }
 
-    .header-right { display: flex; gap: 8px; align-items: center; }
+    /* ─── 메인 래퍼 ─── */
+    .main-wrapper {
+      margin-left: 52px; margin-top: 56px;
+      flex: 1; display: flex; flex-direction: column; min-height: calc(100vh - 56px);
+    }
 
     /* ─── 버튼 ─── */
     .btn {
@@ -108,10 +163,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ─── 레이아웃 ─── */
-    .layout {
-      min-height: calc(100vh - 61px);
-    }
+    /* (layout removed — using .main-wrapper) */
 
     /* ─── 사이드바 오버레이 ─── */
     .sidebar-overlay {
@@ -126,7 +178,7 @@
     /* ─── 조정 사이드바 ─── */
     .sidebar {
       position: fixed;
-      top: 61px; right: 0; bottom: 0;
+      top: 56px; right: 0; bottom: 0;
       width: 380px;
       background: rgba(255, 255, 255, 0.97);
       border-left: 1px solid var(--border);
@@ -287,22 +339,69 @@
 
     /* ─── 콘텐츠 영역 ─── */
     .content {
+      flex: 1;
       padding: 0 40px 48px;
-      display: flex; flex-direction: column; gap: 20px;
+      display: flex; flex-direction: column; gap: 16px;
     }
 
-    /* ─── 인사 영역 ─── */
-    .greeting-section {
-      padding-top: 84px;
-      margin-bottom: 30px; /* gap 20px + 30px = 카드와 50px 간격 */
-      display: flex; flex-direction: column; gap: 6px;
+    /* ─── 페이지 헤더 ─── */
+    .page-hd {
+      padding-top: 40px; margin-bottom: 4px;
+      display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
     }
-    .greeting-title {
-      font-size: 38px; font-weight: 800;
-      letter-spacing: -1px; line-height: 1.2;
-      color: var(--text-1);
+    .page-title {
+      font-size: 30px; font-weight: 700;
+      letter-spacing: -0.5px; line-height: 1.25; color: var(--text-1);
     }
-    .greeting-title .g-name { color: var(--primary); }
+    .page-title .g-name { color: var(--primary); }
+    .page-sub { font-size: 13px; color: var(--text-3); margin-top: 4px; }
+
+    /* ─── 탭 그룹 ─── */
+    .tab-group {
+      display: flex; gap: 2px; flex-shrink: 0;
+      background: var(--bg-input); border-radius: var(--r-sm); padding: 3px;
+    }
+    .tab {
+      padding: 6px 14px; border-radius: 6px;
+      font-size: 13px; font-weight: 500; border: none;
+      background: transparent; color: var(--text-3);
+      cursor: pointer; transition: all var(--ease); font-family: var(--font);
+    }
+    .tab.active {
+      background: var(--bg-card); color: var(--text-1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    /* ─── 제안 영역 ─── */
+    .suggest-area { display: flex; flex-direction: column; gap: 10px; }
+    .suggest-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .suggest-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 12px; background: var(--bg-card);
+      border: 1px solid var(--border); border-radius: var(--r-sm);
+      font-size: 12px; font-weight: 500; color: var(--text-2);
+      cursor: pointer; transition: all var(--ease);
+      font-family: var(--font);
+    }
+    .suggest-chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-glow); }
+    .suggest-chip .ms { font-size: 14px; }
+    .suggest-list { display: flex; flex-direction: column; }
+    .suggest-item {
+      font-size: 14px; color: var(--text-2);
+      cursor: pointer; padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      transition: color var(--ease); line-height: 1.4;
+    }
+    .suggest-item:first-child { border-top: 1px solid var(--border); }
+    .suggest-item:hover { color: var(--text-1); }
+    .suggest-item strong { color: var(--text-1); font-weight: 600; }
+    .suggest-box {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .suggest-box-text { flex: 1; font-size: 14px; color: var(--text-3); }
+    .suggest-box-actions { display: flex; gap: 8px; }
 
     /* ─── 결과 카드 ─── */
     .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
@@ -421,15 +520,16 @@
       .content { padding: 0 24px 36px; }
     }
     @media (max-width: 700px) {
-      .sidebar { width: 100%; top: 0; }
+      .sidebar { width: 100%; top: 56px; }
+      .nav-side { display: none; }
+      .main-wrapper { margin-left: 0; }
     }
     @media (max-width: 560px) {
-      .header  { padding: 12px 16px; }
       .content { padding: 0 14px 24px; }
-      .greeting-title { font-size: 26px; }
+      .page-title { font-size: 22px; }
       .cards   { grid-template-columns: 1fr 1fr; gap: 8px; }
       .chart-wrap { height: 230px; }
-      .btn .btn-text { display: none; }
+      .tab-group { display: none; }
     }
 
     /* ─── 애니메이션 ─── */
@@ -439,16 +539,21 @@
 </head>
 <body>
 
-<!-- ═══ 헤더 ═══ -->
-<header class="header">
-  <div class="logo">
-    <div class="logo-title">파라다이스 계산기</div>
-  </div>
-  <div class="header-right">
-    <a href="onboarding.html" class="btn btn-ghost" style="text-decoration:none">← 다시 입력</a>
-    <button class="btn btn-outline" id="btn-share"><span class="ico ms">share</span><span class="btn-text">공유하기</span></button>
-    <button class="btn btn-outline" id="btn-dl"><span class="ico ms">photo_camera</span><span class="btn-text">이미지 저장</span></button>
-    <button class="btn btn-primary" id="btn-settings" onclick="toggleSidebar()"><span class="ico ms">tune</span><span class="btn-text">조정하기</span></button>
+<!-- ═══ 탑바 (fixed full-width) ═══ -->
+<header class="topbar">
+  <div class="topbar-logo"><span class="ms">park</span></div>
+  <div class="topbar-inner">
+    <div class="topbar-search">
+      <span class="ms">search</span>
+      <span>시뮬레이션 검색...</span>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-right">
+      <button class="topbar-icon-btn ms" id="btn-share" title="공유하기">share</button>
+      <button class="topbar-icon-btn ms" id="btn-dl" title="이미지 저장">photo_camera</button>
+      <a href="onboarding.html" class="btn btn-ghost" style="text-decoration:none; font-size:13px; padding:6px 12px;">← 다시 입력</a>
+      <div class="avatar">미</div>
+    </div>
   </div>
 </header>
 
@@ -459,7 +564,7 @@
 <div class="sidebar" id="sidebar">
 
   <div class="sidebar-toprow">
-    <span class="sidebar-toprow-title">⚙️ 조정 패널</span>
+    <span class="sidebar-toprow-title"><span class="ms" style="font-size:14px;vertical-align:middle">tune</span> 조정 패널</span>
     <button class="sidebar-close-btn" onclick="closeSidebar()">✕ 닫기</button>
   </div>
 
@@ -679,12 +784,34 @@
 
 </div><!-- /#sidebar -->
 
+<!-- ═══ 앱 셸 ═══ -->
+<div class="app-shell">
+
+  <!-- 좌측 아이콘 내비 -->
+  <nav class="nav-side">
+    <span class="nav-icon active ms" title="대시보드">dashboard</span>
+    <span class="nav-icon ms" title="시뮬레이션 차트"
+      onclick="document.querySelector('.chart-box').scrollIntoView({behavior:'smooth'})">bar_chart</span>
+    <div class="nav-spacer"></div>
+    <span class="nav-icon ms" title="조정하기" onclick="toggleSidebar()" style="margin-bottom:12px">tune</span>
+  </nav>
+
+  <!-- 메인 래퍼 -->
+  <div class="main-wrapper">
+
 <!-- ═══ 메인 콘텐츠 ═══ -->
 <main class="content" id="capture-area">
 
-  <!-- 인사 영역 -->
-  <div class="greeting-section">
-    <h1 class="greeting-title"><span class="g-name">미학</span>님 안녕하세요</h1>
+  <!-- 페이지 헤더 -->
+  <div class="page-hd">
+    <div>
+      <h1 class="page-title">Good morning, <span class="g-name">미학</span>님</h1>
+      <p class="page-sub">자산 시뮬레이션 결과를 한눈에 확인하세요.</p>
+    </div>
+    <div class="tab-group">
+      <button class="tab active">개요</button>
+      <button class="tab" onclick="toggleSidebar()">조정하기</button>
+    </div>
   </div>
 
   <!-- 결과 카드 -->
@@ -719,6 +846,39 @@
         <span class="card-lbl">현재 페이스 은퇴</span>
         <span class="card-val" id="c-pace">—</span>
         <span class="card-sub" id="c-pace-sub">현재 저축액 기준</span>
+      </div>
+
+    </div>
+
+    <!-- Row 2: 입력 컨텍스트 카드 -->
+    <div class="cards">
+
+      <div class="card">
+        <span class="card-ico ms">account_balance</span>
+        <span class="card-lbl">현재 자산</span>
+        <span class="card-val" id="ci-assets">—</span>
+        <span class="card-sub">만원 · 현재 포트폴리오</span>
+      </div>
+
+      <div class="card">
+        <span class="card-ico ms">add_card</span>
+        <span class="card-lbl">월 저축액</span>
+        <span class="card-val" id="ci-savings">—</span>
+        <span class="card-sub">만원/월 · 현재 저축 페이스</span>
+      </div>
+
+      <div class="card">
+        <span class="card-ico ms">percent</span>
+        <span class="card-lbl">연 수익률</span>
+        <span class="card-val" id="ci-return">—</span>
+        <span class="card-sub">% · 세전 기대 수익</span>
+      </div>
+
+      <div class="card">
+        <span class="card-ico ms">coffee</span>
+        <span class="card-lbl">목표 월 인출</span>
+        <span class="card-val" id="ci-withdrawal">—</span>
+        <span class="card-sub">만원/월 · 은퇴 후 생활비</span>
       </div>
 
     </div>
@@ -775,7 +935,47 @@
       </div>
     </div>
 
+    <!-- ═══ 제안 영역 ═══ -->
+    <div class="suggest-area">
+      <div class="suggest-chips">
+        <button class="suggest-chip" onclick="toggleSidebar()">
+          <span class="ms">tune</span>조정하기
+        </button>
+        <button class="suggest-chip" id="sc-b" onclick="toggleB()">
+          <span class="ms">compare_arrows</span>시나리오 B 비교
+        </button>
+        <button class="suggest-chip" id="sc-share">
+          <span class="ms">share</span>공유하기
+        </button>
+        <button class="suggest-chip" id="sc-dl">
+          <span class="ms">photo_camera</span>이미지 저장
+        </button>
+      </div>
+      <div class="suggest-list">
+        <div class="suggest-item" onclick="toggleSidebar()">
+          나는 <strong>더 이른 나이</strong>에 은퇴하고 싶어요 →
+        </div>
+        <div class="suggest-item" onclick="toggleSidebar()">
+          나는 <strong>월 지출을 늘려도</strong> 되는지 알고 싶어요 →
+        </div>
+        <div class="suggest-item"
+          onclick="document.querySelector('.chart-box').scrollIntoView({behavior:'smooth'})">
+          나는 <strong>자산 성장 그래프</strong>를 확인하고 싶어요 →
+        </div>
+      </div>
+      <div class="suggest-box">
+        <span class="suggest-box-text">나는...</span>
+        <div class="suggest-box-actions">
+          <span class="ms" style="font-size:19px;color:var(--text-3);cursor:pointer">mic</span>
+          <span class="ms" style="font-size:19px;color:var(--primary);cursor:pointer">send</span>
+        </div>
+      </div>
+    </div>
+
 </main>
+
+  </div><!-- /.main-wrapper -->
+</div><!-- /.app-shell -->
 
 <script>
 // ═══════════════════════════════════════════════════════════════
@@ -1262,6 +1462,13 @@ function updateCards(resA, resB) {
   } else {
     cb.classList.remove('vis');
   }
+
+  // ─── Row 2: 입력 컨텍스트 카드 업데이트 ───
+  const nc = n => Math.round(n).toLocaleString('ko-KR');
+  $('ci-assets').textContent     = nc(S.a.currentAssets);
+  $('ci-savings').textContent    = nc(S.a.monthlySavings);
+  $('ci-return').textContent     = S.a.annualReturn.toFixed(1) + '%';
+  $('ci-withdrawal').textContent = nc(S.a.targetWithdrawal);
 }
 
 // ─── 인플레이션 배너 ───
@@ -1496,14 +1703,10 @@ function toggleSidebar() {
   const overlay = $('sidebar-overlay');
   const isOpen  = sidebar.classList.toggle('open');
   overlay.classList.toggle('open', isOpen);
-  $('btn-settings').innerHTML = isOpen
-    ? '<span class="ico">✕</span><span class="btn-text">닫기</span>'
-    : '<span class="ico">⚙️</span><span class="btn-text">조정하기</span>';
 }
 function closeSidebar() {
   $('sidebar').classList.remove('open');
   $('sidebar-overlay').classList.remove('open');
-  $('btn-settings').innerHTML = '<span class="ico">⚙️</span><span class="btn-text">조정하기</span>';
 }
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeSidebar();
@@ -1515,6 +1718,12 @@ function init() {
   loadURL();
   bindSliders();
   update();
+
+  // 제안 칩 — share / dl 연결
+  const scShare = $('sc-share');
+  const scDl    = $('sc-dl');
+  if (scShare) scShare.addEventListener('click', () => $('btn-share').click());
+  if (scDl)    scDl.addEventListener('click',    () => $('btn-dl').click());
 }
 
 document.addEventListener('DOMContentLoaded', init);
