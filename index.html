@@ -81,14 +81,6 @@
       flex: 1; display: flex; align-items: center; gap: 12px;
       padding: 0 20px;
     }
-    .topbar-search {
-      display: flex; align-items: center; gap: 7px;
-      height: 34px; width: 220px; flex-shrink: 0;
-      background: var(--bg-input); border: 1px solid var(--border);
-      border-radius: var(--r-sm); padding: 0 12px;
-      font-size: 13px; color: var(--text-3); cursor: text;
-    }
-    .topbar-search .ms { font-size: 15px; }
     .topbar-spacer { flex: 1; }
     .topbar-right { display: flex; align-items: center; gap: 4px; }
     .topbar-icon-btn {
@@ -107,29 +99,9 @@
       font-size: 12px; font-weight: 700; color: #fff; cursor: pointer;
     }
 
-    /* ─── 좌측 아이콘 내비 ─── */
-    .nav-side {
-      width: 52px; position: fixed; left: 0; top: 56px; bottom: 0;
-      background: var(--bg-card); border-right: 1px solid var(--border);
-      display: flex; flex-direction: column; align-items: center;
-      padding: 12px 0; z-index: 90; gap: 2px;
-    }
-    .nav-icon {
-      width: 36px; height: 36px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 8px; font-size: 20px;
-      color: var(--text-3); cursor: pointer;
-      transition: all var(--ease); user-select: none;
-      text-decoration: none; border: none; background: transparent;
-      font-family: var(--font);
-    }
-    .nav-icon:hover { background: var(--bg-input); color: var(--text-1); }
-    .nav-icon.active { background: var(--primary-glow); color: var(--primary); }
-    .nav-spacer { flex: 1; }
-
     /* ─── 메인 래퍼 ─── */
     .main-wrapper {
-      margin-left: 52px; margin-top: 56px;
+      margin-left: 0; margin-top: 56px;
       flex: 1; display: flex; flex-direction: column; min-height: calc(100vh - 56px);
     }
 
@@ -575,8 +547,6 @@
     }
     @media (max-width: 700px) {
       .sidebar { width: 100%; top: 56px; }
-      .nav-side { display: none; }
-      .main-wrapper { margin-left: 0; }
     }
     @media (max-width: 560px) {
       .content { padding: 0 14px 24px; }
@@ -596,10 +566,6 @@
 <header class="topbar">
   <div class="topbar-logo"><span class="ms">park</span></div>
   <div class="topbar-inner">
-    <div class="topbar-search">
-      <span class="ms">search</span>
-      <span>시뮬레이션 검색...</span>
-    </div>
     <div class="topbar-spacer"></div>
     <div class="topbar-right">
       <button class="topbar-icon-btn ms" id="btn-share" title="공유하기">share</button>
@@ -664,14 +630,6 @@
 
 <!-- ═══ 앱 셸 ═══ -->
 <div class="app-shell">
-
-  <!-- 좌측 아이콘 내비 -->
-  <nav class="nav-side">
-    <span class="nav-icon ms" title="시뮬레이션 차트"
-      onclick="document.querySelector('.chart-box').scrollIntoView({behavior:'smooth'})">bar_chart</span>
-    <div class="nav-spacer"></div>
-    <span class="nav-icon ms" title="설정" onclick="toggleSidebar()" style="margin-bottom:12px">settings</span>
-  </nav>
 
   <!-- 메인 래퍼 -->
   <div class="main-wrapper">
