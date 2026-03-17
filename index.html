@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🌴 파라다이스 계산기 v2.0 — 역산 FIRE 시뮬레이터</title>
+  <title>파라다이스 계산기 v2.0 — 역산 FIRE 시뮬레이터</title>
   <meta name="description" content="원하는 삶에서 출발하는 역산 FIRE 시뮬레이터. 희망 월 인출액을 입력하면 필요 자산과 월 저축액을 역산합니다." />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
@@ -94,6 +95,18 @@
     .btn-ghost { background: transparent; color: var(--text-2); padding: 8px 10px; }
     .btn-ghost:hover { background: var(--bg-input); color: var(--text-1); }
     .btn .ico { font-size: 14px; }
+
+    /* ─── Material Symbols ─── */
+    .ms {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal; font-style: normal;
+      font-size: inherit; line-height: 1;
+      letter-spacing: normal; text-transform: none;
+      display: inline-block; white-space: nowrap;
+      vertical-align: middle;
+      font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
 
     /* ─── 레이아웃 ─── */
     .layout {
@@ -357,27 +370,34 @@
     /* ─── 차트 컨테이너 ─── */
     .chart-box {
       background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--r-lg); padding: 22px; flex: 1; min-height: 360px;
+      border-radius: var(--r-lg); padding: 28px 28px 20px; flex: 1;
       box-shadow: 0 1px 4px rgba(0,0,0,0.05);
     }
 
+    /* Mathical-style 차트 헤더 */
     .chart-hd {
       display: flex; align-items: flex-start; justify-content: space-between;
-      margin-bottom: 18px;
+      margin-bottom: 22px;
+      flex-wrap: wrap; gap: 12px;
     }
-    .chart-title { font-size: 15px; font-weight: 700; }
-    .chart-sub   { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+    .chart-title { font-size: 17px; font-weight: 700; color: var(--text-1); }
+    .chart-sub   { font-size: 12px; color: var(--text-3); margin-top: 3px; }
 
-    .legend { display: flex; gap: 14px; flex-wrap: wrap; }
-    .leg-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-2); }
-    .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
-    .leg-line { width: 20px; height: 2px; border-radius: 1px; }
-    .leg-dashed {
-      width: 20px; height: 2px;
-      background: repeating-linear-gradient(90deg, var(--gold) 0 5px, transparent 5px 9px);
+    /* 범례 — Mathical 스타일: 색상 블록 */
+    .legend { display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+    .leg-item {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 12px; font-weight: 500; color: var(--text-2);
+    }
+    .leg-block {
+      width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0;
+    }
+    .leg-dash {
+      width: 18px; height: 2px; border-radius: 1px; flex-shrink: 0;
+      background: repeating-linear-gradient(90deg, var(--gold) 0 4px, transparent 4px 7px);
     }
 
-    .chart-wrap { position: relative; height: 290px; }
+    .chart-wrap { position: relative; height: 340px; }
 
     /* ─── 뱃지 ─── */
     .badge {
@@ -433,9 +453,9 @@
   </div>
   <div class="header-right">
     <a href="onboarding.html" class="btn btn-ghost" style="text-decoration:none">← 다시 입력</a>
-    <button class="btn btn-outline" id="btn-share"><span class="ico">🔗</span><span class="btn-text">공유하기</span></button>
-    <button class="btn btn-outline" id="btn-dl"><span class="ico">📷</span><span class="btn-text">이미지 저장</span></button>
-    <button class="btn btn-primary" id="btn-settings" onclick="toggleSidebar()"><span class="ico">⚙️</span><span class="btn-text">조정하기</span></button>
+    <button class="btn btn-outline" id="btn-share"><span class="ico ms">share</span><span class="btn-text">공유하기</span></button>
+    <button class="btn btn-outline" id="btn-dl"><span class="ico ms">photo_camera</span><span class="btn-text">이미지 저장</span></button>
+    <button class="btn btn-primary" id="btn-settings" onclick="toggleSidebar()"><span class="ico ms">tune</span><span class="btn-text">조정하기</span></button>
   </div>
 </header>
 
@@ -452,15 +472,15 @@
 
     <!-- 프리셋 -->
     <div class="section">
-      <div class="section-hd">👤 페르소나 프리셋</div>
+      <div class="section-hd"><span class="ms">manage_accounts</span> 페르소나 프리셋</div>
       <div class="preset-row">
         <div class="preset-card" id="pc-jeehyun" onclick="applyPreset('jeehyun', 'a')">
-          <div class="pc-top"><span class="pc-emoji">👩‍💼</span><span class="pc-name">이지현</span></div>
+          <div class="pc-top"><span class="pc-emoji ms">person</span><span class="pc-name">이지현</span></div>
           <div class="pc-type">안정형</div>
           <div class="pc-age">40세 · 4.5% · 채권혼합</div>
         </div>
         <div class="preset-card" id="pc-junhyuk" onclick="applyPreset('junhyuk', 'a')">
-          <div class="pc-top"><span class="pc-emoji">👨‍💻</span><span class="pc-name">박준혁</span></div>
+          <div class="pc-top"><span class="pc-emoji ms">laptop_mac</span><span class="pc-name">박준혁</span></div>
           <div class="pc-type">공격형</div>
           <div class="pc-age">35세 · 9% · 글로벌 ETF</div>
         </div>
@@ -471,7 +491,7 @@
 
     <!-- 원하는 삶 -->
     <div class="section">
-      <div class="section-hd">🌟 원하는 삶</div>
+      <div class="section-hd"><span class="ms">favorite</span> 원하는 삶</div>
 
       <div class="sg" data-f="targetWithdrawal" data-s="a">
         <div class="sg-hd">
@@ -494,7 +514,7 @@
 
     <!-- 현재 상황 -->
     <div class="section">
-      <div class="section-hd">📋 현재 상황</div>
+      <div class="section-hd"><span class="ms">bar_chart</span> 현재 상황</div>
 
       <div class="sg" data-f="currentAge" data-s="a">
         <div class="sg-hd">
@@ -525,7 +545,7 @@
 
     <!-- 수익률 설정 -->
     <div class="section">
-      <div class="section-hd">📈 수익률 설정</div>
+      <div class="section-hd"><span class="ms">trending_up</span> 수익률 설정</div>
 
       <div class="sg" data-f="annualReturn" data-s="a">
         <div class="sg-hd">
@@ -556,7 +576,7 @@
 
     <!-- 설정 -->
     <div class="section">
-      <div class="section-hd">⚙️ 설정</div>
+      <div class="section-hd"><span class="ms">settings</span> 설정</div>
 
       <div class="toggle" id="tog-inf" onclick="toggleInf()">
         <div class="toggle-info">
@@ -599,15 +619,15 @@
     <!-- 시나리오 B 입력 -->
     <div class="panel-b" id="panel-b">
       <div class="hr"></div>
-      <div class="section-hd" style="color:var(--violet)">🔮 시나리오 B <span class="badge badge-v" style="margin-left:6px">비교</span></div>
+      <div class="section-hd" style="color:var(--violet)"><span class="ms">compare_arrows</span> 시나리오 B <span class="badge badge-v" style="margin-left:6px">비교</span></div>
 
       <div class="preset-row">
         <div class="preset-card" id="pc-b-jeehyun" onclick="applyPreset('jeehyun', 'b')">
-          <div class="pc-top"><span class="pc-emoji">👩‍💼</span><span class="pc-name">이지현</span></div>
+          <div class="pc-top"><span class="pc-emoji ms">person</span><span class="pc-name">이지현</span></div>
           <div class="pc-type">안정형</div>
         </div>
         <div class="preset-card" id="pc-b-junhyuk" onclick="applyPreset('junhyuk', 'b')">
-          <div class="pc-top"><span class="pc-emoji">👨‍💻</span><span class="pc-name">박준혁</span></div>
+          <div class="pc-top"><span class="pc-emoji ms">laptop_mac</span><span class="pc-name">박준혁</span></div>
           <div class="pc-type">공격형</div>
         </div>
       </div>
@@ -671,28 +691,28 @@
 
   <!-- 인사 영역 -->
   <div class="greeting-section">
-    <h1 class="greeting-title"><span class="g-name">미학</span>님 안녕하세요 👋</h1>
+    <h1 class="greeting-title"><span class="g-name">미학</span>님 안녕하세요</h1>
   </div>
 
   <!-- 결과 카드 -->
   <div class="cards">
 
       <div class="card c-gold">
-        <span class="card-ico">🏝️</span>
+        <span class="card-ico ms">beach_access</span>
         <span class="card-lbl">낙원까지</span>
         <span class="card-val cv-gold" id="c-countdown">—</span>
         <span class="card-sub" id="c-retire-yr">은퇴 목표 계산 중...</span>
       </div>
 
       <div class="card c-primary">
-        <span class="card-ico">💰</span>
+        <span class="card-ico ms">savings</span>
         <span class="card-lbl">필요 은퇴 자산</span>
         <span class="card-val cv-primary" id="c-fire-num">—</span>
         <span class="card-sub" id="c-fire-sub">월 인출 × 12 / SWR</span>
       </div>
 
       <div class="card" id="card-req-savings">
-        <span class="card-ico">💸</span>
+        <span class="card-ico ms">payments</span>
         <span class="card-lbl">월 필요 저축액 (역산)</span>
         <span class="card-val" id="c-req-save">—</span>
         <div class="gap-row" id="gap-row" style="display:none">
@@ -702,7 +722,7 @@
       </div>
 
       <div class="card" id="card-pace">
-        <span class="card-ico">⏱️</span>
+        <span class="card-ico ms">timer</span>
         <span class="card-lbl">현재 페이스 은퇴</span>
         <span class="card-val" id="c-pace">—</span>
         <span class="card-sub" id="c-pace-sub">현재 저축액 기준</span>
@@ -712,7 +732,7 @@
 
     <!-- 인플레이션 배너 -->
     <div class="inf-banner" id="inf-banner">
-      <span class="inf-banner-ico">📉</span>
+      <span class="inf-banner-ico ms">trending_down</span>
       <span class="inf-banner-txt" id="inf-banner-txt">
         인플레이션 반영 시 실질 구매력을 계산합니다.
       </span>
@@ -720,7 +740,7 @@
 
     <!-- 지연 배너 -->
     <div class="delay-banner" id="delay-banner">
-      <span class="delay-banner-ico">⏳</span>
+      <span class="delay-banner-ico ms">hourglass_empty</span>
       <span class="delay-banner-txt" id="delay-banner-txt">
         지금 시작하지 않으면...
       </span>
@@ -744,15 +764,23 @@
         </div>
         <div class="legend" id="legend">
           <div class="leg-item">
-            <div class="leg-dot" style="background:#6C47FF"></div>
-            <span>현재 페이스 (A)</span>
+            <div class="leg-block" style="background:rgba(108,71,255,0.20)"></div>
+            <span>초기 자산</span>
           </div>
           <div class="leg-item">
-            <div class="leg-dashed" style="background:repeating-linear-gradient(90deg,#F59E0B 0 5px,transparent 5px 9px)"></div>
-            <span>목표 페이스 (A)</span>
+            <div class="leg-block" style="background:rgba(108,71,255,0.45)"></div>
+            <span>저축 원금</span>
+          </div>
+          <div class="leg-item">
+            <div class="leg-block" style="background:rgba(108,71,255,0.75)"></div>
+            <span>투자 수익</span>
+          </div>
+          <div class="leg-item">
+            <div class="leg-dash"></div>
+            <span>FIRE 목표</span>
           </div>
           <div class="leg-item" id="leg-b" style="display:none">
-            <div class="leg-dot" style="background:#818CF8"></div>
+            <div class="leg-block" style="background:#818CF8"></div>
             <span>시나리오 B</span>
           </div>
         </div>
@@ -996,48 +1024,69 @@ function initChart() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      animation: { duration: 180 },
+      animation: { duration: 260, easing: 'easeInOutQuart' },
       interaction: { mode: 'index', intersect: false },
       plugins: {
         legend: { display: false },
         vertLine: { targets: [] },
         tooltip: {
-          backgroundColor: 'rgba(17,24,39,0.92)',
-          borderColor: '#374151',
+          backgroundColor: '#ffffff',
+          borderColor: 'rgba(0,0,0,0.09)',
           borderWidth: 1,
-          padding: 13,
-          titleColor: '#9CA3AF',
-          bodyColor: '#F9FAFB',
-          titleFont: { size: 12, weight: '600' },
+          padding: { top: 12, bottom: 12, left: 16, right: 16 },
+          titleColor: '#6B7280',
+          bodyColor: '#111827',
+          footerColor: '#374151',
+          titleFont: { size: 11, weight: '500', family: "'Pretendard', sans-serif" },
           bodyFont: { size: 13, weight: '700', family: "'Pretendard', sans-serif" },
+          footerFont: { size: 12, weight: '700', family: "'Pretendard', sans-serif" },
+          cornerRadius: 10,
+          boxPadding: 5,
           callbacks: {
             title: items => `${items[0].label}세`,
             label: item => {
-              if (item.raw === null || item.raw === undefined) return null;
-              return ` ${item.dataset.label}: ${fmtShort(item.raw)}`;
+              const layers = chart._layers;
+              if (!layers) return null;
+              const i = item.dataIndex;
+              if (item.datasetIndex === 0) return ` 초기 자산  ${fmtShort(layers.l1[i])}`;
+              if (item.datasetIndex === 1) return ` 저축 원금  ${fmtShort(Math.max(0, layers.l2[i] - layers.l1[i]))}`;
+              if (item.datasetIndex === 2) return ` 투자 수익  ${fmtShort(Math.max(0, layers.l3[i] - layers.l2[i]))}`;
+              return null;
+            },
+            footer: items => {
+              const layers = chart._layers;
+              if (!layers) return '';
+              const i = items[0].dataIndex;
+              return `합계  ${fmtShort(layers.l3[i])}`;
             },
           },
         },
       },
       scales: {
         x: {
-          grid: { color: 'rgba(0,0,0,0.055)' },
+          grid: { display: false },
           ticks: {
-            color: '#9CA3AF', font: { size: 11 },
+            color: '#9CA3AF',
+            font: { size: 11, family: "'Pretendard', sans-serif" },
             callback: function(v) { return this.getLabelForValue(v) + '세'; },
-            maxTicksLimit: 12,
+            maxTicksLimit: 10,
           },
           border: { display: false },
         },
         y: {
           min: 0,
-          grid: { color: 'rgba(0,0,0,0.055)' },
+          grid: {
+            color: 'rgba(0,0,0,0.045)',
+            drawTicks: false,
+          },
           ticks: {
-            color: '#9CA3AF', font: { size: 11 },
+            color: '#9CA3AF',
+            font: { size: 11, family: "'Pretendard', sans-serif" },
             callback: v => fmtShort(v),
             maxTicksLimit: 6,
+            padding: 10,
           },
-          border: { display: false },
+          border: { display: false, dash: [4, 4] },
         },
       },
     },
@@ -1045,99 +1094,122 @@ function initChart() {
 }
 
 function updateChart(resA, resB) {
-  const labels = resA.currentPace.points.map(p => p.age);
+  const pts    = resA.currentPace.points;
+  const labels = pts.map(p => p.age);
 
-  const mkGradient = (ctx, r, g, b) => {
-    const grad = ctx.chart.ctx.createLinearGradient(0, 0, 0, 290);
-    grad.addColorStop(0, `rgba(${r},${g},${b},0.14)`);
-    grad.addColorStop(1, `rgba(${r},${g},${b},0.00)`);
-    return grad;
-  };
+  // ── 자산 3레이어 분해 (Mathical 스타일) ──────────────────────────
+  // Layer 1: 초기 자산만 복리 성장했을 때 (저축 없음)
+  // Layer 2: Layer1 + 누적 저축 원금 (복리 미적용 순수 납입액)
+  // Layer 3: 실제 전체 자산 (차이 = 투자 수익)
+  const startAge = S.a.currentAge;
+  const rr       = resA.r;                   // 실질 연수익률 (인플레 보정 포함)
+  const ms       = S.a.monthlySavings;       // 현재 월 저축액 (만원)
 
-  // 은퇴 시점 포인트
-  const makePoints = (points, retireAge, color) => {
-    return points.map(p => ({
-      r:  p.age === retireAge ? 7 : 0,
-      bg: p.age === retireAge ? color : 'transparent',
-      bw: p.age === retireAge ? 2 : 0,
-    }));
-  };
+  const l1 = pts.map(p => {
+    const t = p.age - startAge;
+    return S.a.currentAssets * Math.pow(1 + rr, t);
+  });
+  const l2 = pts.map((p, i) => {
+    const t = p.age - startAge;
+    return l1[i] + ms * 12 * t;             // 초기성장 + 저축 원금 누적
+  });
+  const l3 = pts.map(p => Math.max(0, p.assets));
 
-  const ptA = makePoints(resA.currentPace.points, resA.currentPace.retireAge, '#F59E0B');
-  const reqPts = makePoints(resA.requiredPace.points, resA.targetRetirementAge, '#6C47FF');
+  // l2가 l3를 초과하는 엣지케이스 보정
+  const l2clamped = l2.map((v, i) => Math.min(v, l3[i]));
+  const l1clamped = l1.map((v, i) => Math.min(v, l2clamped[i]));
+
+  // 툴팁에서 접근하기 위해 chart 객체에 저장
+  chart._layers = { l1: l1clamped, l2: l2clamped, l3 };
+
+  // ── 색상 ─────────────────────────────────────────────────────────
+  const C1 = 'rgba(108,71,255,0.18)';
+  const C2 = 'rgba(108,71,255,0.40)';
+  const C3 = 'rgba(108,71,255,0.68)';
 
   const datasets = [
-    // 현재 페이스 A
+    // 레이어 1 — 초기 자산 성장 (바닥)
     {
-      label: '현재 페이스 (A)',
-      data: resA.currentPace.points.map(p => p.assets),
+      label: '초기 자산',
+      data: l1clamped,
+      borderColor: 'transparent',
+      backgroundColor: C1,
+      borderWidth: 0,
+      tension: 0.45,
+      fill: 'origin',
+      pointRadius: 0, pointHoverRadius: 0,
+    },
+    // 레이어 2 — 저축 원금 누적
+    {
+      label: '저축 원금',
+      data: l2clamped,
+      borderColor: 'transparent',
+      backgroundColor: C2,
+      borderWidth: 0,
+      tension: 0.45,
+      fill: '-1',
+      pointRadius: 0, pointHoverRadius: 0,
+    },
+    // 레이어 3 — 투자 수익 (상단, 실선 보더)
+    {
+      label: '투자 수익',
+      data: l3,
       borderColor: '#6C47FF',
-      backgroundColor: ctx => mkGradient(ctx, 108, 71, 255),
-      borderWidth: 2.5, tension: 0.4, fill: true,
-      pointRadius: ptA.map(p => p.r),
-      pointBackgroundColor: ptA.map(p => p.bg),
-      pointBorderColor: '#F59E0B',
-      pointBorderWidth: ptA.map(p => p.bw),
-      pointHoverRadius: 5,
-    },
-    // 목표 페이스 A (필요 저축액 적용)
-    {
-      label: '목표 페이스 (A)',
-      data: resA.requiredPace.points.map(p => p.assets),
-      borderColor: 'rgba(245,158,11,0.8)',
-      borderDash: [7, 4],
+      backgroundColor: C3,
       borderWidth: 2,
-      backgroundColor: 'transparent',
-      tension: 0.4, fill: false,
-      pointRadius: reqPts.map(p => p.r),
-      pointBackgroundColor: reqPts.map(p => p.bg),
-      pointBorderColor: '#6C47FF',
-      pointBorderWidth: reqPts.map(p => p.bw),
+      tension: 0.45,
+      fill: '-1',
+      pointRadius: labels.map(age => age === resA.currentPace.retireAge ? 6 : 0),
+      pointBackgroundColor: '#6C47FF',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
       pointHoverRadius: 5,
     },
-    // FIRE 목표선 A
+    // FIRE 목표 수평 점선
     {
       label: 'FIRE 목표',
       data: labels.map(() => resA.fireNumber),
-      borderColor: 'rgba(245,158,11,0.25)',
-      borderDash: [4, 4], borderWidth: 1.5,
-      backgroundColor: 'transparent', tension: 0, fill: false,
+      borderColor: 'rgba(245,158,11,0.55)',
+      borderDash: [5, 4],
+      borderWidth: 1.5,
+      backgroundColor: 'transparent',
+      tension: 0, fill: false,
       pointRadius: 0, pointHoverRadius: 0,
     },
   ];
 
-  // 시나리오 B
+  // ── 시나리오 B (단순 비교 라인) ──────────────────────────────────
   if (resB) {
+    const bPts = resB.currentPace.points;
     const bData = labels.map(age => {
-      const pt = resB.currentPace.points.find(p => p.age === age);
-      return pt ? pt.assets : null;
+      const pt = bPts.find(p => p.age === age);
+      return pt ? Math.max(0, pt.assets) : null;
     });
-    const ptB = makePoints(resB.currentPace.points, resB.currentPace.retireAge, '#818CF8');
-
     datasets.push({
-      label: '현재 페이스 (B)',
+      label: '시나리오 B',
       data: bData,
       borderColor: '#818CF8',
-      backgroundColor: ctx => mkGradient(ctx, 129, 140, 248),
-      borderWidth: 2.5, tension: 0.4, fill: true,
-      pointRadius: labels.map((age, i) => {
-        const pt = resB.currentPace.points.find(p => p.age === age);
-        return pt && pt.age === resB.currentPace.retireAge ? 7 : 0;
-      }),
-      pointBackgroundColor: labels.map(age =>
-        age === resB.currentPace.retireAge ? '#c4b5fd' : 'transparent'),
-      pointBorderColor: '#818CF8',
-      pointBorderWidth: labels.map(age => age === resB.currentPace.retireAge ? 2 : 0),
+      backgroundColor: 'transparent',
+      borderWidth: 2,
+      borderDash: [6, 3],
+      tension: 0.45, fill: false,
+      pointRadius: labels.map(age => age === resB.currentPace.retireAge ? 6 : 0),
+      pointBackgroundColor: '#818CF8',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
       pointHoverRadius: 5,
     });
+    $('leg-b').style.display = '';
+  } else {
+    $('leg-b').style.display = 'none';
   }
 
-  // 수직선: 목표 은퇴 나이
+  // ── 수직선: 목표 은퇴 나이 ─────────────────────────────────────
   const vertTargets = [
-    { age: resA.targetRetirementAge, color: 'rgba(108,71,255,0.4)', dash: [6, 4] },
+    { age: resA.targetRetirementAge, color: 'rgba(108,71,255,0.3)', dash: [6, 4] },
   ];
   if (resB && resB.targetRetirementAge !== resA.targetRetirementAge) {
-    vertTargets.push({ age: resB.targetRetirementAge, color: 'rgba(139,124,248,0.35)', dash: [6,4] });
+    vertTargets.push({ age: resB.targetRetirementAge, color: 'rgba(139,124,248,0.28)', dash: [6, 4] });
   }
 
   chart.data.labels   = labels;
@@ -1211,11 +1283,11 @@ function updateCards(resA, resB) {
     $('card-pace').className = diff <= 0 ? 'card c-primary' : 'card c-warn';
 
     if (diff === 0) {
-      $('c-pace-sub').textContent = `${paceYr}년 — 목표와 정확히 일치 ✅`;
+      $('c-pace-sub').textContent = `${paceYr}년 — 목표와 정확히 일치`;
     } else if (diff < 0) {
-      $('c-pace-sub').textContent = `${paceYr}년 — 목표보다 ${Math.abs(diff)}년 빠름 🚀`;
+      $('c-pace-sub').textContent = `${paceYr}년 — 목표보다 ${Math.abs(diff)}년 빠름`;
     } else {
-      $('c-pace-sub').textContent = `${paceYr}년 — 목표보다 ${diff}년 늦음 ⚠️`;
+      $('c-pace-sub').textContent = `${paceYr}년 — 목표보다 ${diff}년 늦음`;
     }
   } else {
     $('c-pace').textContent = '90세+';
@@ -1453,7 +1525,7 @@ $('btn-share').addEventListener('click', () => {
   navigator.clipboard.writeText(location.href).then(() => {
     const btn = $('btn-share');
     const orig = btn.innerHTML;
-    btn.innerHTML = '<span class="ico">✅</span><span class="btn-text"> 복사됨!</span>';
+    btn.innerHTML = '<span class="ico ms">check_circle</span><span class="btn-text"> 복사됨!</span>';
     btn.style.color = 'var(--primary)';
     setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 2000);
   });
