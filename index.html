@@ -678,11 +678,10 @@
 
   <!-- 좌측 아이콘 내비 -->
   <nav class="nav-side">
-    <span class="nav-icon active ms" title="대시보드">dashboard</span>
     <span class="nav-icon ms" title="시뮬레이션 차트"
       onclick="document.querySelector('.chart-box').scrollIntoView({behavior:'smooth'})">bar_chart</span>
     <div class="nav-spacer"></div>
-    <span class="nav-icon ms" title="조정하기" onclick="toggleSidebar()" style="margin-bottom:12px">tune</span>
+    <span class="nav-icon ms" title="설정" onclick="toggleSidebar()" style="margin-bottom:12px">settings</span>
   </nav>
 
   <!-- 메인 래퍼 -->
@@ -698,8 +697,7 @@
       <p class="page-sub">자산 시뮬레이션 결과를 한눈에 확인하세요.</p>
     </div>
     <div class="tab-group">
-      <button class="tab active">개요</button>
-      <button class="tab" onclick="toggleSidebar()">조정하기</button>
+      <button class="tab active" onclick="toggleSidebar()">조정하기</button>
     </div>
   </div>
 
