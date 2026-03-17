@@ -357,16 +357,6 @@
     .page-sub { font-size: 13px; color: var(--text-3); margin-top: 4px; }
 
     /* ─── 탭 그룹 ─── */
-    .tab-group {
-      display: flex; gap: 2px; flex-shrink: 0;
-      background: var(--bg-input); border-radius: var(--r-sm); padding: 3px;
-    }
-    .tab {
-      padding: 6px 14px; border-radius: 6px;
-      font-size: 13px; font-weight: 500; border: none;
-      background: transparent; color: var(--text-3);
-      cursor: pointer; transition: all var(--ease); font-family: var(--font);
-    }
     .tab.active {
       background: var(--bg-card); color: var(--text-1);
       box-shadow: 0 1px 3px rgba(0,0,0,0.08);
@@ -593,7 +583,6 @@
       .page-title { font-size: 22px; }
       .cards   { grid-template-columns: 1fr 1fr; gap: 8px; }
       .chart-wrap { height: 230px; }
-      .tab-group { display: none; }
     }
 
     /* ─── 애니메이션 ─── */
@@ -696,9 +685,7 @@
       <h1 class="page-title">Good morning, <span class="g-name">미학</span>님</h1>
       <p class="page-sub">자산 시뮬레이션 결과를 한눈에 확인하세요.</p>
     </div>
-    <div class="tab-group">
-      <button class="tab active" onclick="toggleSidebar()">조정하기</button>
-    </div>
+    <button class="nav-icon ms" title="설정" onclick="toggleSidebar()" style="width:36px;height:36px;flex-shrink:0">settings</button>
   </div>
 
   <!-- 결과 카드 -->
