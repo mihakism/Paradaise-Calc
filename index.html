@@ -396,8 +396,17 @@
     .inf-banner {
       display: none; align-items: center; gap: 14px;
       background: #ffffff;
-      border: 1px solid rgba(245,200,66,0.2);
       border-radius: var(--r-md); padding: 20px 20px;
+    }
+
+    /* ─── 히어로 숫자 등장 애니메이션 ─── */
+    @keyframes heroRatePop {
+      0%   { opacity: 0; transform: translateY(5px) scale(0.94); }
+      100% { opacity: 1; transform: translateY(0)  scale(1); }
+    }
+    .hero-rate-animate {
+      display: inline-block;
+      animation: heroRatePop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
     /* ─── 커스텀 차트 툴팁 ─── */
@@ -649,7 +658,7 @@
 </div><!-- /#sidebar -->
 
 <!-- ═══ 메인 콘텐츠 ═══ -->
-<main id="capture-area" style="background:#EBEBEB;min-height:100vh;padding:40px 48px 0;">
+<main id="capture-area" style="background:#EBEBEB;min-height:100vh;padding:72px 48px 0;">
 
   <!-- 상단: 로고 (좌) + 우상단 영역 -->
   <div class="anim-fadeup" style="display:flex;justify-content:space-between;align-items:flex-start;height:240px;">
@@ -690,9 +699,9 @@
     <!-- 카드 1: 낙원까지 -->
     <div class="anim-fadeup" style="animation-delay:0.28s;">
       <div style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
           <span class="ms" style="font-size:20px;color:#999999;">beach_access</span>
-          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#999999;margin:0;">+ 낙원까지</p>
+          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#999999;margin:0;">낙원까지</p>
         </div>
         <div id="c-countdown" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#F59E0B;">—</div>
         <div id="c-retire-yr" style="font-size:13px;font-weight:400;color:#999999;margin-top:4px;">은퇴 목표 계산 중...</div>
@@ -702,9 +711,9 @@
     <!-- 카드 2: 필요 은퇴 자산 -->
     <div class="anim-fadeup" style="animation-delay:0.38s;">
       <div style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
           <span class="ms" style="font-size:20px;color:#999999;">savings</span>
-          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#999999;margin:0;">+ 필요 은퇴 자산</p>
+          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#999999;margin:0;">필요 은퇴 자산</p>
         </div>
         <div id="c-fire-num" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#111111;">—</div>
         <div id="c-fire-sub" style="font-size:13px;font-weight:400;color:#999999;margin-top:16px;">월 인출 × 12 / SWR</div>
@@ -714,9 +723,9 @@
     <!-- 카드 3: 월 필요 저축액 -->
     <div class="anim-fadeup" style="animation-delay:0.48s;">
       <div id="card-req-savings" style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
           <span class="ms" style="font-size:20px;color:#999999;">payments</span>
-          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#999999;margin:0;">+ 월 필요 저축액</p>
+          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#999999;margin:0;">월 필요 저축액</p>
         </div>
         <div id="c-req-save" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#111111;">—</div>
         <div style="font-size:13px;font-weight:400;color:#999999;margin-top:16px;">
@@ -729,9 +738,9 @@
     <!-- 카드 4: 현재 페이스 -->
     <div class="anim-fadeup" style="animation-delay:0.58s;">
       <div id="card-pace" style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
           <span class="ms" style="font-size:20px;color:#999999;">timer</span>
-          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#999999;margin:0;">+ 현재 페이스</p>
+          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#999999;margin:0;">현재 페이스</p>
         </div>
         <div id="c-pace" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#111111;">—</div>
         <div id="c-pace-sub" style="font-size:13px;font-weight:400;color:#999999;margin-top:16px;">현재 저축 페이스 기준 은퇴 가능</div>
@@ -1306,7 +1315,12 @@ function updateCards(results) {
   if (heroName) heroName.textContent = p.name || '나';
   const assetPct = parseFloat(Math.min(100, resA.fireRate).toFixed(1));
   const heroRate = $('hero-rate');
-  if (heroRate) heroRate.textContent = assetPct + '%';
+  if (heroRate) {
+    heroRate.textContent = assetPct + '%';
+    heroRate.classList.remove('hero-rate-animate');
+    void heroRate.offsetWidth;
+    heroRate.classList.add('hero-rate-animate');
+  }
 
   // 메타 인플레이션 토글 + 사이드바 토글 동기화
   updateMetaInfToggle();
