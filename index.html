@@ -728,39 +728,6 @@
 
     </div>
 
-    <!-- Row 2: 입력 컨텍스트 카드 -->
-    <div class="cards">
-
-      <div class="card">
-        <span class="card-ico ms">account_balance</span>
-        <span class="card-lbl">현재 자산</span>
-        <span class="card-val" id="ci-assets">—</span>
-        <span class="card-sub">만원 · 현재 포트폴리오</span>
-      </div>
-
-      <div class="card">
-        <span class="card-ico ms">add_card</span>
-        <span class="card-lbl">월 저축액</span>
-        <span class="card-val" id="ci-savings">—</span>
-        <span class="card-sub">만원/월 · 현재 저축 페이스</span>
-      </div>
-
-      <div class="card">
-        <span class="card-ico ms">percent</span>
-        <span class="card-lbl">연 수익률</span>
-        <span class="card-val" id="ci-return">—</span>
-        <span class="card-sub">% · 세전 기대 수익</span>
-      </div>
-
-      <div class="card">
-        <span class="card-ico ms">coffee</span>
-        <span class="card-lbl">목표 월 인출</span>
-        <span class="card-val" id="ci-withdrawal">—</span>
-        <span class="card-sub">만원/월 · 은퇴 후 생활비</span>
-      </div>
-
-    </div>
-
     <!-- 인플레이션 배너 -->
     <div class="inf-banner" id="inf-banner">
       <span class="inf-banner-ico ms">trending_down</span>
@@ -1335,13 +1302,6 @@ function updateCards(results) {
   // 비교 배너 숨기기 (다중 인원은 차트 범례로 표시)
   const cb = $('compare-banner');
   if (cb) cb.classList.remove('vis');
-
-  // Row 2: 입력 컨텍스트 카드
-  const nc = n => Math.round(n).toLocaleString('ko-KR');
-  $('ci-assets').textContent     = nc(p.currentAssets);
-  $('ci-savings').textContent    = nc(p.monthlySavings);
-  $('ci-return').textContent     = p.annualReturn.toFixed(1) + '%';
-  $('ci-withdrawal').textContent = nc(p.targetWithdrawal);
 
   // ─── 히어로 영역 업데이트 ───
   const heroName = $('hero-name');
