@@ -461,6 +461,21 @@
       padding-left: 6px;
       opacity: 1;
     }
+    /* ─── filled 강조 버튼 (조정 패널) ─── */
+    .pill-icon-btn-filled {
+      background: #111111;
+      color: #ffffff;
+      border: none;
+      width: 36px;
+      height: 36px;
+    }
+    .pill-icon-btn-filled:hover {
+      background: #333333;
+      color: #ffffff;
+      border: none;
+      padding: 0 13px 0 10px;
+      width: auto;
+    }
 
     /* ─── 커스텀 차트 툴팁 ─── */
     #chartjs-tooltip {
@@ -678,18 +693,19 @@
   <div class="section">
     <div class="section-hd"><span class="ms">settings</span> 설정</div>
 
-    <div class="toggle" id="tog-inf" onclick="toggleInf()">
-      <div class="toggle-info">
-        <span class="toggle-title">인플레이션 반영</span>
-        <span class="toggle-desc">실질 구매력 표시 (기본 2.5%)</span>
+    <div style="background:#FFFFFF;border-radius:12px;padding:16px;">
+      <div class="toggle" id="tog-inf" onclick="toggleInf()">
+        <div class="toggle-info">
+          <span class="toggle-title">인플레이션 반영</span>
+          <span class="toggle-desc">실질 구매력 표시 (기본 2.5%)</span>
+        </div>
+        <div class="sw"></div>
       </div>
-      <div class="sw"></div>
-    </div>
-
-    <div class="inf-row" id="inf-row">
-      <span class="inf-label">인플레이션율</span>
-      <input type="number" class="inf-input" id="inf-val" value="2.5" min="0" max="10" step="0.1" />
-      <span style="font-size:12px;color:var(--text-3)">%</span>
+      <div class="inf-row" id="inf-row">
+        <span class="inf-label">인플레이션율</span>
+        <input type="number" class="inf-input" id="inf-val" value="2.5" min="0" max="10" step="0.1" />
+        <span style="font-size:12px;color:var(--text-3)">%</span>
+      </div>
     </div>
 
     <div class="toggle" id="tog-delay" onclick="toggleDelay()">
@@ -720,25 +736,15 @@
     <div style="font-size:64px;font-weight:200;color:#111111;border:1.5px solid #111111;border-radius:12px;padding:14px 20px;line-height:1;display:inline-block;">P.Calc</div>
 
     <!-- 우상단: 공유 + 메타 블록 -->
-    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <button class="pill-icon-btn" id="btn-share" title="공유하기">
-          <span class="ms pill-ico">share</span>
-          <span class="pill-label">공유하기</span>
-        </button>
-        <a href="onboarding.html" class="pill-icon-btn" title="처음으로">
-          <span class="ms pill-ico">restart_alt</span>
-          <span class="pill-label">처음으로</span>
-        </a>
-      </div>
-      <div style="font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1.8;">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:28px;">
-          <span style="color:#999999;text-transform:uppercase;">INFLATION</span>
-          <button id="meta-inf-btn" onclick="toggleInf()" style="width:32px;height:18px;border-radius:9999px;background:#111111;border:none;cursor:pointer;position:relative;padding:0;flex-shrink:0;transition:background 150ms ease;vertical-align:middle;display:inline-block;">
-            <span id="meta-inf-thumb" style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:transform 150ms ease;display:block;transform:translateX(14px);"></span>
-          </button>
-        </div>
-      </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="pill-icon-btn" id="btn-share" title="공유하기">
+        <span class="ms pill-ico">share</span>
+        <span class="pill-label">공유하기</span>
+      </button>
+      <a href="onboarding.html" class="pill-icon-btn" title="처음으로">
+        <span class="ms pill-ico">restart_alt</span>
+        <span class="pill-label">처음으로</span>
+      </a>
     </div>
 
   </div>
@@ -756,7 +762,7 @@
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:8px;padding-bottom:4px;">
-      <button class="pill-icon-btn" title="조정 패널" onclick="toggleSidebar()">
+      <button class="pill-icon-btn pill-icon-btn-filled" title="조정 패널" onclick="toggleSidebar()">
         <span class="ms pill-ico">tune</span>
         <span class="pill-label">조정 패널</span>
       </button>
