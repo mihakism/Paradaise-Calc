@@ -682,7 +682,7 @@
   </div>
 
   <!-- 히어로 텍스트 + 유틸리티 버튼 -->
-  <div class="anim-fadeup" style="margin-top:32px;display:flex;justify-content:space-between;align-items:flex-end;animation-delay:0.12s;">
+  <div class="anim-fadeup" style="margin-top:32px;display:flex;justify-content:space-between;align-items:flex-end;animation-delay:0.2s;">
     <div>
       <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">나</span>님</div>
       <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">FIRE까지 <span id="hero-rate" style="color:#111111;font-weight:600;">0%</span> 달성했어요</div>
@@ -697,7 +697,7 @@
   <div style="margin-top:36px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
 
     <!-- 카드 1: 낙원까지 -->
-    <div class="anim-fadeup" style="animation-delay:0.28s;">
+    <div class="anim-fadeup" style="animation-delay:0.40s;">
       <div style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
           <span class="ms" style="font-size:20px;color:#999999;">beach_access</span>
@@ -709,7 +709,7 @@
     </div>
 
     <!-- 카드 2: 필요 은퇴 자산 -->
-    <div class="anim-fadeup" style="animation-delay:0.38s;">
+    <div class="anim-fadeup" style="animation-delay:0.52s;">
       <div style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
           <span class="ms" style="font-size:20px;color:#999999;">savings</span>
@@ -721,7 +721,7 @@
     </div>
 
     <!-- 카드 3: 월 필요 저축액 -->
-    <div class="anim-fadeup" style="animation-delay:0.48s;">
+    <div class="anim-fadeup" style="animation-delay:0.64s;">
       <div id="card-req-savings" style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
           <span class="ms" style="font-size:20px;color:#999999;">payments</span>
@@ -736,7 +736,7 @@
     </div>
 
     <!-- 카드 4: 현재 페이스 -->
-    <div class="anim-fadeup" style="animation-delay:0.58s;">
+    <div class="anim-fadeup" style="animation-delay:0.76s;">
       <div id="card-pace" style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
           <span class="ms" style="font-size:20px;color:#999999;">timer</span>
@@ -771,7 +771,7 @@
   </div>
 
   <!-- 차트 -->
-  <div class="anim-fadeup" style="margin-top:16px;padding-bottom:48px;animation-delay:0.7s;">
+  <div class="anim-fadeup" style="margin-top:16px;padding-bottom:48px;animation-delay:0.92s;">
     <div style="background:#ffffff;border-radius:16px;padding:24px;">
       <div class="chart-hd">
         <div>
@@ -1251,6 +1251,15 @@ function updateCards(results) {
   const yr = new Date().getFullYear();
   const N  = resA.yearsLeft;
 
+  // 카드 수치 팝 애니메이션 헬퍼
+  function popVal(id) {
+    const el = $(id);
+    if (!el) return;
+    el.classList.remove('hero-rate-animate');
+    void el.offsetWidth;
+    el.classList.add('hero-rate-animate');
+  }
+
   // ─── 카드 1: 낙원까지 ───
   if (N > 0) {
     $('c-countdown').innerHTML = `D-${N}${U('년')}`;
@@ -1262,10 +1271,12 @@ function updateCards(results) {
     $('c-countdown').textContent = '재설정 필요';
     $('c-retire-yr').textContent = '현재 나이 ≥ 은퇴 희망 나이';
   }
+  popVal('c-countdown');
 
   // ─── 카드 2: 필요 은퇴 자산 ───
   $('c-fire-num').innerHTML = fmtShortHtml(resA.fireNumber);
   $('c-fire-sub').textContent = `${resA.targetWithdrawal.toLocaleString()}만원 × 12 ÷ ${resA.safeRate}%`;
+  popVal('c-fire-num');
 
   // ─── 카드 3: 월 필요 저축액 ───
   const req    = resA.requiredMonthlySavings;
@@ -1295,6 +1306,7 @@ function updateCards(results) {
       }
     }
   }
+  popVal('c-req-save');
 
   // ─── 카드 4: 현재 페이스 ───
   const paceAge = resA.currentPace.retireAge;
@@ -1305,6 +1317,7 @@ function updateCards(results) {
     $('c-pace').textContent = '90세+';
     $('c-pace-sub').textContent = '저축액을 늘려보세요';
   }
+  popVal('c-pace');
 
   // 비교 배너 숨기기
   const cb = $('compare-banner');
