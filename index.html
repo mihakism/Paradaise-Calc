@@ -1408,7 +1408,7 @@ function fmtShort(manwon) {
 }
 
 // 카드 수치용: 단위를 18px #111111로 스타일링
-const U = u => `<span style="font-size:18px;font-weight:400;color:#111111;">${u}</span>`;
+const U = u => `<span style="font-size:18px;font-weight:400;color:#111111;margin-left:4px;">${u}</span>`;
 function fmtShortHtml(manwon) {
   if (manwon >= 100000000) return (manwon / 100000000).toFixed(1).replace(/\.0$/, '') + U('조원');
   if (manwon >= 10000)     return (manwon / 10000).toFixed(1).replace(/\.0$/, '') + U('억원');
