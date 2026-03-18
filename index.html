@@ -409,6 +409,67 @@
       animation: heroRatePop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
+    /* ─── 시나리오 비교 패널 ─── */
+    .scenario-panel {
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      width: 420px;
+      background: rgba(255,255,255,0.97);
+      border-left: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      overflow-y: auto;
+      padding: 24px;
+      display: flex; flex-direction: column; gap: 16px;
+      transform: translateX(100%);
+      transition: transform 320ms cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 200;
+    }
+    .scenario-panel.open { transform: translateX(0); }
+
+    .sc-card {
+      background: #F7F7F7;
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .sc-metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+    }
+    .sc-metric {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .sc-label {
+      font-size: 10px;
+      font-weight: 500;
+      color: #AAAAAA;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .sc-val-big {
+      font-size: 26px;
+      font-weight: 400;
+      color: #111111;
+      letter-spacing: -0.3px;
+      line-height: 1;
+    }
+    .sc-val-mid {
+      font-size: 16px;
+      font-weight: 400;
+      color: #111111;
+    }
+    .sc-divider {
+      border: none;
+      border-top: 1px solid #EBEBEB;
+      margin: 14px 0;
+    }
+    .sc-gap-pos { color: #10B981; font-size: 12px; font-weight: 500; }
+    .sc-gap-neg { color: #EF4444; font-size: 12px; font-weight: 500; }
+
     /* ─── pill 아이콘 버튼 (공유/tune/restart/비교 공통) ─── */
     .pill-icon-btn {
       display: inline-flex;
@@ -726,6 +787,18 @@
 
 </div><!-- /#sidebar -->
 
+<!-- ═══ 시나리오 비교 패널 ═══ -->
+<div class="sidebar-overlay" id="scenario-overlay" onclick="closeScenarioPanel()"></div>
+<div class="scenario-panel" id="scenario-panel">
+  <div class="sidebar-toprow">
+    <span class="sidebar-toprow-title">
+      <span class="ms" style="font-size:14px;vertical-align:middle;margin-right:6px;">compare_arrows</span>시나리오 비교
+    </span>
+    <button class="sidebar-close-btn" onclick="closeScenarioPanel()">✕ 닫기</button>
+  </div>
+  <div id="scenario-cards" style="display:flex;flex-direction:column;gap:12px;"></div>
+</div>
+
 <!-- ═══ 메인 콘텐츠 ═══ -->
 <main id="capture-area" style="background:#EBEBEB;min-height:100vh;padding:48px 48px 0;">
 
@@ -755,7 +828,7 @@
       <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">나</span>님</div>
       <div style="display:flex;align-items:center;gap:14px;">
         <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">FIRE까지 <span id="hero-rate" style="color:#111111;font-weight:600;">0%</span> 달성했어요</div>
-        <button class="pill-icon-btn" title="시나리오 비교" onclick="setChartMode('bar');document.getElementById('chart-wrap')?.scrollIntoView({behavior:'smooth',block:'center'})">
+        <button class="pill-icon-btn" title="시나리오 비교" onclick="openScenarioPanel()">
           <span class="ms pill-ico">add</span>
           <span class="pill-label">시나리오 비교</span>
         </button>
@@ -1531,13 +1604,17 @@ let timer = null;
 function sched() { clearTimeout(timer); timer = setTimeout(updateFull, 250); }
 
 // ─── 메인 업데이트 ───
+let _lastResults = null;
+
 function updateFull() {
   const results = S.people.map(p => calcFIRE(p));
+  _lastResults = results;
   updateCards(results);
   updateChart(results);
   updateInfBanner(S.people[S.activePerson]);
   updateDelayBanner(S.people[S.activePerson]);
   updateURL();
+  if ($('scenario-panel')?.classList.contains('open')) buildScenarioCards(results);
 }
 
 // alias for legacy
@@ -1786,6 +1863,91 @@ function bindCommonSliders() {
 }
 
 // ─── 사이드바 ───
+// ─── 시나리오 비교 패널 ───
+function openScenarioPanel() {
+  buildScenarioCards(_lastResults || S.people.map(p => calcFIRE(p)));
+  $('scenario-panel').classList.add('open');
+  $('scenario-overlay').classList.add('open');
+}
+function closeScenarioPanel() {
+  $('scenario-panel').classList.remove('open');
+  $('scenario-overlay').classList.remove('open');
+}
+
+function buildScenarioCards(results) {
+  const container = $('scenario-cards');
+  if (!container || !results) return;
+  const yr = new Date().getFullYear();
+
+  container.innerHTML = results.map((res, i) => {
+    const p   = S.people[i];
+    const col = PERSON_COLORS[i % PERSON_COLORS.length];
+    const fireRate = Math.min(100, res.fireRate).toFixed(1);
+    const paceAge  = res.currentPace.retireAge;
+    const req      = res.requiredMonthlySavings;
+    const gap      = p.monthlySavings - req;
+    const gapHtml  = req <= 0
+      ? `<span class="sc-gap-pos">저축 불필요</span>`
+      : gap >= 0
+        ? `<span class="sc-gap-pos">+${Math.round(gap).toLocaleString()}만원 여유</span>`
+        : `<span class="sc-gap-neg">${Math.round(gap).toLocaleString()}만원 부족</span>`;
+
+    // FIRE 달성 progress bar
+    const pct = Math.min(100, parseFloat(fireRate));
+
+    return `
+      <div class="sc-card">
+        <!-- 이름 + 컬러 -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:${col.line};flex-shrink:0;"></div>
+          <span style="font-size:14px;font-weight:600;color:#111111;">${p.name}</span>
+          <span style="font-size:11px;color:#AAAAAA;margin-left:auto;">${p.currentAge}세 · 목표 ${p.targetRetirementAge}세</span>
+        </div>
+
+        <!-- 달성률 + 프로그레스 -->
+        <div style="margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+            <span class="sc-label">FIRE 달성률</span>
+            <span style="font-size:22px;font-weight:500;color:#111111;">${fireRate}%</span>
+          </div>
+          <div style="background:#EBEBEB;border-radius:9999px;height:4px;overflow:hidden;">
+            <div style="background:#111111;border-radius:9999px;height:100%;width:${pct}%;transition:width 0.6s ease;"></div>
+          </div>
+        </div>
+
+        <hr class="sc-divider">
+
+        <!-- 주요 지표 -->
+        <div class="sc-metric-row">
+          <div class="sc-metric">
+            <span class="sc-label">현재 페이스 은퇴</span>
+            <span class="sc-val-big">${paceAge ? paceAge + '세' : '90세+'}</span>
+            ${paceAge ? `<span style="font-size:11px;color:#AAAAAA;">${yr + (paceAge - p.currentAge)}년</span>` : ''}
+          </div>
+          <div class="sc-metric" style="text-align:right;">
+            <span class="sc-label">FIRE 목표 자산</span>
+            <span class="sc-val-mid">${fmtShort(res.fireNumber)}</span>
+          </div>
+        </div>
+
+        <hr class="sc-divider">
+
+        <!-- 저축 갭 -->
+        <div class="sc-metric-row">
+          <div class="sc-metric">
+            <span class="sc-label">월 필요 저축</span>
+            <span class="sc-val-mid">${req > 0 ? Math.ceil(req).toLocaleString() + '만원' : '—'}</span>
+          </div>
+          <div class="sc-metric" style="text-align:right;">
+            <span class="sc-label">현재 저축 갭</span>
+            <div style="margin-top:2px;">${gapHtml}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 function toggleSidebar() {
   const sidebar = $('sidebar');
   const overlay = $('sidebar-overlay');
