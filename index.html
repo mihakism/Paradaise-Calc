@@ -397,7 +397,23 @@
       display: none; align-items: center; gap: 14px;
       background: #ffffff;
       border: 1px solid rgba(245,200,66,0.2);
-      border-radius: var(--r-md); padding: 14px 18px;
+      border-radius: var(--r-md); padding: 20px 20px;
+    }
+
+    /* ─── 커스텀 차트 툴팁 ─── */
+    #chartjs-tooltip {
+      background: #111111;
+      color: #ffffff;
+      font-size: 12px;
+      font-family: var(--font);
+      border-radius: 9999px;
+      padding: 6px 12px;
+      position: absolute;
+      pointer-events: none;
+      z-index: 1000;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.15s ease;
     }
     .inf-banner.vis { display: flex; }
     .inf-banner-ico { font-size: 22px; flex-shrink: 0; }
@@ -635,19 +651,22 @@
 <!-- ═══ 메인 콘텐츠 ═══ -->
 <main id="capture-area" style="background:#EBEBEB;min-height:100vh;padding:40px 48px 0;">
 
-  <!-- 상단: 로고 (좌) + 메타 블록 (우) -->
-  <div class="anim-fadeup" style="display:flex;justify-content:space-between;align-items:flex-end;height:300px;">
+  <!-- 상단: 로고 (좌) + 우상단 영역 -->
+  <div class="anim-fadeup" style="display:flex;justify-content:space-between;align-items:flex-start;height:240px;">
 
     <!-- 로고 -->
-    <div style="font-size:96px;font-weight:200;color:#111111;border:1.5px solid #111111;border-radius:12px;padding:14px 20px;line-height:1;display:inline-block;align-self:flex-start;">파라다이스 계산기</div>
+    <div style="font-size:96px;font-weight:200;color:#111111;border:1.5px solid #111111;border-radius:12px;padding:14px 20px;line-height:1;display:inline-block;">25x</div>
 
-    <!-- 메타 블록 (INFLATION only) -->
-    <div style="font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1.8;">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:28px;">
-        <span style="color:#999999;text-transform:uppercase;">INFLATION</span>
-        <button id="meta-inf-btn" onclick="toggleInf()" style="width:32px;height:18px;border-radius:9999px;background:#7C3AED;border:none;cursor:pointer;position:relative;padding:0;flex-shrink:0;transition:background 150ms ease;vertical-align:middle;display:inline-block;">
-          <span id="meta-inf-thumb" style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:transform 150ms ease;display:block;transform:translateX(14px);"></span>
-        </button>
+    <!-- 우상단: 공유 + 메타 블록 -->
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px;">
+      <button class="topbar-icon-btn ms" id="btn-share" title="공유하기">share</button>
+      <div style="font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1.8;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:28px;">
+          <span style="color:#999999;text-transform:uppercase;">INFLATION</span>
+          <button id="meta-inf-btn" onclick="toggleInf()" style="width:32px;height:18px;border-radius:9999px;background:#111111;border:none;cursor:pointer;position:relative;padding:0;flex-shrink:0;transition:background 150ms ease;vertical-align:middle;display:inline-block;">
+            <span id="meta-inf-thumb" style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:transform 150ms ease;display:block;transform:translateX(14px);"></span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -657,28 +676,26 @@
   <div class="anim-fadeup" style="margin-top:32px;display:flex;justify-content:space-between;align-items:flex-end;animation-delay:0.12s;">
     <div>
       <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">나</span>님</div>
-      <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">FIRE까지 <span id="hero-rate" style="color:#7C3AED;font-weight:600;">0%</span> 달성했어요</div>
+      <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">FIRE까지 <span id="hero-rate" style="color:#111111;font-weight:600;">0%</span> 달성했어요</div>
     </div>
     <div style="display:flex;align-items:center;gap:4px;padding-bottom:4px;">
-      <button class="topbar-icon-btn ms" id="btn-share" title="공유하기">share</button>
-      <button class="topbar-icon-btn ms" id="btn-dl" title="이미지 저장">photo_camera</button>
-      <button class="topbar-icon-btn ms" title="설정" onclick="toggleSidebar()">settings</button>
-      <a href="onboarding.html" class="btn btn-ghost" style="text-decoration:none;font-size:12px;padding:5px 10px;">← 다시 입력</a>
+      <button class="topbar-icon-btn ms" title="설정" onclick="toggleSidebar()">tune</button>
+      <a href="onboarding.html" class="btn btn-ghost" style="text-decoration:none;font-size:12px;padding:5px 10px;">처음으로</a>
     </div>
   </div>
 
   <!-- 결과 카드 4개 -->
-  <div style="margin-top:80px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+  <div style="margin-top:36px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
 
     <!-- 카드 1: 낙원까지 -->
     <div class="anim-fadeup" style="animation-delay:0.28s;">
       <div style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
           <span class="ms" style="font-size:20px;color:#999999;">beach_access</span>
-          <p style="font-size:10px;font-weight:500;letter-spacing:0.12em;color:#999999;text-transform:uppercase;margin:0;">+ 낙원까지</p>
+          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#999999;margin:0;">+ 낙원까지</p>
         </div>
         <div id="c-countdown" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#F59E0B;">—</div>
-        <div id="c-retire-yr" style="font-size:13px;font-weight:400;color:#999999;margin-top:16px;">은퇴 목표 계산 중...</div>
+        <div id="c-retire-yr" style="font-size:13px;font-weight:400;color:#999999;margin-top:4px;">은퇴 목표 계산 중...</div>
       </div>
     </div>
 
@@ -687,9 +704,9 @@
       <div style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
           <span class="ms" style="font-size:20px;color:#999999;">savings</span>
-          <p style="font-size:10px;font-weight:500;letter-spacing:0.12em;color:#999999;text-transform:uppercase;margin:0;">+ 필요 은퇴 자산</p>
+          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#999999;margin:0;">+ 필요 은퇴 자산</p>
         </div>
-        <div id="c-fire-num" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#7C3AED;">—</div>
+        <div id="c-fire-num" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#111111;">—</div>
         <div id="c-fire-sub" style="font-size:13px;font-weight:400;color:#999999;margin-top:16px;">월 인출 × 12 / SWR</div>
       </div>
     </div>
@@ -699,9 +716,9 @@
       <div id="card-req-savings" style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
           <span class="ms" style="font-size:20px;color:#999999;">payments</span>
-          <p style="font-size:10px;font-weight:500;letter-spacing:0.12em;color:#999999;text-transform:uppercase;margin:0;">+ 월 필요 저축액</p>
+          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#999999;margin:0;">+ 월 필요 저축액</p>
         </div>
-        <div id="c-req-save" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#7C3AED;">—</div>
+        <div id="c-req-save" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#111111;">—</div>
         <div style="font-size:13px;font-weight:400;color:#999999;margin-top:16px;">
           <div id="gap-row" style="display:none;align-items:center;gap:6px;"><span id="gap-badge"></span></div>
           <span id="c-req-sub-default">역산 필요 저축액</span>
@@ -714,9 +731,9 @@
       <div id="card-pace" style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
           <span class="ms" style="font-size:20px;color:#999999;">timer</span>
-          <p style="font-size:10px;font-weight:500;letter-spacing:0.12em;color:#999999;text-transform:uppercase;margin:0;">+ 현재 페이스</p>
+          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#999999;margin:0;">+ 현재 페이스</p>
         </div>
-        <div id="c-pace" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#7C3AED;">—</div>
+        <div id="c-pace" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#111111;">—</div>
         <div id="c-pace-sub" style="font-size:13px;font-weight:400;color:#999999;margin-top:16px;">현재 저축 페이스 기준 은퇴 가능</div>
       </div>
     </div>
@@ -745,19 +762,19 @@
   </div>
 
   <!-- 차트 -->
-  <div class="anim-fadeup" style="margin-top:32px;padding-bottom:48px;animation-delay:0.7s;">
+  <div class="anim-fadeup" style="margin-top:16px;padding-bottom:48px;animation-delay:0.7s;">
     <div style="background:#ffffff;border-radius:16px;padding:24px;">
       <div class="chart-hd">
         <div>
           <div style="font-size:14px;font-weight:500;color:#111111;">자산 성장 시뮬레이션</div>
-          <div style="font-size:12px;color:#999999;margin-top:2px;" id="chart-sub-txt">인원별 FIRE 목표 달성 계획</div>
+          <div style="font-size:12px;color:#999999;margin-top:2px;" id="chart-sub-txt">목표 달성 계획을 차트로 확인해 보세요</div>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;">
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
           <div class="chart-mode-toggle">
-            <button class="cmt-btn active" id="cmt-line" onclick="setChartMode('line')">궤적</button>
+            <button class="cmt-btn active" id="cmt-line" onclick="setChartMode('line')">시나리오</button>
             <button class="cmt-btn" id="cmt-bar" onclick="setChartMode('bar')">비교</button>
           </div>
-          <div class="legend" id="legend"></div>
+          <div class="legend" id="legend" style="font-size:11px;color:#666666;"></div>
         </div>
       </div>
       <div class="chart-wrap" id="chart-wrap">
@@ -776,7 +793,7 @@
 
 // ─── 인원 컬러 팔레트 ───
 const PERSON_COLORS = [
-  { line: '#374151', r:  55, g:  65, b:  81 },
+  { line: '#8EAD35', r: 142, g: 173, b:  53 },
   { line: '#F59E0B', r: 245, g: 158, b:  11 },
   { line: '#10B981', r:  16, g: 185, b: 129 },
   { line: '#EF4444', r: 239, g:  68, b:  68 },
@@ -971,6 +988,28 @@ const vertLinePlugin = {
   },
 };
 
+function externalTooltipHandler(context) {
+  const { chart, tooltip } = context;
+  let el = document.getElementById('chartjs-tooltip');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'chartjs-tooltip';
+    document.body.appendChild(el);
+  }
+  if (tooltip.opacity === 0) { el.style.opacity = '0'; return; }
+  const title = tooltip.title?.[0] || '';
+  const bodyLines = (tooltip.body || [])
+    .map(b => b.lines.join('').trim())
+    .filter(Boolean);
+  el.innerHTML = bodyLines.length
+    ? `${title}세 · ${bodyLines.join(' · ')}`
+    : `${title}세`;
+  el.style.opacity = '1';
+  const rect = chart.canvas.getBoundingClientRect();
+  el.style.left = (rect.left + window.scrollX + tooltip.caretX) + 'px';
+  el.style.top  = (rect.top + window.scrollY + tooltip.caretY - el.offsetHeight - 10) + 'px';
+}
+
 function initChart() {
   Chart.register(vertLinePlugin);
   const ctx = $('chart').getContext('2d');
@@ -986,38 +1025,33 @@ function initChart() {
         legend: { display: false },
         vertLine: { targets: [] },
         tooltip: {
-          backgroundColor: 'rgba(17,24,39,0.92)',
-          borderColor: '#374151',
-          borderWidth: 1,
-          padding: 13,
-          titleColor: '#9CA3AF',
-          bodyColor: '#F9FAFB',
-          titleFont: { size: 12, weight: '600' },
-          bodyFont: { size: 13, weight: '700', family: "'Pretendard', sans-serif" },
+          enabled: false,
+          external: externalTooltipHandler,
           callbacks: {
-            title: items => `${items[0].label}세`,
+            title: items => `${items[0].label}`,
             label: item => {
               if (item.raw === null || item.raw === undefined) return null;
-              return ` ${item.dataset.label}: ${fmtShort(item.raw)}`;
+              return `${item.dataset.label}: ${fmtShort(item.raw)}`;
             },
           },
         },
       },
       scales: {
         x: {
-          grid: { color: 'rgba(0,0,0,0.055)' },
+          grid: { display: false },
           ticks: {
-            color: '#9CA3AF', font: { size: 11 },
+            color: '#999999', font: { size: 11 },
             callback: function(v) { return this.getLabelForValue(v) + '세'; },
             maxTicksLimit: 12,
+            maxRotation: 0,
           },
           border: { display: false },
         },
         y: {
           min: 0,
-          grid: { color: 'rgba(0,0,0,0.055)' },
+          grid: { display: false },
           ticks: {
-            color: '#9CA3AF', font: { size: 11 },
+            color: '#999999', font: { size: 11 },
             callback: v => fmtShort(v),
             maxTicksLimit: 6,
           },
@@ -1037,7 +1071,7 @@ function updateChart(results) {
 
   const mkGradient = (ctx, r, g, b) => {
     const grad = ctx.chart.ctx.createLinearGradient(0, 0, 0, 290);
-    grad.addColorStop(0, `rgba(${r},${g},${b},0.14)`);
+    grad.addColorStop(0, `rgba(${r},${g},${b},0.15)`);
     grad.addColorStop(1, `rgba(${r},${g},${b},0.00)`);
     return grad;
   };
@@ -1047,12 +1081,6 @@ function updateChart(results) {
   results.forEach((res, i) => {
     const col  = PERSON_COLORS[i % PERSON_COLORS.length];
     const name = S.people[i].name;
-    const retireAge = res.currentPace.retireAge;
-
-    // point styling
-    const pRadii = labels.map(age => age === retireAge ? 7 : 0);
-    const pBg    = labels.map(age => age === retireAge ? col.line : 'transparent');
-    const pBw    = labels.map(age => age === retireAge ? 2 : 0);
 
     datasets.push({
       label: name,
@@ -1062,9 +1090,8 @@ function updateChart(results) {
       }),
       borderColor: col.line,
       backgroundColor: ctx => mkGradient(ctx, col.r, col.g, col.b),
-      borderWidth: 2.5, tension: 0.4, fill: true, spanGaps: true,
-      pointRadius: pRadii, pointBackgroundColor: pBg,
-      pointBorderColor: col.line, pointBorderWidth: pBw, pointHoverRadius: 5,
+      borderWidth: 1.5, tension: 0.4, fill: true, spanGaps: true,
+      pointRadius: 0, pointHoverRadius: 4,
     });
   });
 
@@ -1090,7 +1117,7 @@ function updateChart(results) {
     datasets.push({
       label: 'FIRE 목표',
       data: labels.map(() => active.fireNumber),
-      borderColor: 'rgba(239,68,68,0.45)', borderDash: [7, 4], borderWidth: 2,
+      borderColor: 'rgba(239,68,68,0.5)', borderDash: [2, 2], borderWidth: 1,
       backgroundColor: 'transparent', tension: 0, fill: false,
       pointRadius: 0, pointHoverRadius: 0,
     });
@@ -1181,8 +1208,8 @@ function rebuildLegend(results) {
     const name = S.people[i].name;
     const item = document.createElement('div');
     item.className = 'leg-item';
-    item.style.cursor = 'pointer';
-    item.innerHTML = `<div class="leg-dot" style="background:${col.line}"></div><span>${name}</span>`;
+    item.style.cssText = 'cursor:pointer;font-size:11px;color:#666666;display:flex;align-items:center;gap:5px;';
+    item.innerHTML = `<div class="leg-dot" style="background:${col.line};width:8px;height:8px;border-radius:50%;flex-shrink:0;"></div><span>${name}</span>`;
     item.addEventListener('click', () => setActivePerson(i));
     leg.appendChild(item);
   });
@@ -1540,7 +1567,7 @@ function updateMetaInfToggle() {
   const btn   = $('meta-inf-btn');
   const thumb = $('meta-inf-thumb');
   if (!btn || !thumb) return;
-  btn.style.background    = S.showInf ? '#7C3AED' : '#CCCCCC';
+  btn.style.background    = S.showInf ? '#111111' : '#CCCCCC';
   thumb.style.transform   = S.showInf ? 'translateX(14px)' : 'translateX(0px)';
 }
 
