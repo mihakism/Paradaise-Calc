@@ -409,6 +409,56 @@
       animation: heroRatePop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
 
+    /* ─── 시나리오 비교 버튼 ─── */
+    .scenario-cmp-btn {
+      display: inline-flex;
+      align-items: center;
+      border: 1.5px solid #111111;
+      border-radius: 9999px;
+      background: transparent;
+      color: #111111;
+      font-size: 14px;
+      font-family: var(--font);
+      cursor: pointer;
+      padding: 5px 5px;
+      width: 28px;
+      height: 28px;
+      box-sizing: border-box;
+      white-space: nowrap;
+      transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, padding 0.25s ease, width 0.25s ease;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .scenario-cmp-btn .cmp-icon {
+      flex-shrink: 0;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+    }
+    .scenario-cmp-btn .cmp-text {
+      max-width: 0;
+      overflow: hidden;
+      opacity: 0;
+      font-size: 13px;
+      font-weight: 500;
+      padding-left: 0;
+      transition: max-width 0.25s ease, padding-left 0.25s ease, opacity 0.2s ease;
+    }
+    .scenario-cmp-btn:hover {
+      background: #111111;
+      color: #ffffff;
+      border-color: #111111;
+      padding: 5px 14px 5px 10px;
+      width: auto;
+    }
+    .scenario-cmp-btn:hover .cmp-text {
+      max-width: 120px;
+      padding-left: 6px;
+      opacity: 1;
+    }
+
     /* ─── 커스텀 차트 툴팁 ─── */
     #chartjs-tooltip {
       background: #111111;
@@ -685,7 +735,13 @@
   <div class="anim-fadeup" style="margin-top:32px;display:flex;justify-content:space-between;align-items:flex-end;animation-delay:0.2s;">
     <div>
       <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">나</span>님</div>
-      <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">FIRE까지 <span id="hero-rate" style="color:#111111;font-weight:600;">0%</span> 달성했어요</div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">FIRE까지 <span id="hero-rate" style="color:#111111;font-weight:600;">0%</span> 달성했어요</div>
+        <button class="scenario-cmp-btn" title="시나리오 비교" onclick="setChartMode('bar');document.getElementById('chart-wrap')?.scrollIntoView({behavior:'smooth',block:'center'})">
+          <span class="cmp-icon">+</span>
+          <span class="cmp-text">시나리오 비교</span>
+        </button>
+      </div>
     </div>
     <div style="display:flex;align-items:center;gap:4px;padding-bottom:4px;">
       <button class="topbar-icon-btn ms" title="설정" onclick="toggleSidebar()">tune</button>
