@@ -581,6 +581,7 @@
     <div class="topbar-right">
       <button class="topbar-icon-btn ms" id="btn-share" title="공유하기">share</button>
       <button class="topbar-icon-btn ms" id="btn-dl" title="이미지 저장">photo_camera</button>
+      <button class="topbar-icon-btn ms" title="설정" onclick="toggleSidebar()">settings</button>
       <a href="onboarding.html" class="btn btn-ghost" style="text-decoration:none; font-size:13px; padding:6px 12px;">← 다시 입력</a>
       <div class="avatar">미</div>
     </div>
@@ -649,12 +650,9 @@
 <main class="content" id="capture-area">
 
   <!-- ═══ 히어로 영역 ═══ -->
-  <div class="relative rounded-2xl border" style="margin-top:32px;background:linear-gradient(135deg,#f5f3ff 0%,#ffffff 100%);border-color:#ede9fe;padding:28px 28px 24px;">
+  <div class="rounded-2xl" style="margin-top:32px;background:linear-gradient(135deg,#f5f3ff 0%,#ffffff 100%);padding:28px 28px 24px;">
 
-    <!-- 설정 버튼 -->
-    <button class="nav-icon ms" style="position:absolute;top:14px;right:14px;width:36px;height:36px;flex-shrink:0;" title="설정" onclick="toggleSidebar()">settings</button>
-
-    <div id="hero-inner" style="display:flex;align-items:center;gap:32px;padding-right:44px;">
+    <div id="hero-inner" style="display:flex;align-items:center;gap:32px;">
 
       <!-- 왼쪽: 인사말 + 프로그레스 -->
       <div style="flex:1;min-width:0;">
