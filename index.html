@@ -1262,11 +1262,14 @@ function updateCards(results) {
     el.classList.add('hero-rate-animate');
   }
 
-  const DUR = 550;
+  const DUR = 750;
+  // 초기 로드 시 카드가 등장하는 타이밍에 맞춰 카운트업 시작
+  const D = _firstLoad ? { h: 220, c1: 420, c2: 540, c3: 660, c4: 780 }
+                       : { h: 0,   c1: 0,   c2: 0,   c3: 0,   c4: 0   };
 
   // ─── 카드 1: 낙원까지 ───
   if (N > 0) {
-    countUp($('c-countdown'), N, v => `D-${v}${U('년')}`, DUR, true);
+    countUp($('c-countdown'), N, v => `D-${v}${U('년')}`, DUR, true, D.c1);
     $('c-retire-yr').textContent = `${yr + N}년 (${resA.targetRetirementAge}세) 목표`;
   } else if (N === 0) {
     $('c-countdown').textContent = '지금!';
@@ -1277,7 +1280,7 @@ function updateCards(results) {
   }
 
   // ─── 카드 2: 필요 은퇴 자산 ───
-  countUp($('c-fire-num'), resA.fireNumber, v => fmtShortHtml(v), DUR, true);
+  countUp($('c-fire-num'), resA.fireNumber, v => fmtShortHtml(v), DUR, true, D.c2);
   $('c-fire-sub').textContent = `${resA.targetWithdrawal.toLocaleString()}만원 × 12 ÷ ${resA.safeRate}%`;
 
   // ─── 카드 3: 월 필요 저축액 ───
@@ -1292,7 +1295,7 @@ function updateCards(results) {
     if (gapRow) gapRow.style.display = 'none';
     if (defSub) { defSub.style.display = ''; defSub.textContent = '이미 FIRE 달성 가능'; }
   } else {
-    countUp($('c-req-save'), Math.ceil(req), v => `${v.toLocaleString()}${U('만원')}`, DUR, true);
+    countUp($('c-req-save'), Math.ceil(req), v => `${v.toLocaleString()}${U('만원')}`, DUR, true, D.c3);
     if (defSub) defSub.style.display = 'none';
     if (gapRow) {
       gapRow.style.display = 'flex';
@@ -1312,7 +1315,7 @@ function updateCards(results) {
   // ─── 카드 4: 현재 페이스 ───
   const paceAge = resA.currentPace.retireAge;
   if (paceAge) {
-    countUp($('c-pace'), paceAge, v => `${v}${U('세')}`, DUR, true);
+    countUp($('c-pace'), paceAge, v => `${v}${U('세')}`, DUR, true, D.c4);
     $('c-pace-sub').textContent = '현재 저축 페이스 기준 은퇴 가능';
   } else {
     $('c-pace').textContent = '90세+';
@@ -1328,7 +1331,7 @@ function updateCards(results) {
   if (heroName) heroName.textContent = p.name || '나';
   const assetPct = parseFloat(Math.min(100, resA.fireRate).toFixed(1));
   const heroRate = $('hero-rate');
-  if (heroRate) countUp(heroRate, assetPct, v => v + '%', 550);
+  if (heroRate) countUp(heroRate, assetPct, v => v + '%', 750, false, D.h);
 
   // 메타 인플레이션 토글 + 사이드바 토글 동기화
   updateMetaInfToggle();
@@ -1396,21 +1399,27 @@ const $ = id => document.getElementById(id);
 
 /* ── 카운트업 애니메이션 ── */
 const _cuGen = {};
-function countUp(el, target, fmt, duration, html = false) {
+let _firstLoad = true;
+
+function countUp(el, target, fmt, duration, html = false, startDelay = 0) {
   if (!el) return;
   const id  = el.id || (el.id = '_cu_' + Math.random().toString(36).slice(2));
   const gen = (_cuGen[id] = (_cuGen[id] || 0) + 1);
-  const start = performance.now();
-  const ease  = t => 1 - Math.pow(1 - t, 3);
-  const set   = v => html ? (el.innerHTML = fmt(v)) : (el.textContent = fmt(v));
-  function tick(now) {
-    if (_cuGen[id] !== gen) return;
-    const progress = Math.min((now - start) / duration, 1);
-    set(Math.round(target * ease(progress)));
-    if (progress < 1) requestAnimationFrame(tick);
-    else set(target);
-  }
-  requestAnimationFrame(tick);
+  const set = v => html ? (el.innerHTML = fmt(v)) : (el.textContent = fmt(v));
+
+  const run = () => {
+    const t0 = performance.now();
+    function tick(now) {
+      if (_cuGen[id] !== gen) return;
+      const progress = Math.min((now - t0) / duration, 1);
+      set(Math.round(target * progress)); // linear — 일정한 카운팅 속도
+      if (progress < 1) requestAnimationFrame(tick);
+      else set(target);
+    }
+    requestAnimationFrame(tick);
+  };
+
+  startDelay > 0 ? setTimeout(run, startDelay) : run();
 }
 
 function fmtShort(manwon) {
@@ -1757,6 +1766,7 @@ function init() {
   bindCommonSliders();
   bindShareButtons();
   updateFull();
+  setTimeout(() => { _firstLoad = false; }, 1600); // 모든 초기 애니메이션 완료 후 해제
 }
 document.addEventListener('DOMContentLoaded', init);
 </script>
