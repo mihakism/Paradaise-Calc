@@ -664,7 +664,7 @@
   <div class="anim-fadeup" style="display:flex;justify-content:space-between;align-items:flex-start;height:240px;">
 
     <!-- 로고 -->
-    <div style="font-size:96px;font-weight:200;color:#111111;border:1.5px solid #111111;border-radius:12px;padding:14px 20px;line-height:1;display:inline-block;">25x</div>
+    <div style="font-size:64px;font-weight:200;color:#111111;border:1.5px solid #111111;border-radius:12px;padding:14px 20px;line-height:1;display:inline-block;">P.Calc</div>
 
     <!-- 우상단: 공유 + 메타 블록 -->
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px;">
@@ -1262,9 +1262,11 @@ function updateCards(results) {
     el.classList.add('hero-rate-animate');
   }
 
+  const DUR = 550;
+
   // ─── 카드 1: 낙원까지 ───
   if (N > 0) {
-    $('c-countdown').innerHTML = `D-${N}${U('년')}`;
+    countUp($('c-countdown'), N, v => `D-${v}${U('년')}`, DUR, true);
     $('c-retire-yr').textContent = `${yr + N}년 (${resA.targetRetirementAge}세) 목표`;
   } else if (N === 0) {
     $('c-countdown').textContent = '지금!';
@@ -1273,12 +1275,10 @@ function updateCards(results) {
     $('c-countdown').textContent = '재설정 필요';
     $('c-retire-yr').textContent = '현재 나이 ≥ 은퇴 희망 나이';
   }
-  popVal('c-countdown');
 
   // ─── 카드 2: 필요 은퇴 자산 ───
-  $('c-fire-num').innerHTML = fmtShortHtml(resA.fireNumber);
+  countUp($('c-fire-num'), resA.fireNumber, v => fmtShortHtml(v), DUR, true);
   $('c-fire-sub').textContent = `${resA.targetWithdrawal.toLocaleString()}만원 × 12 ÷ ${resA.safeRate}%`;
-  popVal('c-fire-num');
 
   // ─── 카드 3: 월 필요 저축액 ───
   const req    = resA.requiredMonthlySavings;
@@ -1292,7 +1292,7 @@ function updateCards(results) {
     if (gapRow) gapRow.style.display = 'none';
     if (defSub) { defSub.style.display = ''; defSub.textContent = '이미 FIRE 달성 가능'; }
   } else {
-    $('c-req-save').innerHTML = `${Math.ceil(req).toLocaleString()}${U('만원')}`;
+    countUp($('c-req-save'), Math.ceil(req), v => `${v.toLocaleString()}${U('만원')}`, DUR, true);
     if (defSub) defSub.style.display = 'none';
     if (gapRow) {
       gapRow.style.display = 'flex';
@@ -1308,18 +1308,16 @@ function updateCards(results) {
       }
     }
   }
-  popVal('c-req-save');
 
   // ─── 카드 4: 현재 페이스 ───
   const paceAge = resA.currentPace.retireAge;
   if (paceAge) {
-    $('c-pace').innerHTML = `${paceAge}${U('세')}`;
+    countUp($('c-pace'), paceAge, v => `${v}${U('세')}`, DUR, true);
     $('c-pace-sub').textContent = '현재 저축 페이스 기준 은퇴 가능';
   } else {
     $('c-pace').textContent = '90세+';
     $('c-pace-sub').textContent = '저축액을 늘려보세요';
   }
-  popVal('c-pace');
 
   // 비교 배너 숨기기
   const cb = $('compare-banner');
@@ -1330,7 +1328,7 @@ function updateCards(results) {
   if (heroName) heroName.textContent = p.name || '나';
   const assetPct = parseFloat(Math.min(100, resA.fireRate).toFixed(1));
   const heroRate = $('hero-rate');
-  if (heroRate) countUp(heroRate, assetPct, v => v + '%', 900);
+  if (heroRate) countUp(heroRate, assetPct, v => v + '%', 550);
 
   // 메타 인플레이션 토글 + 사이드바 토글 동기화
   updateMetaInfToggle();
@@ -1398,18 +1396,19 @@ const $ = id => document.getElementById(id);
 
 /* ── 카운트업 애니메이션 ── */
 const _cuGen = {};
-function countUp(el, target, fmt, duration) {
+function countUp(el, target, fmt, duration, html = false) {
   if (!el) return;
   const id  = el.id || (el.id = '_cu_' + Math.random().toString(36).slice(2));
   const gen = (_cuGen[id] = (_cuGen[id] || 0) + 1);
   const start = performance.now();
   const ease  = t => 1 - Math.pow(1 - t, 3);
+  const set   = v => html ? (el.innerHTML = fmt(v)) : (el.textContent = fmt(v));
   function tick(now) {
     if (_cuGen[id] !== gen) return;
     const progress = Math.min((now - start) / duration, 1);
-    el.textContent = fmt(Math.round(target * ease(progress)));
+    set(Math.round(target * ease(progress)));
     if (progress < 1) requestAnimationFrame(tick);
-    else el.textContent = fmt(target);
+    else set(target);
   }
   requestAnimationFrame(tick);
 }
