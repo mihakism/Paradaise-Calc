@@ -54,7 +54,7 @@
 
     body {
       font-family: var(--font);
-      background: var(--bg-base);
+      background: #EBEBEB;
       color: var(--text-1);
       min-height: 100vh;
       line-height: 1.6;
@@ -154,7 +154,7 @@
     /* ─── 조정 사이드바 ─── */
     .sidebar {
       position: fixed;
-      top: 56px; right: 0; bottom: 0;
+      top: 0; right: 0; bottom: 0;
       width: 380px;
       background: rgba(255, 255, 255, 0.97);
       border-left: 1px solid var(--border);
@@ -573,20 +573,6 @@
 </head>
 <body>
 
-<!-- ═══ 탑바 (fixed full-width) ═══ -->
-<header class="topbar">
-  <div class="topbar-logo"><span class="ms">park</span></div>
-  <div class="topbar-inner">
-    <div class="topbar-spacer"></div>
-    <div class="topbar-right">
-      <button class="topbar-icon-btn ms" id="btn-share" title="공유하기">share</button>
-      <button class="topbar-icon-btn ms" id="btn-dl" title="이미지 저장">photo_camera</button>
-      <button class="topbar-icon-btn ms" title="설정" onclick="toggleSidebar()">settings</button>
-      <a href="onboarding.html" class="btn btn-ghost" style="text-decoration:none; font-size:13px; padding:6px 12px;">← 다시 입력</a>
-      <div class="avatar">미</div>
-    </div>
-  </div>
-</header>
 
 <!-- ═══ 사이드바 오버레이 ═══ -->
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -640,125 +626,139 @@
 
 </div><!-- /#sidebar -->
 
-<!-- ═══ 앱 셸 ═══ -->
-<div class="app-shell">
-
-  <!-- 메인 래퍼 -->
-  <div class="main-wrapper">
-
 <!-- ═══ 메인 콘텐츠 ═══ -->
-<main class="content" id="capture-area">
+<main id="capture-area" style="background:#EBEBEB;min-height:100vh;padding:40px 48px 0;">
 
-  <!-- ═══ 히어로 영역 ═══ -->
-  <div class="rounded-2xl" style="margin-top:32px;background:linear-gradient(135deg,#f5f3ff 0%,#ffffff 100%);padding:28px 28px 24px;">
+  <!-- 상단: 로고 (좌) + 메타 블록 (우) -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;">
 
-    <div id="hero-inner" style="display:flex;align-items:center;gap:32px;">
+    <!-- 로고 -->
+    <div style="font-size:28px;font-weight:400;color:#111111;border:1.5px solid #111111;border-radius:12px;padding:14px 20px;line-height:1;display:inline-block;">파라다이스 계산기</div>
 
-      <!-- 왼쪽: 인사말 + 프로그레스 -->
-      <div style="flex:1;min-width:0;">
-        <h1 style="font-size:26px;font-weight:700;color:#111827;letter-spacing:-0.5px;line-height:1.3;">
-          Good morning, <span id="hero-name" style="color:#7C3AED;">미학</span>님
-        </h1>
-        <p style="font-size:14px;color:#6B7280;margin:8px 0 18px;">
-          FIRE까지 <strong id="hero-rate" style="color:#7C3AED;font-weight:700;">0%</strong> 달성했어요
-        </p>
-        <!-- 프로그레스 바 -->
-        <div style="background:#EDE9FE;border-radius:9999px;height:8px;overflow:hidden;">
-          <div id="hero-progress" style="background:#7C3AED;border-radius:9999px;height:100%;width:0%;transition:width 1.2s cubic-bezier(0.4,0,0.2,1);"></div>
-        </div>
-        <p style="font-size:11px;color:#A78BFA;margin-top:7px;">자산 기준 · 현재 자산 ÷ 목표 자산</p>
+    <!-- 메타 블록 + 유틸리티 버튼 -->
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px;">
+
+      <!-- 유틸리티 버튼 행 -->
+      <div style="display:flex;align-items:center;gap:4px;">
+        <button class="topbar-icon-btn ms" id="btn-share" title="공유하기">share</button>
+        <button class="topbar-icon-btn ms" id="btn-dl" title="이미지 저장">photo_camera</button>
+        <button class="topbar-icon-btn ms" title="설정" onclick="toggleSidebar()">settings</button>
+        <a href="onboarding.html" class="btn btn-ghost" style="text-decoration:none;font-size:12px;padding:5px 10px;">← 다시 입력</a>
       </div>
 
-      <!-- 오른쪽: 수치 카드 2개 -->
-      <div id="hero-metrics" style="display:flex;gap:14px;flex-shrink:0;">
-
-        <!-- 자산 달성률 -->
-        <div style="background:#fff;border-radius:12px;border:1px solid #ede9fe;padding:16px 22px;text-align:center;min-width:110px;box-shadow:0 1px 4px rgba(124,58,237,0.06);">
-          <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">자산 달성률</div>
-          <div id="hero-asset-rate" style="font-size:28px;font-weight:800;color:#7C3AED;letter-spacing:-0.5px;line-height:1.1;">0%</div>
-          <div style="font-size:11px;color:#C4B5FD;margin-top:5px;">현재 ÷ 목표</div>
+      <!-- 메타 정보 -->
+      <div style="font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1.8;">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:28px;">
+          <span style="color:#999999;text-transform:uppercase;">STATUS</span>
+          <span id="meta-status" style="color:#111111;"><span style="color:#22C55E;">●</span>&nbsp;On Track</span>
         </div>
-
-        <!-- 기간 달성률 -->
-        <div style="background:#fff;border-radius:12px;border:1px solid #ede9fe;padding:16px 22px;text-align:center;min-width:110px;box-shadow:0 1px 4px rgba(124,58,237,0.06);">
-          <div style="font-size:10px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">기간 달성률</div>
-          <div id="hero-time-rate" style="font-size:28px;font-weight:800;color:#7C3AED;letter-spacing:-0.5px;line-height:1.1;">0%</div>
-          <div style="font-size:11px;color:#C4B5FD;margin-top:5px;">경과 ÷ 목표 기간</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:28px;">
+          <span style="color:#999999;text-transform:uppercase;">D-DAY</span>
+          <span id="meta-dday" style="color:#111111;">D-—년</span>
         </div>
-
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:28px;">
+          <span style="color:#999999;text-transform:uppercase;">ELAPSED</span>
+          <span id="meta-elapsed" style="color:#111111;">—%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:28px;">
+          <span style="color:#999999;text-transform:uppercase;">WITHDRAWAL</span>
+          <span id="meta-withdrawal" style="color:#111111;">—만원</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:28px;">
+          <span style="color:#999999;text-transform:uppercase;">INFLATION</span>
+          <button id="meta-inf-btn" onclick="toggleInf()" style="width:32px;height:18px;border-radius:9999px;background:#7C3AED;border:none;cursor:pointer;position:relative;padding:0;flex-shrink:0;transition:background 150ms ease;vertical-align:middle;display:inline-block;">
+            <span id="meta-inf-thumb" style="width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:transform 150ms ease;display:block;transform:translateX(14px);"></span>
+          </button>
+        </div>
       </div>
+
     </div>
   </div>
 
-  <!-- 결과 카드 -->
-  <div class="cards">
+  <!-- 히어로 텍스트 -->
+  <div style="margin-top:32px;">
+    <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">나</span>님</div>
+    <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">FIRE까지 <span id="hero-rate" style="color:#7C3AED;font-weight:600;">0%</span> 달성했어요</div>
+  </div>
 
-      <div class="card c-gold">
-        <span class="card-ico ms">beach_access</span>
-        <span class="card-lbl">낙원까지</span>
-        <span class="card-val cv-gold" id="c-countdown">—</span>
-        <span class="card-sub" id="c-retire-yr">은퇴 목표 계산 중...</span>
+  <!-- 결과 카드 4개 -->
+  <div style="margin-top:80px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+
+    <!-- 카드 1: 낙원까지 -->
+    <div>
+      <p style="font-size:10px;font-weight:500;letter-spacing:0.12em;color:#999999;text-transform:uppercase;margin-bottom:10px;">+ 낙원까지</p>
+      <div style="position:relative;background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
+        <div style="position:absolute;top:20px;right:20px;width:8px;height:8px;border-radius:50%;background:#7C3AED;"></div>
+        <div id="c-countdown" style="font-size:40px;font-weight:300;letter-spacing:-0.5px;line-height:1.2;color:#F59E0B;">—</div>
+        <div id="c-retire-yr" style="font-size:13px;font-weight:400;color:#999999;margin-top:16px;">은퇴 목표 계산 중...</div>
       </div>
+    </div>
 
-      <div class="card c-primary">
-        <span class="card-ico ms">savings</span>
-        <span class="card-lbl">필요 은퇴 자산</span>
-        <span class="card-val cv-primary" id="c-fire-num">—</span>
-        <span class="card-sub" id="c-fire-sub">월 인출 × 12 / SWR</span>
+    <!-- 카드 2: 필요 은퇴 자산 -->
+    <div>
+      <p style="font-size:10px;font-weight:500;letter-spacing:0.12em;color:#999999;text-transform:uppercase;margin-bottom:10px;">+ 필요 은퇴 자산</p>
+      <div style="position:relative;background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
+        <div style="position:absolute;top:20px;right:20px;width:8px;height:8px;border-radius:50%;background:#7C3AED;"></div>
+        <div id="c-fire-num" style="font-size:40px;font-weight:300;letter-spacing:-0.5px;line-height:1.2;color:#7C3AED;">—</div>
+        <div id="c-fire-sub" style="font-size:13px;font-weight:400;color:#999999;margin-top:16px;">월 인출 × 12 / SWR</div>
       </div>
+    </div>
 
-      <div class="card" id="card-req-savings">
-        <span class="card-ico ms">payments</span>
-        <span class="card-lbl">월 필요 저축액 (역산)</span>
-        <span class="card-val" id="c-req-save">—</span>
-        <div class="gap-row" id="gap-row" style="display:none">
-          <span class="gap-badge" id="gap-badge">—</span>
-          <span style="font-size:11px;color:var(--text-3)" id="gap-txt">—</span>
+    <!-- 카드 3: 월 필요 저축액 -->
+    <div>
+      <p style="font-size:10px;font-weight:500;letter-spacing:0.12em;color:#999999;text-transform:uppercase;margin-bottom:10px;">+ 월 필요 저축액</p>
+      <div id="card-req-savings" style="position:relative;background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
+        <div style="position:absolute;top:20px;right:20px;width:8px;height:8px;border-radius:50%;background:#7C3AED;"></div>
+        <div id="c-req-save" style="font-size:40px;font-weight:300;letter-spacing:-0.5px;line-height:1.2;color:#7C3AED;">—</div>
+        <div style="font-size:13px;font-weight:400;color:#999999;margin-top:16px;">
+          <div id="gap-row" style="display:none;align-items:center;gap:6px;"><span id="gap-badge"></span></div>
+          <span id="c-req-sub-default">역산 필요 저축액</span>
         </div>
       </div>
-
-      <div class="card" id="card-pace">
-        <span class="card-ico ms">timer</span>
-        <span class="card-lbl">현재 페이스 은퇴</span>
-        <span class="card-val" id="c-pace">—</span>
-        <span class="card-sub" id="c-pace-sub">현재 저축액 기준</span>
-      </div>
-
     </div>
 
-    <!-- 인플레이션 배너 -->
-    <div class="inf-banner" id="inf-banner">
-      <span class="inf-banner-ico ms">trending_down</span>
-      <span class="inf-banner-txt" id="inf-banner-txt">
-        인플레이션 반영 시 실질 구매력을 계산합니다.
-      </span>
-    </div>
-
-    <!-- 지연 배너 -->
-    <div class="delay-banner" id="delay-banner">
-      <span class="delay-banner-ico ms">hourglass_empty</span>
-      <span class="delay-banner-txt" id="delay-banner-txt">
-        지금 시작하지 않으면...
-      </span>
-    </div>
-
-    <!-- 시나리오 비교 배너 -->
-    <div class="compare-banner" id="compare-banner">
-      <div class="cb-left" id="cb-left">—</div>
-      <div class="cb-right">
-        <span class="cb-a">A: <strong id="cb-a-yr">—</strong></span>
-        <span class="cb-b">B: <strong id="cb-b-yr">—</strong></span>
+    <!-- 카드 4: 현재 페이스 -->
+    <div>
+      <p style="font-size:10px;font-weight:500;letter-spacing:0.12em;color:#999999;text-transform:uppercase;margin-bottom:10px;">+ 현재 페이스</p>
+      <div id="card-pace" style="position:relative;background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
+        <div style="position:absolute;top:20px;right:20px;width:8px;height:8px;border-radius:50%;background:#7C3AED;"></div>
+        <div id="c-pace" style="font-size:40px;font-weight:300;letter-spacing:-0.5px;line-height:1.2;color:#7C3AED;">—</div>
+        <div id="c-pace-sub" style="font-size:13px;font-weight:400;color:#999999;margin-top:16px;">현재 저축 페이스 기준 은퇴 가능</div>
       </div>
     </div>
 
-    <!-- 차트 -->
-    <div class="chart-box">
+  </div>
+
+  <!-- 인플레이션 배너 -->
+  <div class="inf-banner" id="inf-banner" style="margin-top:16px;">
+    <span class="inf-banner-ico ms">trending_down</span>
+    <span class="inf-banner-txt" id="inf-banner-txt">인플레이션 반영 시 실질 구매력을 계산합니다.</span>
+  </div>
+
+  <!-- 지연 배너 -->
+  <div class="delay-banner" id="delay-banner" style="margin-top:16px;">
+    <span class="delay-banner-ico ms">hourglass_empty</span>
+    <span class="delay-banner-txt" id="delay-banner-txt">지금 시작하지 않으면...</span>
+  </div>
+
+  <!-- 시나리오 비교 배너 -->
+  <div class="compare-banner" id="compare-banner" style="margin-top:16px;">
+    <div class="cb-left" id="cb-left">—</div>
+    <div class="cb-right">
+      <span class="cb-a">A: <strong id="cb-a-yr">—</strong></span>
+      <span class="cb-b">B: <strong id="cb-b-yr">—</strong></span>
+    </div>
+  </div>
+
+  <!-- 차트 -->
+  <div style="margin-top:32px;padding-bottom:48px;">
+    <div style="background:#ffffff;border-radius:16px;padding:24px;">
       <div class="chart-hd">
         <div>
-          <div class="chart-title">자산 성장 시뮬레이션</div>
-          <div class="chart-sub" id="chart-sub-txt">인원별 FIRE 목표 달성 궤적</div>
+          <div style="font-size:14px;font-weight:500;color:#111111;">자산 성장 시뮬레이션</div>
+          <div style="font-size:12px;color:#999999;margin-top:2px;" id="chart-sub-txt">인원별 FIRE 목표 달성 계획</div>
         </div>
-        <div style="display:flex;align-items:center;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px;">
           <div class="chart-mode-toggle">
             <button class="cmt-btn active" id="cmt-line" onclick="setChartMode('line')">궤적</button>
             <button class="cmt-btn" id="cmt-bar" onclick="setChartMode('bar')">비교</button>
@@ -771,13 +771,9 @@
         <canvas id="chart-bar" style="display:none"></canvas>
       </div>
     </div>
-
-    <!-- ═══ 제안 영역 ═══ -->
+  </div>
 
 </main>
-
-  </div><!-- /.main-wrapper -->
-</div><!-- /.app-shell -->
 
 <script>
 // ═══════════════════════════════════════════════════════════════
@@ -810,7 +806,7 @@ const S = {
   people:       [DEFAULT_PERSON()],
   activePerson: 0,
   chartMode:    'line',
-  showInf:     false,
+  showInf:     true,
   infRate:     2.5,
   showDelay:   false,
   delayYears:  3,
@@ -1225,7 +1221,7 @@ function updateCards(results) {
   const yr = new Date().getFullYear();
   const N  = resA.yearsLeft;
 
-  // 낙원까지 D-N
+  // ─── 카드 1: 낙원까지 ───
   if (N > 0) {
     $('c-countdown').textContent = `D-${N}년`;
     $('c-retire-yr').textContent = `${yr + N}년 (${resA.targetRetirementAge}세) 목표`;
@@ -1237,95 +1233,87 @@ function updateCards(results) {
     $('c-retire-yr').textContent = '현재 나이 ≥ 은퇴 희망 나이';
   }
 
-  // 필요 은퇴 자산
+  // ─── 카드 2: 필요 은퇴 자산 ───
   $('c-fire-num').textContent = fmtShort(resA.fireNumber);
-  $('c-fire-sub').textContent =
-    `${resA.targetWithdrawal.toLocaleString()}만원 × 12 ÷ ${resA.safeRate}%`;
+  $('c-fire-sub').textContent = `${resA.targetWithdrawal.toLocaleString()}만원 × 12 ÷ ${resA.safeRate}%`;
 
-  // 월 필요 저축액 (역산)
-  const req = resA.requiredMonthlySavings;
-  const cur = p.monthlySavings;
-  const gap = cur - req;
+  // ─── 카드 3: 월 필요 저축액 ───
+  const req    = resA.requiredMonthlySavings;
+  const cur    = p.monthlySavings;
+  const gap    = cur - req;
+  const gapRow = $('gap-row');
+  const defSub = $('c-req-sub-default');
 
   if (req <= 0) {
     $('c-req-save').textContent = '저축 불필요';
-    $('c-req-save').className = 'card-val cv-success';
-    $('card-req-savings').className = 'card c-primary';
+    if (gapRow) gapRow.style.display = 'none';
+    if (defSub) { defSub.style.display = ''; defSub.textContent = '이미 FIRE 달성 가능'; }
   } else {
     $('c-req-save').textContent = `${Math.ceil(req).toLocaleString()}만원`;
-    $('c-req-save').className = gap >= 0 ? 'card-val cv-success' : 'card-val cv-danger';
-    $('card-req-savings').className = gap >= 0 ? 'card c-primary' : 'card c-warn';
-  }
-
-  const gapRow = $('gap-row');
-  if (req > 0) {
-    gapRow.style.display = 'flex';
-    const gb = $('gap-badge');
-    const gt = $('gap-txt');
-    if (gap >= 0) {
-      gb.textContent = `+${Math.round(gap).toLocaleString()}만원 여유`;
-      gb.className = 'gap-badge gap-ok';
-      gt.textContent = '목표 초과 저축 중';
-    } else {
-      gb.textContent = `${Math.round(gap).toLocaleString()}만원 부족`;
-      gb.className = 'gap-badge gap-bad';
-      gt.textContent = `월 ${Math.abs(Math.round(gap)).toLocaleString()}만원 더 필요`;
+    if (defSub) defSub.style.display = 'none';
+    if (gapRow) {
+      gapRow.style.display = 'flex';
+      const gb = $('gap-badge');
+      if (gb) {
+        if (gap >= 0) {
+          gb.textContent = `+${Math.round(gap).toLocaleString()}만원 여유`;
+          gb.style.cssText = 'background:#D1FAE5;color:#065F46;border-radius:4px;padding:2px 6px;font-size:11px;font-weight:500;';
+        } else {
+          gb.textContent = `${Math.round(gap).toLocaleString()}만원 부족`;
+          gb.style.cssText = 'background:#FEE2E2;color:#991B1B;border-radius:4px;padding:2px 6px;font-size:11px;font-weight:500;';
+        }
+      }
     }
-  } else {
-    gapRow.style.display = 'none';
   }
 
-  // 현재 페이스 은퇴
+  // ─── 카드 4: 현재 페이스 ───
   const paceAge = resA.currentPace.retireAge;
   if (paceAge) {
-    const paceYr = yr + (paceAge - resA.currentAge);
-    const diff   = paceAge - resA.targetRetirementAge;
     $('c-pace').textContent = `${paceAge}세`;
-    $('c-pace').className = diff <= 0 ? 'card-val cv-success' : 'card-val cv-danger';
-    $('card-pace').className = diff <= 0 ? 'card c-primary' : 'card c-warn';
-
-    if (diff === 0)
-      $('c-pace-sub').textContent = `${paceYr}년 — 목표와 정확히 일치`;
-    else if (diff < 0)
-      $('c-pace-sub').textContent = `${paceYr}년 — 목표보다 ${Math.abs(diff)}년 빠름`;
-    else
-      $('c-pace-sub').textContent = `${paceYr}년 — 목표보다 ${diff}년 늦음`;
+    $('c-pace-sub').textContent = '현재 저축 페이스 기준 은퇴 가능';
   } else {
     $('c-pace').textContent = '90세+';
-    $('c-pace').className = 'card-val cv-danger';
-    $('card-pace').className = 'card c-warn';
     $('c-pace-sub').textContent = '저축액을 늘려보세요';
   }
 
-  // 비교 배너 숨기기 (다중 인원은 차트 범례로 표시)
+  // 비교 배너 숨기기
   const cb = $('compare-banner');
   if (cb) cb.classList.remove('vis');
 
-  // ─── 히어로 영역 업데이트 ───
+  // ─── 히어로 텍스트 ───
   const heroName = $('hero-name');
-  if (heroName) heroName.textContent = p.name || '미학';
+  if (heroName) heroName.textContent = p.name || '나';
 
-  // 자산 달성률 (fireRate = currentAssets / fireNumber × 100)
   const assetPct = parseFloat(Math.min(100, resA.fireRate).toFixed(1));
   const heroRate = $('hero-rate');
   if (heroRate) heroRate.textContent = assetPct + '%';
 
-  const heroProgress = $('hero-progress');
-  if (heroProgress) {
-    // 애니메이션을 위해 다음 프레임에서 width 적용
-    requestAnimationFrame(() => { heroProgress.style.width = assetPct + '%'; });
-  }
+  // ─── 메타 블록 ───
+  const onTrack   = paceAge && paceAge <= resA.targetRetirementAge;
+  const metaStatus = $('meta-status');
+  if (metaStatus) metaStatus.innerHTML = onTrack
+    ? '<span style="color:#22C55E;">●</span>&nbsp;On Track'
+    : '<span style="color:#EF4444;">●</span>&nbsp;Behind';
 
-  const heroAssetRate = $('hero-asset-rate');
-  if (heroAssetRate) heroAssetRate.textContent = assetPct + '%';
+  const metaDday = $('meta-dday');
+  if (metaDday) metaDday.textContent = N > 0 ? `D-${N}년` : N === 0 ? '지금!' : '—';
 
-  // 기간 달성률 (25세 시작 기준)
-  const START_AGE = 25;
+  const START_AGE  = 25;
   const elapsed    = Math.max(0, p.currentAge - START_AGE);
   const totalSpan  = Math.max(1, p.targetRetirementAge - START_AGE);
   const timePct    = parseFloat(Math.min(100, (elapsed / totalSpan) * 100).toFixed(1));
-  const heroTimeRate = $('hero-time-rate');
-  if (heroTimeRate) heroTimeRate.textContent = timePct + '%';
+  const metaElapsed = $('meta-elapsed');
+  if (metaElapsed) metaElapsed.textContent = timePct + '%';
+
+  const metaWithdrawal = $('meta-withdrawal');
+  if (metaWithdrawal) metaWithdrawal.textContent = p.targetWithdrawal.toLocaleString() + '만원';
+
+  // 메타 인플레이션 토글 + 사이드바 토글 동기화
+  updateMetaInfToggle();
+  const togInf = $('tog-inf');
+  if (togInf) togInf.classList.toggle('on', S.showInf);
+  const infRow = $('inf-row');
+  if (infRow) infRow.classList.toggle('vis', S.showInf);
 }
 // ─── 인플레이션 배너 ───
 function updateInfBanner(p) {
@@ -1567,10 +1555,16 @@ function bindPersonSliders(idx) {
 }
 
 // ─── 토글 ───
+function updateMetaInfToggle() {
+  const btn   = $('meta-inf-btn');
+  const thumb = $('meta-inf-thumb');
+  if (!btn || !thumb) return;
+  btn.style.background    = S.showInf ? '#7C3AED' : '#CCCCCC';
+  thumb.style.transform   = S.showInf ? 'translateX(14px)' : 'translateX(0px)';
+}
+
 function toggleInf() {
   S.showInf = !S.showInf;
-  $('tog-inf').classList.toggle('on', S.showInf);
-  $('inf-row').classList.toggle('vis', S.showInf);
   sched();
 }
 
