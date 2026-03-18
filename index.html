@@ -1330,12 +1330,7 @@ function updateCards(results) {
   if (heroName) heroName.textContent = p.name || '나';
   const assetPct = parseFloat(Math.min(100, resA.fireRate).toFixed(1));
   const heroRate = $('hero-rate');
-  if (heroRate) {
-    heroRate.textContent = assetPct + '%';
-    heroRate.classList.remove('hero-rate-animate');
-    void heroRate.offsetWidth;
-    heroRate.classList.add('hero-rate-animate');
-  }
+  if (heroRate) countUp(heroRate, assetPct, v => v + '%', 900);
 
   // 메타 인플레이션 토글 + 사이드바 토글 동기화
   updateMetaInfToggle();
@@ -1400,6 +1395,24 @@ const PRESETS = {
     annualReturn:9.0, savingsGrowth:5.0, safeRate:3.5 },
 };
 const $ = id => document.getElementById(id);
+
+/* ── 카운트업 애니메이션 ── */
+const _cuGen = {};
+function countUp(el, target, fmt, duration) {
+  if (!el) return;
+  const id  = el.id || (el.id = '_cu_' + Math.random().toString(36).slice(2));
+  const gen = (_cuGen[id] = (_cuGen[id] || 0) + 1);
+  const start = performance.now();
+  const ease  = t => 1 - Math.pow(1 - t, 3);
+  function tick(now) {
+    if (_cuGen[id] !== gen) return;
+    const progress = Math.min((now - start) / duration, 1);
+    el.textContent = fmt(Math.round(target * ease(progress)));
+    if (progress < 1) requestAnimationFrame(tick);
+    else el.textContent = fmt(target);
+  }
+  requestAnimationFrame(tick);
+}
 
 function fmtShort(manwon) {
   if (manwon >= 100000000) return (manwon / 100000000).toFixed(1).replace(/\.0$/, '') + '조원';
