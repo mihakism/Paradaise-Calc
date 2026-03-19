@@ -1438,18 +1438,6 @@ function updateChart(results) {
   });
 
   // 활성 인원의 FIRE 목표선
-  const active = results[S.activePerson];
-  if (active) {
-    datasets.push({
-      label: 'FIRE 목표',
-      data: labels.map(() => active.fireNumber),
-      borderColor: 'rgba(239,68,68,0.5)', borderDash: [2, 2], borderWidth: 1,
-      backgroundColor: 'transparent', tension: 0, fill: false,
-      pointRadius: 0, pointHoverRadius: 0,
-    });
-  }
-
-  // 활성 인원의 FIRE 목표선
   if (active) {
     datasets.push({
       label: 'FIRE 목표',
