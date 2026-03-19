@@ -317,7 +317,7 @@
     .toggle.on .inf-row { display: flex; }
     .inf-label { font-size: 13px; color: var(--text-2); }
     .inf-input {
-      width: 40px; background: rgba(224,224,224,0.3);
+      width: 40px; background: var(--bg-input);
       border: 1px solid var(--border); border-radius: var(--r-sm);
       color: var(--text-1); font-size: 11px; font-weight: 800;
       padding: 4px 0px; text-align: center; outline: none; font-family: var(--font);
@@ -1363,7 +1363,9 @@ function updateChart(results) {
       fill:              false,
       spanGaps:          false,   // null 구간에서 라인 끊김
       pointRadius:       0,
-      pointHoverRadius:  0,
+      pointHoverRadius:  4,
+      pointHoverBorderColor: '#fff',
+      pointHoverBorderWidth: 2,
     });
   });
 
