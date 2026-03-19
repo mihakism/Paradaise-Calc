@@ -1268,6 +1268,10 @@ function showChartTooltip(chart, activeEls) {
 
 function initChart() {
   Chart.register(vertLinePlugin, retirePlugin);
+  // 전역 기본값에서 포인트 완전 제거
+  Chart.defaults.elements.point.radius      = 0;
+  Chart.defaults.elements.point.hoverRadius = 0;
+  Chart.defaults.elements.point.hitRadius   = 0;
   const ctx = $('chart').getContext('2d');
   chart = new Chart(ctx, {
     type: 'line',
@@ -1429,7 +1433,7 @@ function updateCards(results) {
 
   // ─── 카드 2: 필요 은퇴 자산 ───
   countUp($('c-fire-num'), resA.fireNumber, v => fmtShortHtml(v), DUR, true, D.c2);
-  $('c-fire-sub').textContent = `${resA.targetWithdrawal.toLocaleString()}만원 × 12 ÷ ${resA.safeRate}%`;
+  $('c-fire-sub').textContent = `월인출 ${resA.targetWithdrawal.toLocaleString()} × 12 ÷ 안전인출률`;
 
   // ─── 카드 3: 월 필요 저축액 ───
   const req    = resA.requiredMonthlySavings;
