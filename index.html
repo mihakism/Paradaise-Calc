@@ -1238,11 +1238,11 @@ function showChartTooltip(chart, activeEls) {
   if (!personItems.length) { hideChartTooltip(); return; }
 
   // 은퇴 시점 라벨 — 항상 한 줄에 나란히 표시
-  const retireParts = [];
-  if (_retire2Age != null) retireParts.push(`<span>목표 은퇴&nbsp;<strong style="font-weight:600;">${_retire2Age}세</strong></span>`);
-  if (_retire1Age != null) retireParts.push(`<span>은퇴 예상&nbsp;<strong style="font-weight:600;">${_retire1Age}세</strong></span>`);
-  const retireHtml = retireParts.length
-    ? `<div style="display:flex;justify-content:space-between;gap:12px;font-size:10px;color:#111111;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(0,0,0,0.06);">${retireParts.join('')}</div>`
+  const retireRows = [];
+  if (_retire2Age != null) retireRows.push(`<div style="display:flex;justify-content:space-between;align-items:center;gap:24px;"><strong style="font-size:11px;font-weight:600;color:#111111;">${_retire2Age}세</strong><span style="font-size:10px;color:#6B7280;">목표 은퇴</span></div>`);
+  if (_retire1Age != null) retireRows.push(`<div style="display:flex;justify-content:space-between;align-items:center;gap:24px;"><strong style="font-size:11px;font-weight:600;color:#111111;">${_retire1Age}세</strong><span style="font-size:10px;color:#6B7280;">은퇴 예상</span></div>`);
+  const retireHtml = retireRows.length
+    ? `<div style="display:flex;flex-direction:column;gap:3px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(0,0,0,0.06);">${retireRows.join('')}</div>`
     : '';
 
   // 각 인원 행
