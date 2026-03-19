@@ -200,8 +200,8 @@
 
     /* ─── 섹션 ─── */
     .section { display: flex; flex-direction: column; gap: 0; }
-    .section-hd { margin-bottom: 12px; }
-    .section > * + * { margin-top: 12px; }
+    .section-hd { margin-bottom: 14px; }
+    .section > * + * { margin-top: 14px; }
     .section > .section-hd + * { margin-top: 0; }
 
     .section-hd {
@@ -695,7 +695,7 @@
     .ptab-add:hover { border-color: #111111; color: #111111; }
 
     /* ─── 인원 패널 (사이드바 동적 섹션) ─── */
-    .person-panel { display: flex; flex-direction: column; gap: 50px; margin-top: 24px; }
+    .person-panel { display: flex; flex-direction: column; gap: 50px; margin-top: 14px; }
 
     /* ─── 차트 모드 토글 ─── */
     .chart-mode-toggle {
@@ -766,13 +766,14 @@
     </button>
   </div>
 
-  <!-- 인원 섹션 헤더 -->
-  <div class="section-hd" style="margin-bottom:12px;"><span class="ms">group</span> 멤버</div>
-
-  <!-- 인원 탭 (JS 동적 생성) -->
-  <div class="person-tabs" id="person-tabs"></div>
-  <!-- 인원별 슬라이더 패널 (JS 동적 생성) -->
-  <div class="person-panel" id="person-panel"></div>
+  <!-- 멤버 섹션 -->
+  <div class="section">
+    <div class="section-hd"><span class="ms">group</span> 멤버</div>
+    <!-- 인원 탭 (JS 동적 생성) -->
+    <div class="person-tabs" id="person-tabs"></div>
+    <!-- 인원별 슬라이더 패널 (JS 동적 생성) -->
+    <div class="person-panel" id="person-panel"></div>
+  </div>
   <div class="hr"></div>
   <!-- 공통 설정 -->
   <div class="section" style="margin-top:24px;">
