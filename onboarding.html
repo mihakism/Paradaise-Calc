@@ -599,20 +599,30 @@
       margin-bottom: 36px;
     }
 
-    .l-title-top,
+    .l-title-top {
+      display: block;
+      font-family: 'Inria Sans', sans-serif;
+      font-size: 72px;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.05;
+      letter-spacing: -.02em;
+      color: rgba(12, 26, 6, 0.45);
+      text-transform: uppercase;
+      padding-bottom: 6px;
+    }
+
     .l-title-btm {
       display: block;
       font-family: 'Inria Sans', sans-serif;
-      font-size: 120px;
-      font-weight: 300;             /* Light */
+      font-size: 130px;
+      font-weight: 300;
       font-style: normal;
-      line-height: 0.95;
-      letter-spacing: -.05em;
+      line-height: 0.92;
+      letter-spacing: -.055em;
       color: #0c1a06;
       text-transform: uppercase;
     }
-
-    .l-title-top { padding-bottom: 10px; }
 
     /* ─── 야자수 아스키 아트 — 배경 레이어 ─── */
     .l-palm {
@@ -693,8 +703,8 @@
 
     /* ── Mobile ── */
     @media (max-width: 700px) {
-      .l-title-top,
-      .l-title-btm { font-size: clamp(40px, 14vw, 80px); }
+      .l-title-top { font-size: clamp(28px, 9vw, 56px); }
+      .l-title-btm { font-size: clamp(42px, 14vw, 90px); }
       .l-palm pre { font-size: 1.4vh; }
       .l-rolling-text { font-size: 13px; }
     }
