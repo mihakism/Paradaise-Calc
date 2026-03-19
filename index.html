@@ -1453,7 +1453,7 @@ function updateCards(results) {
   // ─── 카드 1: 낙원까지 ───
   if (N > 0) {
     countUp($('c-countdown'), N, v => `D-${v}${U('년')}`, DUR, true, D.c1);
-    $('c-retire-yr').textContent = `${yr + N}년 (${resA.targetRetirementAge}세) 목표`;
+    $('c-retire-yr').textContent = `${yr + N}년 · ${resA.targetRetirementAge}세 목표`;
   } else if (N === 0) {
     $('c-countdown').textContent = '지금!';
     $('c-retire-yr').textContent = '은퇴 목표 연도입니다';
