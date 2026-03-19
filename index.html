@@ -1379,12 +1379,13 @@ function updateCards(results) {
       gapRow.style.display = 'flex';
       const gb = $('gap-badge');
       if (gb) {
-        const arrowSvg = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><line x1="5" y1="1" x2="5" y2="9"/><polyline points="2,6.5 5,9 8,6.5"/></svg>`;
+        const arrowDown = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><line x1="5" y1="1" x2="5" y2="9"/><polyline points="2,6.5 5,9 8,6.5"/></svg>`;
+        const arrowUp   = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><line x1="5" y1="9" x2="5" y2="1"/><polyline points="2,3.5 5,1 8,3.5"/></svg>`;
         if (gap >= 0) {
-          gb.innerHTML = `${arrowSvg}+${Math.round(gap).toLocaleString()}만원 여유`;
+          gb.innerHTML = `${arrowUp}+${Math.round(gap).toLocaleString()}만원 여유`;
           gb.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:rgba(129,206,22,0.12);color:#4A5A00;border-radius:4px;padding:2px 6px;font-size:11px;font-weight:500;';
         } else {
-          gb.innerHTML = `${arrowSvg}${Math.round(gap).toLocaleString()}만원 부족`;
+          gb.innerHTML = `${arrowDown}${Math.round(gap).toLocaleString()}만원 부족`;
           gb.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:rgba(244,144,122,0.12);color:#8B3010;border-radius:4px;padding:2px 6px;font-size:11px;font-weight:500;';
         }
       }
