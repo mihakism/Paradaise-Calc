@@ -623,20 +623,22 @@
       z-index: 0;
       pointer-events: none;
       user-select: none;
+      transform-origin: bottom center;
+      animation: sway 4s ease-in-out infinite;
     }
 
     /* ─── 야자수 흔들림 애니메이션 ─── */
     @keyframes sway {
-      0%   { transform: rotate(-1.5deg); }
-      50%  { transform: rotate(1.5deg); }
-      100% { transform: rotate(-1.5deg); }
+      0%   { transform: translate(-50%, -50%) rotate(-6deg); }
+      50%  { transform: translate(-50%, -50%) rotate(6deg); }
+      100% { transform: translate(-50%, -50%) rotate(-6deg); }
     }
     .palm-leaves {
       transform-box: fill-box;
       transform-origin: bottom center;
-      animation: sway 6s ease-in-out infinite;
     }
     @media (prefers-reduced-motion: reduce) {
+      .l-palm  { animation: none; }
       .palm-leaves { animation: none; }
     }
 
@@ -715,26 +717,26 @@
 
   <!-- 야자수 아스키 아트 — 배경 레이어 -->
   <div class="l-palm">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 250" preserveAspectRatio="xMidYMid meet" style="display:block;height:85vh;width:auto;">
-      <g font-family="'Courier New', Courier, monospace" font-size="13" fill="#ffffff" opacity="0.25">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 183" preserveAspectRatio="xMidYMid meet" style="display:block;height:85vh;width:auto;">
+      <g font-family="'Courier New', Courier, monospace" font-size="13" letter-spacing="-0.1em" fill="#ffffff" opacity="0.25">
         <g class="palm-leaves">
           <text x="0" y="13">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</text>
-          <text x="0" y="28.6">⠀⠀⠀⠀⠀⠀⢰⣖⡶⣦⢦⣀⡀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣖⣶⣲⠄⠀⠀⠀⠀⠀⠀</text>
-          <text x="0" y="44.2">⠀⠀⠀⠀⠀⠀⢸⣞⣿⡽⣿⡽⣾⢦⡀⠀⠀⠀⢀⣴⣟⣾⣞⣷⢯⡿⡅⠀⠀⠀⠀⠀⠀</text>
-          <text x="0" y="59.8">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⢿⢯⣿⡽⣦⣀⣴⢿⣳⣿⡺⠓⠁⠁⠈⠀⣄⣖⣠⠀⠀⠀</text>
-          <text x="0" y="75.4">⠀⠀⠀⠀⠀⠀⠀⠀⣀⣄⣤⣤⢿⣳⣟⣯⢿⢾⣻⣽⢾⡤⣤⣠⣀⠀⠐⠊⣟⠒⠀⠀⠀</text>
-          <text x="0" y="91">⠀⠀⠀⠀⢀⣠⡶⣟⣯⣟⣷⣻⢿⣽⢾⣯⢿⣻⣽⢯⡿⣽⣟⣾⣽⣻⡶⣄⡀⠀⠀⠀⠀</text>
-          <text x="0" y="106.6">⠀⠀⢀⣰⣞⣯⣟⣯⠟⠚⠙⣸⢿⣞⣿⢾⣻⣽⢾⣻⡯⣏⠊⠓⠯⣷⣟⣯⣷⡤⡀⠀⠀</text>
-          <text x="0" y="122.2">⠀⠀⠘⠽⣾⣻⠚⠀⠀⢠⡾⣯⢿⣞⣯⣿⣽⢾⢿⡽⣯⡿⣵⡀⠀⠈⠚⣷⢯⠟⠁⠀⠀</text>
+          <text x="0" y="24.1">⠀⠀⠀⠀⠀⠀⢰⣖⡶⣦⢦⣀⡀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣖⣶⣲⠄⠀⠀⠀⠀⠀⠀</text>
+          <text x="0" y="35.2">⠀⠀⠀⠀⠀⠀⢸⣞⣿⡽⣿⡽⣾⢦⡀⠀⠀⠀⢀⣴⣟⣾⣞⣷⢯⡿⡅⠀⠀⠀⠀⠀⠀</text>
+          <text x="0" y="46.2">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⢿⢯⣿⡽⣦⣀⣴⢿⣳⣿⡺⠓⠁⠁⠈⠀⣄⣖⣠⠀⠀⠀</text>
+          <text x="0" y="57.3">⠀⠀⠀⠀⠀⠀⠀⠀⣀⣄⣤⣤⢿⣳⣟⣯⢿⢾⣻⣽⢾⡤⣤⣠⣀⠀⠐⠊⣟⠒⠀⠀⠀</text>
+          <text x="0" y="68.3">⠀⠀⠀⠀⢀⣠⡶⣟⣯⣟⣷⣻⢿⣽⢾⣯⢿⣻⣽⢯⡿⣽⣟⣾⣽⣻⡶⣄⡀⠀⠀⠀⠀</text>
+          <text x="0" y="79.4">⠀⠀⢀⣰⣞⣯⣟⣯⠟⠚⠙⣸⢿⣞⣿⢾⣻⣽⢾⣻⡯⣏⠊⠓⠯⣷⣟⣯⣷⡤⡀⠀⠀</text>
+          <text x="0" y="90.4">⠀⠀⠘⠽⣾⣻⠚⠀⠀⢠⡾⣯⢿⣞⣯⣿⣽⢾⢿⡽⣯⡿⣵⡀⠀⠈⠚⣷⢯⠟⠁⠀⠀</text>
         </g>
-        <text x="0" y="137.8">⠀⠀⠀⠀⠉⠀⠀⠀⢠⣿⡽⣯⡟⠑⡿⡾⣾⢧⠀⠉⢿⡽⣯⢿⡀⠀⠀⠈⠉⠀⠀⠀⠀</text>
-        <text x="0" y="153.4">⠀⠀⠀⠀⠀⠀⠀⠀⣟⣷⣻⡗⠀⠀⠙⣿⡽⣟⣧⠀⠀⢻⣽⣟⣷⠀⠀⠀⠀⠀⠀⠀⠀</text>
-        <text x="0" y="169">⠀⠀⠀⠀⠀⠀⠀⠨⣟⣷⣟⡆⠀⠀⠀⠱⡿⣯⡷⣇⠀⢸⢷⣻⣾⠀⠀⠀⠀⠀⠀⠀⠀</text>
-        <text x="0" y="184.6">⠀⠀⠀⠀⠀⠀⠀⠈⠛⠓⠛⠂⠀⠀⠀⠀⠹⣷⣟⣿⣂⠘⠛⠙⠚⠀⠀⠀⠀⠀⠀⠀⠀</text>
-        <text x="0" y="200.2">⠀⠀⠀⠀⠀⠀⢀⣠⡴⣶⢾⣖⡷⣦⣤⡀⠀⢻⣞⣷⢿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</text>
-        <text x="0" y="215.8">⠀⠀⠀⠀⠀⣴⣻⣞⣿⣽⣻⢾⣻⣽⣞⣿⣲⡀⢻⣾⣻⣽⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</text>
-        <text x="0" y="231.4">⠀⠀⠀⠀⣼⣟⣾⣳⣟⣾⡽⣿⢽⣾⣳⣯⣯⢿⡈⢾⣽⢾⣳⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀</text>
-        <text x="0" y="247">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</text>
+        <text x="0" y="101.5">⠀⠀⠀⠀⠉⠀⠀⠀⢠⣿⡽⣯⡟⠑⡿⡾⣾⢧⠀⠉⢿⡽⣯⢿⡀⠀⠀⠈⠉⠀⠀⠀⠀</text>
+        <text x="0" y="112.5">⠀⠀⠀⠀⠀⠀⠀⠀⣟⣷⣻⡗⠀⠀⠙⣿⡽⣟⣧⠀⠀⢻⣽⣟⣷⠀⠀⠀⠀⠀⠀⠀⠀</text>
+        <text x="0" y="123.6">⠀⠀⠀⠀⠀⠀⠀⠨⣟⣷⣟⡆⠀⠀⠀⠱⡿⣯⡷⣇⠀⢸⢷⣻⣾⠀⠀⠀⠀⠀⠀⠀⠀</text>
+        <text x="0" y="134.6">⠀⠀⠀⠀⠀⠀⠀⠈⠛⠓⠛⠂⠀⠀⠀⠀⠹⣷⣟⣿⣂⠘⠛⠙⠚⠀⠀⠀⠀⠀⠀⠀⠀</text>
+        <text x="0" y="145.7">⠀⠀⠀⠀⠀⠀⢀⣠⡴⣶⢾⣖⡷⣦⣤⡀⠀⢻⣞⣷⢿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</text>
+        <text x="0" y="156.7">⠀⠀⠀⠀⠀⣴⣻⣞⣿⣽⣻⢾⣻⣽⣞⣿⣲⡀⢻⣾⣻⣽⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</text>
+        <text x="0" y="167.8">⠀⠀⠀⠀⣼⣟⣾⣳⣟⣾⡽⣿⢽⣾⣳⣯⣯⢿⡈⢾⣽⢾⣳⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀</text>
+        <text x="0" y="178.8">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</text>
       </g>
     </svg>
   </div>
