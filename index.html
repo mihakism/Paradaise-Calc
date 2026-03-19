@@ -238,7 +238,7 @@
     }
     .sg-label { font-size: 13px; color: var(--text-1); font-weight: 500; }
 
-    .sg-val-wrap { display: flex; align-items: baseline; gap: 3px; }
+    .sg-val-wrap { display: flex; align-items: baseline; gap: 3px; margin-top: 2px; }
     .sg-val {
       font-size: 15px; font-weight: 800; color: var(--text-1);
       min-width: 64px; text-align: right;
@@ -864,7 +864,7 @@
 
   <!-- 히어로 텍스트 -->
   <div class="anim-fadeup" style="margin-top:16px;animation-delay:0.2s;">
-    <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">나</span>님</div>
+    <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">미학</span>님</div>
     <div style="display:flex;align-items:center;gap:8px;">
           <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">목표 자산의 <span class="hero-rate-wrap"><span id="hero-rate" style="color:#111111;font-weight:600;">0%</span><span class="hero-rate-tip">목표 자산 대비 현재 자산 비율</span></span> 모았어요</div>
           <button class="pill-icon-btn pill-icon-btn-filled" title="조정 패널" onclick="toggleSidebar()">
@@ -991,7 +991,7 @@ const PERSON_COLORS = [
 ];
 
 const DEFAULT_PERSON = () => ({
-  name: '나',
+  name: '미학',
   targetWithdrawal:    300,
   targetRetirementAge: 55,
   currentAge:          35,
@@ -1355,9 +1355,9 @@ function initChart() {
   $('chart').addEventListener('mouseleave', hideChartTooltip);
 }
 
-// "나"(index 0)는 #111111, 비교 시나리오는 PERSON_COLORS 0→1→2→3 순으로 배정
+// index 0는 PERSON_COLORS[0](그린), 비교 시나리오는 PERSON_COLORS 1→2→3 순으로 배정
 function personChartColor(i) {
-  return i === 0 ? '#111111' : PERSON_COLORS[(i - 1) % PERSON_COLORS.length].line;
+  return PERSON_COLORS[i % PERSON_COLORS.length].line;
 }
 
 function updateChart(results) {
@@ -1510,7 +1510,7 @@ function updateCards(results) {
 
   // ─── 히어로 텍스트 + INFLATION 토글 동기화 ───
   const heroName = $('hero-name');
-  if (heroName) heroName.textContent = p.name || '나';
+  if (heroName) heroName.textContent = p.name || '미학';
   const assetPct = parseFloat(Math.min(100, resA.fireRate).toFixed(1));
   const heroRate = $('hero-rate');
   if (heroRate) countUp(heroRate, assetPct, v => v + '%', 750, false, D.h);
