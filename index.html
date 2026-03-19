@@ -1237,12 +1237,12 @@ function showChartTooltip(chart, activeEls) {
 
   if (!personItems.length) { hideChartTooltip(); return; }
 
-  // 은퇴 시점 라벨 — 항상 한 줄에 나란히 표시
+  // 은퇴 시점 라벨 — 해당 나이에 hover 했을 때만 표시
   const retireRows = [];
-  if (_retire2Age != null) retireRows.push(`<div style="display:flex;justify-content:space-between;align-items:center;gap:24px;"><strong style="font-size:11px;font-weight:600;color:#111111;">${_retire2Age}세</strong><span style="font-size:10px;color:#6B7280;">목표 은퇴</span></div>`);
-  if (_retire1Age != null) retireRows.push(`<div style="display:flex;justify-content:space-between;align-items:center;gap:24px;"><strong style="font-size:11px;font-weight:600;color:#111111;">${_retire1Age}세</strong><span style="font-size:10px;color:#6B7280;">은퇴 예상</span></div>`);
+  if (age === _retire2Age) retireRows.push(`<div style="display:flex;justify-content:space-between;align-items:center;gap:24px;"><strong style="font-size:13px;font-weight:600;color:#111111;">${_retire2Age}세</strong><span style="font-size:11px;color:#6B7280;">목표 은퇴</span></div>`);
+  if (age === _retire1Age) retireRows.push(`<div style="display:flex;justify-content:space-between;align-items:center;gap:24px;"><strong style="font-size:13px;font-weight:600;color:#111111;">${_retire1Age}세</strong><span style="font-size:11px;color:#6B7280;">은퇴 예상</span></div>`);
   const retireHtml = retireRows.length
-    ? `<div style="display:flex;flex-direction:column;gap:3px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid rgba(0,0,0,0.06);">${retireRows.join('')}</div>`
+    ? `<div style="display:flex;flex-direction:column;gap:3px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(0,0,0,0.06);">${retireRows.join('')}</div>`
     : '';
 
   // 각 인원 행
@@ -1272,7 +1272,7 @@ function showChartTooltip(chart, activeEls) {
 
   el.innerHTML = `<div style="background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:10px;padding:10px 13px;box-shadow:0 4px 16px rgba(0,0,0,0.08);min-width:130px;">
     ${retireHtml}
-    <div style="font-size:11px;color:#6B7280;margin-bottom:2px;">${age}세</div>
+    ${!retireRows.length ? `<div style="font-size:11px;color:#6B7280;margin-bottom:2px;">${age}세</div>` : ''}
     ${rowsHtml}
     ${diffHtml}
   </div>`;
