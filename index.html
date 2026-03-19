@@ -303,7 +303,6 @@
     /* ─── 지연 슬라이더 ─── */
     .delay-row {
       display: none; align-items: center; gap: 10px;
-      padding: 8px 0;
     }
     .delay-row.vis { display: flex; }
     .delay-label { font-size: 13px; color: var(--text-2); white-space: nowrap; }
@@ -806,7 +805,7 @@
       <span class="delay-label">몇 년 뒤 시작:</span>
       <input type="range" id="sl-delay" min="1" max="10" value="3" step="1" style="flex:1" />
       <span class="delay-val" id="v-delay">3</span>
-      <span style="font-size:12px;color:var(--text-3)">년</span>
+      <span style="font-size:12px;color:var(--text-3);text-align:left;">년</span>
     </div>
   </div>
 
@@ -1637,10 +1636,10 @@ function fmtVal(field, raw) {
   return Math.round(raw).toLocaleString('ko-KR');
 }
 
-function fillSlider(sl, idx) {
+function fillSlider(sl, idx, customColor) {
   const min = parseFloat(sl.min), max = parseFloat(sl.max), val = parseFloat(sl.value);
   const pct = ((val - min) / (max - min)) * 100;
-  const col = PERSON_COLORS[idx % PERSON_COLORS.length].line;
+  const col = customColor || PERSON_COLORS[idx % PERSON_COLORS.length].line;
   sl.style.background = `linear-gradient(to right, ${col} ${pct}%, #e5e7eb ${pct}%)`;
 }
 
@@ -1922,10 +1921,10 @@ function bindCommonSliders() {
     slDelay.addEventListener('input', e => {
       S.delayYears = parseInt(e.target.value);
       $('v-delay').textContent = S.delayYears;
-      fillSlider(slDelay, 0);
+      fillSlider(slDelay, 0, '#111111');
       sched();
     });
-    fillSlider(slDelay, 0);
+    fillSlider(slDelay, 0, '#111111');
   }
   const infVal = $('inf-val');
   if (infVal) {
