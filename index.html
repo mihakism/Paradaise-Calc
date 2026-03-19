@@ -496,7 +496,8 @@
       color: #6B7280;
       font-family: var(--font);
       cursor: pointer;
-      width: 34px;
+      min-width: 34px;
+      max-width: 34px;
       height: 34px;
       padding: 0;
       box-sizing: border-box;
@@ -504,8 +505,9 @@
       text-decoration: none;
       overflow: hidden;
       flex-shrink: 0;
-      transition: background 0.25s ease, color 0.25s ease,
-                  border-color 0.25s ease, padding 0.25s ease, width 0.25s ease;
+      transition: max-width 0.3s cubic-bezier(0.4,0,0.2,1),
+                  padding 0.3s cubic-bezier(0.4,0,0.2,1),
+                  background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
     }
     .pill-icon-btn .pill-ico {
       flex-shrink: 0;
@@ -517,23 +519,22 @@
       line-height: 1;
     }
     .pill-icon-btn .pill-label {
-      max-width: 0;
       overflow: hidden;
       opacity: 0;
       font-size: 13px;
       font-weight: 500;
       padding-left: 0;
-      transition: max-width 0.25s ease, padding-left 0.25s ease, opacity 0.2s ease;
+      white-space: nowrap;
+      transition: opacity 0.15s ease 0.15s, padding-left 0.3s cubic-bezier(0.4,0,0.2,1);
     }
     .pill-icon-btn:hover {
       background: #111111;
       color: #ffffff;
       border-color: #111111;
-      padding: 0 12px 0 10px;
-      width: auto;
+      max-width: 180px;
+      padding: 0 14px 0 10px;
     }
     .pill-icon-btn:hover .pill-label {
-      max-width: 140px;
       padding-left: 6px;
       opacity: 1;
     }
@@ -542,15 +543,16 @@
       background: #111111;
       color: #ffffff;
       border: none;
-      width: 36px;
+      min-width: 36px;
+      max-width: 36px;
       height: 36px;
     }
     .pill-icon-btn-filled:hover {
       background: #333333;
       color: #ffffff;
       border: none;
-      padding: 0 13px 0 10px;
-      width: auto;
+      max-width: 180px;
+      padding: 0 14px 0 10px;
     }
 
     /* ─── 커스텀 차트 툴팁 ─── */
@@ -870,11 +872,11 @@
       <button class="pill-icon-btn pill-icon-btn-filled" title="조정 패널" onclick="toggleSidebar()">
         <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;flex-shrink:0;">
           <line x1="1" y1="3" x2="14" y2="3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          <circle cx="9.5" cy="3" r="2" fill="#111111" stroke="currentColor" stroke-width="1.2"/>
+          <circle cx="9.5" cy="3" r="2" fill="currentColor" stroke="currentColor" stroke-width="1.2"/>
           <line x1="1" y1="10" x2="14" y2="10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          <circle cx="5.5" cy="10" r="2" fill="#111111" stroke="currentColor" stroke-width="1.2"/>
+          <circle cx="5.5" cy="10" r="2" fill="currentColor" stroke="currentColor" stroke-width="1.2"/>
         </svg>
-        <span class="pill-label">조정 패널</span>
+        <span class="pill-label">수정</span>
       </button>
       <button class="pill-icon-btn" title="시나리오 비교" onclick="openScenarioPanel()">
         <span class="ms pill-ico">add</span>
