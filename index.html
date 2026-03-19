@@ -1454,7 +1454,7 @@ function updateDelayBanner(p) {
       `<strong>${S.delayYears}년</strong> 늦게 시작하면 은퇴 후 월 <strong>${Math.round(loss).toLocaleString()}만원</strong> 인출 감소`;
   } else {
     $('delay-banner-txt').innerHTML =
-      `${S.delayYears}년 뒤에 시작해도 목표 달성 가능`;
+      `${S.delayYears}년 뒤에 시작해도 <span style="color:#81CE16;font-weight:600;">목표 달성 가능</span>`;
   }
 }
 
