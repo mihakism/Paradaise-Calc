@@ -617,21 +617,21 @@
     /* ─── 야자수 아스키 아트 — 배경 레이어 ─── */
     .l-palm {
       position: absolute;
-      bottom: 0;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translate(-50%, -50%);
       z-index: 0;
       pointer-events: none;
       user-select: none;
     }
     .l-palm pre {
       font-family: "Courier New", Courier, monospace;
-      font-size: 1.45vh;
+      font-size: 1.75vh;
       letter-spacing: 0em;
       line-height: 1.0;
       white-space: pre;
       color: #ffffff;
-      opacity: 0.22;
+      opacity: 0.50;
       margin: 0;
       padding: 0;
       overflow: visible;
@@ -695,18 +695,8 @@
     @media (max-width: 700px) {
       .l-title-top,
       .l-title-btm { font-size: clamp(40px, 14vw, 80px); }
-      .l-palm pre { font-size: 1.2vh; }
+      .l-palm pre { font-size: 1.4vh; }
       .l-rolling-text { font-size: 13px; }
-    }
-
-    /* ── 지폐 낙하 캔버스 ── */
-    #coin-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
     }
 
   </style>
@@ -723,9 +713,6 @@
   <video id="l-bg-video" autoplay muted loop playsinline
     src="https://cdn.midjourney.com/video/110cd6b5-8978-4268-bcd1-4f6e61e46ba3/2.mp4">
   </video>
-
-  <!-- 지폐 낙하 캔버스 -->
-  <canvas id="coin-canvas"></canvas>
 
   <!-- 야자수 아스키 아트 — 배경 레이어 -->
   <div class="l-palm"><pre><span class="palm-top">                                                                                                 
@@ -1304,7 +1291,6 @@ function init() {
   bindFields();
   updatePreview();
   startRolling();
-  initCoinRain();
 }
 
 document.addEventListener('DOMContentLoaded', init);
