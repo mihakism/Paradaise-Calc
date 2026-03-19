@@ -867,11 +867,11 @@
   <div style="margin-top:48px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
 
     <!-- 카드 1: 낙원까지 -->
-    <div class="anim-fadeup" style="animation-delay:0.40s;">
-      <div style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
+    <div class="anim-fadeup" style="animation-delay:0.40s;height:100%;">
+      <div style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;height:100%;display:flex;flex-direction:column;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
-          <span class="ms" style="font-size:20px;color:#111111;">beach_access</span>
-          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#111111;margin:0;">파라다이스까지</p>
+          <span class="ms" style="font-size:20px;color:#666666;">beach_access</span>
+          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#666666;margin:0;">파라다이스까지</p>
         </div>
         <div id="c-countdown" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#81CE16;">—</div>
         <div id="c-retire-yr" style="font-size:13px;font-weight:400;color:#999999;margin-top:4px;">은퇴 목표 계산 중...</div>
@@ -879,11 +879,11 @@
     </div>
 
     <!-- 카드 2: 필요 은퇴 자산 -->
-    <div class="anim-fadeup" style="animation-delay:0.52s;">
-      <div style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
+    <div class="anim-fadeup" style="animation-delay:0.52s;height:100%;">
+      <div style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;height:100%;display:flex;flex-direction:column;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
-          <span class="ms" style="font-size:20px;color:#111111;">savings</span>
-          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#111111;margin:0;">필요 은퇴 자산</p>
+          <span class="ms" style="font-size:20px;color:#666666;">savings</span>
+          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#666666;margin:0;">필요 은퇴 자산</p>
         </div>
         <div id="c-fire-num" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#111111;">—</div>
         <div id="c-fire-sub" style="font-size:13px;font-weight:400;color:#999999;margin-top:4px;">월 인출 × 12 / SWR</div>
@@ -891,11 +891,11 @@
     </div>
 
     <!-- 카드 3: 월 필요 저축액 -->
-    <div class="anim-fadeup" style="animation-delay:0.64s;">
-      <div id="card-req-savings" style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
+    <div class="anim-fadeup" style="animation-delay:0.64s;height:100%;">
+      <div id="card-req-savings" style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;height:100%;display:flex;flex-direction:column;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
-          <span class="ms" style="font-size:20px;color:#111111;">payments</span>
-          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#111111;margin:0;">월 필요 저축액</p>
+          <span class="ms" style="font-size:20px;color:#666666;">payments</span>
+          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#666666;margin:0;">월 필요 저축액</p>
         </div>
         <div id="c-req-save" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#111111;">—</div>
         <div style="font-size:13px;font-weight:400;color:#999999;margin-top:4px;">
@@ -906,11 +906,11 @@
     </div>
 
     <!-- 카드 4: 현재 페이스 -->
-    <div class="anim-fadeup" style="animation-delay:0.76s;">
-      <div id="card-pace" style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;">
+    <div class="anim-fadeup" style="animation-delay:0.76s;height:100%;">
+      <div id="card-pace" style="background:#ffffff;border-radius:16px;padding:24px;overflow:hidden;height:100%;display:flex;flex-direction:column;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
-          <span class="ms" style="font-size:20px;color:#111111;">timer</span>
-          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#111111;margin:0;">현재 페이스</p>
+          <span class="ms" style="font-size:20px;color:#666666;">timer</span>
+          <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#666666;margin:0;">현재 페이스</p>
         </div>
         <div id="c-pace" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#111111;">—</div>
         <div id="c-pace-sub" style="font-size:13px;font-weight:400;color:#999999;margin-top:4px;">현재 저축 페이스 기준 은퇴 가능</div>
@@ -1165,22 +1165,36 @@ const retirePlugin = {
   id: 'retireLines',
   afterDraw(chart) {
     const { ctx, chartArea: { top, bottom }, scales: { x } } = chart;
+    const labelY = top + 12; // 두 레이블 모두 동일한 가로 위치
+
     [
-      [_retire2Age, '#999999'],
-      [_retire1Age, '#999999'],
-    ].forEach(([age, color]) => {
+      [_retire2Age, '목표 은퇴'],
+      [_retire1Age, '은퇴 예상'],
+    ].forEach(([age, label]) => {
       if (age == null) return;
       const i = _ageLabels.indexOf(age);
       if (i < 0) return;
       const xp = x.getPixelForValue(i);
+
       ctx.save();
+
+      // 수직 점선 (레이블 바로 아래부터 시작)
       ctx.setLineDash([2, 4]);
       ctx.lineWidth = 1;
-      ctx.strokeStyle = color;
+      ctx.strokeStyle = 'rgba(0,0,0,0.18)';
       ctx.beginPath();
-      ctx.moveTo(xp, top);
+      ctx.moveTo(xp, labelY + 10);
       ctx.lineTo(xp, bottom);
       ctx.stroke();
+
+      // 텍스트 레이블
+      ctx.setLineDash([]);
+      ctx.font = '500 10px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillStyle = '#111111';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`${label} ${age}세`, xp, labelY);
+
       ctx.restore();
     });
   },
@@ -1221,9 +1235,9 @@ function showChartTooltip(chart, activeEls) {
   // 은퇴 시점 라벨
   let retireHtml = '';
   if (age === _retire1Age)
-    retireHtml = `<div style="font-size:11px;font-weight:600;color:#7C3AED;margin-bottom:5px;">은퇴 시점</div>`;
+    retireHtml = `<div style="font-size:11px;font-weight:600;color:#111111;margin-bottom:5px;">은퇴 예상</div>`;
   else if (age === _retire2Age)
-    retireHtml = `<div style="font-size:11px;font-weight:600;color:#A78BFA;margin-bottom:5px;">목표 은퇴</div>`;
+    retireHtml = `<div style="font-size:11px;font-weight:600;color:#111111;margin-bottom:5px;">목표 은퇴</div>`;
 
   // 각 인원 행
   const rowsHtml = personItems.map(({ ds, raw }) => {
