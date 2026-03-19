@@ -808,22 +808,35 @@
     <!-- 로고 -->
     <div style="font-size:64px;font-weight:200;color:#111111;border:1.5px solid #111111;border-radius:12px;padding:14px 20px;line-height:1;display:inline-block;">P.Calc</div>
 
-    <!-- 우상단: 공유 + 메타 블록 -->
-    <div style="display:flex;align-items:center;gap:8px;">
-      <button class="pill-icon-btn" id="btn-share" title="공유하기">
-        <span class="ms pill-ico">share</span>
-        <span class="pill-label">공유하기</span>
-      </button>
-      <a href="onboarding.html" class="pill-icon-btn" title="처음으로">
-        <span class="ms pill-ico">restart_alt</span>
-        <span class="pill-label">처음으로</span>
-      </a>
+    <!-- 우상단: 아이콘 버튼 + 메타 블록 -->
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:16px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="pill-icon-btn" id="btn-share" title="공유하기">
+          <span class="ms pill-ico">share</span>
+          <span class="pill-label">공유하기</span>
+        </button>
+        <a href="onboarding.html" class="pill-icon-btn" title="처음으로">
+          <span class="ms pill-ico">restart_alt</span>
+          <span class="pill-label">처음으로</span>
+        </a>
+      </div>
+      <!-- 메타 블록 -->
+      <div id="meta-block" style="display:grid;grid-template-columns:auto auto;column-gap:20px;font-family:monospace;font-size:11px;line-height:2;user-select:none;">
+        <span style="color:#999999;text-transform:uppercase;letter-spacing:0.05em;">Status</span>
+        <span id="meta-status" style="color:#111111;text-align:right;white-space:nowrap;"></span>
+        <span style="color:#999999;text-transform:uppercase;letter-spacing:0.05em;">D-Day</span>
+        <span id="meta-dday" style="color:#111111;text-align:right;white-space:nowrap;"></span>
+        <span style="color:#999999;text-transform:uppercase;letter-spacing:0.05em;">Pace</span>
+        <span id="meta-pace" style="color:#111111;text-align:right;white-space:nowrap;"></span>
+        <span style="color:#999999;text-transform:uppercase;letter-spacing:0.05em;">Need</span>
+        <span id="meta-need" style="text-align:right;white-space:nowrap;"></span>
+      </div>
     </div>
 
   </div>
 
   <!-- 히어로 텍스트 + 유틸리티 버튼 -->
-  <div class="anim-fadeup" style="margin-top:32px;display:flex;justify-content:space-between;align-items:flex-end;animation-delay:0.2s;">
+  <div class="anim-fadeup" style="margin-top:16px;display:flex;justify-content:space-between;align-items:flex-end;animation-delay:0.2s;">
     <div>
       <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">나</span>님</div>
       <div style="display:flex;align-items:center;gap:14px;">
@@ -1482,6 +1495,9 @@ function updateCards(results) {
   const heroRate = $('hero-rate');
   if (heroRate) countUp(heroRate, assetPct, v => v + '%', 750, false, D.h);
 
+  // 메타 블록 업데이트
+  updateMetaBlock(p, resA);
+
   // 메타 인플레이션 토글 + 사이드바 토글 동기화
   updateMetaInfToggle();
   const togInf = $('tog-inf');
@@ -1766,6 +1782,44 @@ function bindPersonSliders(idx) {
 }
 
 // ─── 토글 ───
+// ─── 우상단 메타 블록 ───
+function updateMetaBlock(p, resA) {
+  const statusEl = $('meta-status');
+  const ddayEl   = $('meta-dday');
+  const paceEl   = $('meta-pace');
+  const needEl   = $('meta-need');
+  if (!statusEl) return;
+
+  const req     = resA.requiredMonthlySavings;
+  const cur     = p.monthlySavings;
+  const gap     = cur - req;
+  const onTrack = req <= 0 || gap >= 0;
+
+  // STATUS
+  statusEl.innerHTML = onTrack
+    ? '<span style="color:#22C55E;">●</span> On Track'
+    : '<span style="color:#EF4444;">●</span> Behind';
+
+  // D-DAY
+  const daysLeft = Math.max(0, Math.round((resA.targetRetirementAge - p.currentAge) * 365));
+  ddayEl.textContent = `D-${daysLeft.toLocaleString()}일`;
+
+  // PACE
+  const paceAge = resA.currentPace.retireAge;
+  paceEl.textContent = paceAge ? `${paceAge}세 은퇴 예상` : '90세+ 은퇴 예상';
+
+  // NEED
+  if (onTrack) {
+    const surplus = Math.max(0, Math.round(gap));
+    needEl.textContent = `+${surplus.toLocaleString()}만원/월 여유`;
+    needEl.style.color = '#22C55E';
+  } else {
+    const deficit = Math.abs(Math.round(gap));
+    needEl.textContent = `+${deficit.toLocaleString()}만원/월 필요`;
+    needEl.style.color = '#EF4444';
+  }
+}
+
 function updateMetaInfToggle() {
   const btn   = $('meta-inf-btn');
   const thumb = $('meta-inf-thumb');
