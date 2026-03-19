@@ -459,6 +459,7 @@
     .sc-head-row { padding-bottom: 12px; margin-bottom: 2px; }
     .sc-head-row + .sc-table-row { border-top: 0.5px solid var(--border); }
     .sc-metric-lbl {
+      min-width: 80px; white-space: nowrap;
       font-size: 11px; color: var(--text-3);
     }
     .sc-metric-val {
@@ -471,8 +472,9 @@
     .sc-head-name {
       display: flex; align-items: center; gap: 5px;
       font-size: 12px; font-weight: 600; color: var(--text-1);
+      white-space: nowrap;
     }
-    .sc-head-sub { font-size: 10px; color: var(--text-3); }
+    .sc-head-sub { font-size: 10px; color: var(--text-3); white-space: nowrap; }
     .sc-gap-pos { color: #81CE16; }
     .sc-gap-neg { color: #F4907A; }
 
@@ -2031,7 +2033,7 @@ function buildScenarioCards(results) {
   if (!container || !results) return;
 
   const n   = results.length;
-  const cols = `minmax(0,1fr) repeat(${n},minmax(0,1fr))`;
+  const cols = `80px repeat(${n},minmax(0,1fr))`;
 
   const metrics = [
     { label: 'FIRE 달성률',    fn: (res, p) => `${Math.min(100, res.fireRate).toFixed(1)}%` },
