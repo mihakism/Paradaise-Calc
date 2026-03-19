@@ -477,8 +477,15 @@
     .preview-cards .pcard:nth-child(2)::before {
       animation-delay: -1.4s;
     }
-    /* 카드 배경 레이어 제거 — 투명 배경 */
-    .pcard::after { display: none; }
+    /* 카드 배경 레이어 — 흰색으로 내부 채워 shimmer 라인만 노출 */
+    .pcard::after {
+      content: '';
+      position: absolute;
+      inset: 0.5px;
+      border-radius: 15.5px;
+      background: #ffffff;
+      z-index: -1;
+    }
     .pcard-lbl {
       font-size: 14px;
       font-weight: 500;
