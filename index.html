@@ -168,7 +168,13 @@
       transform: translateX(calc(100% + 24px));
       transition: transform 320ms cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 200;
+      scrollbar-width: none;
     }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: transparent; border-radius: 2px; transition: background 0.2s; }
+    .sidebar.is-scrolling { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.18) transparent; }
+    .sidebar.is-scrolling::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.18); }
     .sidebar.open { transform: translateX(0); }
 
     .sidebar-toprow {
@@ -246,7 +252,7 @@
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none; appearance: none;
       width: 11px; height: 11px; border-radius: 50%;
-      background: var(--primary); cursor: pointer;
+      background: var(--knob-color, var(--primary)); cursor: pointer;
       box-shadow: none;
       transition: transform .15s ease;
     }
@@ -265,6 +271,11 @@
       border-radius: var(--r-sm); cursor: pointer; transition: all var(--ease);
     }
     .toggle:hover { border-color: var(--border-light); }
+    .section .toggle {
+      background: transparent; border: none; border-radius: 0;
+      padding: 6px 0;
+    }
+    .section .toggle:hover { background: transparent; }
 
     .toggle-info { display: flex; flex-direction: column; gap: 1px; }
     .toggle-title { font-size: 13px; font-weight: 600; }
@@ -650,7 +661,7 @@
     }
     .ptab:hover { border-color: var(--border-light); color: var(--text-1); }
     .ptab.active { background: var(--bg-card); border-color: var(--border-light);
-      color: var(--text-1); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+      color: var(--text-1); }
     .ptab-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .ptab-del {
       width: 14px; height: 14px; border-radius: 50%;
@@ -671,7 +682,7 @@
       display: flex; align-items: center; gap: 3px;
       height: 33px; padding: 0 12px; border-radius: 20px;
       font-size: 12px; font-weight: 600; cursor: pointer;
-      border: 1px solid var(--border-light);
+      border: 1px solid transparent;
       background: transparent; color: var(--text-3);
       transition: all var(--ease); font-family: var(--font);
     }
@@ -751,7 +762,11 @@
       </svg>
       조정 패널
     </span>
-    <button class="sidebar-close-btn" onclick="closeSidebar()" title="닫기"><span class="ms" style="font-variation-settings:'FILL' 1;font-size:14px;vertical-align:middle">close</span></button>
+    <button class="sidebar-close-btn" onclick="closeSidebar()" title="닫기">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+        <line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/>
+      </svg>
+    </button>
   </div>
 
   <!-- 인원 탭 (JS 동적 생성) -->
@@ -760,23 +775,21 @@
   <div class="person-panel" id="person-panel"></div>
   <div class="hr"></div>
   <!-- 공통 설정 -->
-  <div class="section">
+  <div class="section" style="margin-top:24px;">
     <div class="section-hd"><span class="ms">settings</span> 설정</div>
 
-    <div style="background:#FFFFFF;border-radius:12px;padding:16px;">
-      <div class="toggle" id="tog-inf" onclick="toggleInf()" style="flex-direction:column;align-items:stretch;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div class="toggle-info">
-            <span class="toggle-title">인플레이션 반영</span>
-            <span class="toggle-desc">실질 구매력 표시 (기본 2.5%)</span>
-          </div>
-          <div class="sw"></div>
+    <div class="toggle" id="tog-inf" onclick="toggleInf()" style="flex-direction:column;align-items:stretch;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="toggle-info">
+          <span class="toggle-title">인플레이션 반영</span>
+          <span class="toggle-desc">실질 구매력 표시 (기본 2.5%)</span>
         </div>
-        <div class="inf-row" id="inf-row">
-          <span class="inf-label">인플레이션율</span>
-          <input type="number" class="inf-input" id="inf-val" value="2.5" min="0" max="10" step="0.1" onclick="event.stopPropagation()" />
-          <span style="font-size:12px;color:var(--text-3)">%</span>
-        </div>
+        <div class="sw"></div>
+      </div>
+      <div class="inf-row" id="inf-row">
+        <span class="inf-label">인플레이션율</span>
+        <input type="number" class="inf-input" id="inf-val" value="2.5" min="0" max="10" step="0.1" onclick="event.stopPropagation()" />
+        <span style="font-size:12px;color:var(--text-3)">%</span>
       </div>
     </div>
 
@@ -974,11 +987,11 @@
 
 // ─── 인원 컬러 팔레트 ───
 const PERSON_COLORS = [
-  { line: '#8EAD35', r: 142, g: 173, b:  53 },
-  { line: '#F59E0B', r: 245, g: 158, b:  11 },
-  { line: '#10B981', r:  16, g: 185, b: 129 },
-  { line: '#EF4444', r: 239, g:  68, b:  68 },
-  { line: '#6B7280', r: 107, g: 114, b: 128 },
+  { line: '#22C55E', r:  34, g: 197, b:  94 },
+  { line: '#F97316', r: 249, g: 115, b:  22 },
+  { line: '#3B82F6', r:  59, g: 130, b: 246 },
+  { line: '#EC4899', r: 236, g:  72, b: 153 },
+  { line: '#8B5CF6', r: 139, g:  92, b: 246 },
 ];
 
 const DEFAULT_PERSON = () => ({
@@ -1717,6 +1730,7 @@ function buildPersonPanel(idx) {
   if (!panel) return;
   const p   = S.people[idx];
   const col = PERSON_COLORS[idx % PERSON_COLORS.length].line;
+  panel.style.setProperty('--knob-color', col);
 
   panel.innerHTML = `
     <div class="section">
@@ -2057,6 +2071,18 @@ function init() {
   setTimeout(() => { _firstLoad = false; }, 1600); // 모든 초기 애니메이션 완료 후 해제
 }
 document.addEventListener('DOMContentLoaded', init);
+
+// ─── 사이드바 스크롤바 ───
+(function() {
+  let _scrollTimer;
+  const sb = document.getElementById('sidebar');
+  if (!sb) return;
+  sb.addEventListener('scroll', () => {
+    sb.classList.add('is-scrolling');
+    clearTimeout(_scrollTimer);
+    _scrollTimer = setTimeout(() => sb.classList.remove('is-scrolling'), 900);
+  }, { passive: true });
+})();
 
 </script>
 </body>
