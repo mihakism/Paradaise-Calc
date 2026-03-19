@@ -1666,7 +1666,7 @@ function updateInfBanner(p) {
   $('inf-banner-txt').innerHTML =
     `오늘의 <strong>${p.targetWithdrawal.toLocaleString()}만원</strong>은 ` +
     `${targetYr}년에 <strong>${Math.round(realVal).toLocaleString()}만원</strong>의 가치입니다. ` +
-    `<span style="color:#999999;">인플레이션 ${S.infRate}% 반영</span>`;
+    `<span style="color:#999999;font-size:13px;">인플레이션 ${S.infRate}% 반영</span>`;
 }
 
 // ─── 지연 배너 ───
@@ -1686,7 +1686,7 @@ function updateDelayBanner(p) {
     $('delay-banner-txt').innerHTML =
       `<strong>${S.delayYears}년</strong> 뒤에 시작하면, ` +
       `은퇴 후 월 인출 가능액이 <strong>-${Math.round(loss).toLocaleString()}만원</strong> 줄어듭니다. ` +
-      `(${p.targetWithdrawal.toLocaleString()}만원 → ${Math.round(res.maxWithdrawal).toLocaleString()}만원)`;
+      `<span style="color:#999999;font-size:13px;">${p.targetWithdrawal.toLocaleString()}만원 → ${Math.round(res.maxWithdrawal).toLocaleString()}만원</span>`;
   } else {
     $('delay-banner-txt').innerHTML =
       `${S.delayYears}년 뒤에 시작해도 현재 자산 성장으로 목표를 달성할 수 있습니다.`;
