@@ -1288,6 +1288,7 @@ function initChart() {
       responsive: true,
       maintainAspectRatio: false,
       animation: { duration: 180 },
+      layout: { padding: { top: 4, right: 4, bottom: 0, left: 0 } },
       interaction: { mode: 'index', intersect: false },
       onHover: (event, activeEls, ch) => showChartTooltip(ch, activeEls),
       plugins: {
@@ -1377,10 +1378,11 @@ function updateChart(results) {
       borderDash:        [],
       borderCapStyle:    'round',
       borderJoinStyle:   'round',
-      borderWidth:       isMe ? 5 : 3,
+      borderWidth:       2,
       tension:           0.4,
       fill:              false,
-      spanGaps:          false,   // null 구간에서 라인 끊김
+      clip:              false,
+      spanGaps:          false,
       pointRadius:       0,
       pointHoverRadius:  0,
     });
