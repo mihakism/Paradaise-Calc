@@ -269,19 +269,14 @@
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 16px; height: 16px;
+      width: 11px; height: 11px;
       border-radius: 50%;
       background: var(--color-accent);
       cursor: pointer;
-      box-shadow:
-        0 0 0 3px var(--accent-glow),
-        0 0 10px var(--accent-glow);
-      transition: box-shadow .2s ease, transform .15s ease;
+      box-shadow: none;
+      transition: transform .15s ease;
     }
     input[type="range"]::-webkit-slider-thumb:hover {
-      box-shadow:
-        0 0 0 6px var(--accent-glow),
-        0 0 16px var(--accent-glow);
       transform: scale(1.15);
     }
     input[type="range"]::-moz-range-thumb {
@@ -900,8 +895,8 @@
     <div class="content content-wide" id="c5">
 
       <p class="preview-headline">
-        <span id="ph-age">35</span>세부터 시작하면<br/>
-        <span class="hl" id="ph-retire">50</span>세에 낙원 도달 가능 <span class="ms" style="font-size:20px;vertical-align:middle">park</span>
+        <span class="hl" id="ph-age">35</span>세부터 시작하면<br/>
+        <span class="hl" id="ph-retire">50</span>세에 낙원 도달 가능 <span class="ms" style="font-size:20px;vertical-align:middle">beach_access</span>
       </p>
 
       <!-- Preview cards — DESIGN_SPEC §7 card spec -->
