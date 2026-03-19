@@ -785,6 +785,12 @@
     </div>
   </div>
 
+  <!-- 처음부터 다시 입력 -->
+  <div style="margin-top:24px;border-top:1px solid #E5E5E5;">
+    <a href="onboarding.html" onclick="localStorage.clear()" style="display:block;width:100%;padding:16px 0;font-size:12px;color:#999999;text-align:center;text-decoration:none;cursor:pointer;transition:color 0.2s;"
+      onmouseover="this.style.color='#111111'" onmouseout="this.style.color='#999999'">처음부터 다시 입력</a>
+  </div>
+
 </div><!-- /#sidebar -->
 
 <!-- ═══ 시나리오 비교 패널 ═══ -->
@@ -808,18 +814,12 @@
     <!-- 로고 -->
     <div style="font-size:64px;font-weight:200;color:#111111;border:1.5px solid #111111;border-radius:12px;padding:14px 20px;line-height:1;display:inline-block;">P.Calc</div>
 
-    <!-- 우상단: 아이콘 버튼 + 메타 블록 -->
+    <!-- 우상단: 조정 버튼 + 메타 블록 -->
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:16px;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <button class="pill-icon-btn" id="btn-share" title="공유하기">
-          <span class="ms pill-ico">share</span>
-          <span class="pill-label">공유하기</span>
-        </button>
-        <a href="onboarding.html" class="pill-icon-btn" title="처음으로">
-          <span class="ms pill-ico">restart_alt</span>
-          <span class="pill-label">처음으로</span>
-        </a>
-      </div>
+      <button class="pill-icon-btn pill-icon-btn-filled" title="조정 패널" onclick="toggleSidebar()">
+        <span class="ms pill-ico">tune</span>
+        <span class="pill-label">조정 패널</span>
+      </button>
       <!-- 메타 블록 -->
       <div id="meta-block" style="display:grid;grid-template-columns:auto auto;column-gap:20px;font-family:monospace;font-size:11px;line-height:2;user-select:none;">
         <span style="color:#999999;text-transform:uppercase;letter-spacing:0.05em;">Status</span>
@@ -835,22 +835,14 @@
 
   </div>
 
-  <!-- 히어로 텍스트 + 유틸리티 버튼 -->
-  <div class="anim-fadeup" style="margin-top:16px;display:flex;justify-content:space-between;align-items:flex-end;animation-delay:0.2s;">
-    <div>
-      <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">나</span>님</div>
-      <div style="display:flex;align-items:center;gap:14px;">
-        <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">FIRE까지 <span id="hero-rate" style="color:#111111;font-weight:600;">0%</span> 달성했어요</div>
-        <button class="pill-icon-btn" title="시나리오 비교" onclick="openScenarioPanel()">
-          <span class="ms pill-ico">add</span>
-          <span class="pill-label">시나리오 비교</span>
-        </button>
-      </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;padding-bottom:4px;">
-      <button class="pill-icon-btn pill-icon-btn-filled" title="조정 패널" onclick="toggleSidebar()">
-        <span class="ms pill-ico">tune</span>
-        <span class="pill-label">조정 패널</span>
+  <!-- 히어로 텍스트 -->
+  <div class="anim-fadeup" style="margin-top:16px;animation-delay:0.2s;">
+    <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">나</span>님</div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">FIRE까지 <span id="hero-rate" style="color:#111111;font-weight:600;">0%</span> 달성했어요</div>
+      <button class="pill-icon-btn" title="시나리오 비교" onclick="openScenarioPanel()">
+        <span class="ms pill-ico">add</span>
+        <span class="pill-label">시나리오 비교</span>
       </button>
     </div>
   </div>
