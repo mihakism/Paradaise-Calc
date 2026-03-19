@@ -1538,8 +1538,8 @@ function updateInfBanner(p) {
   const targetYr = yr + N;
   $('inf-banner-txt').innerHTML =
     `오늘의 <strong>${p.targetWithdrawal.toLocaleString()}만원</strong>은 ` +
-    `${targetYr}년의 <strong>${Math.round(realVal).toLocaleString()}만원</strong> ` +
-    `<span style="color:#999999;font-size:13px;">인플레 ${S.infRate}%</span>`;
+    `${targetYr}년엔 <strong>${Math.round(realVal).toLocaleString()}만원</strong> 가치 ` +
+    `<span style="color:#999999;font-size:13px;">· 인플레 ${S.infRate}%</span>`;
 }
 
 // ─── 지연 배너 ───
