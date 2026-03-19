@@ -38,7 +38,7 @@
       --warning:        #F97316;
 
       --text-1:         #111111;
-      --text-2:         #999999;
+      --text-2:         #666666;
       --text-3:         #999999;
 
       --font: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -587,15 +587,28 @@
 
     /* ─── 지연 배너 ─── */
     .delay-banner {
-      display: none; align-items: flex-start; gap: 14px;
-      background: rgba(244,144,122,0.06);
-      border: 1px solid rgba(244,144,122,0.25);
-      border-radius: var(--r-md); padding: 14px 18px;
+      display: none; align-items: center; gap: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 18px 22px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      position: relative; overflow: hidden;
+    }
+    .delay-banner::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--danger); border-radius: var(--r-lg) 0 0 var(--r-lg);
     }
     .delay-banner.vis { display: flex; }
-    .delay-banner-ico { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
-    .delay-banner-txt { font-size: 14px; line-height: 1.6; }
-    .delay-banner-txt strong { color: var(--danger); font-size: 17px; }
+    .delay-banner-ico {
+      font-size: 20px; flex-shrink: 0;
+      width: 38px; height: 38px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(244,144,122,0.1);
+      border-radius: 50%;
+      color: var(--danger);
+    }
+    .delay-banner-txt { font-size: 13px; line-height: 1.65; color: var(--text-2); }
+    .delay-banner-txt strong { color: var(--danger); font-size: 15px; font-weight: 700; }
 
     /* ─── 시나리오 비교 배너 ─── */
     .compare-banner {
