@@ -421,7 +421,7 @@
       font-size: clamp(22px, 4vw, 28px);
       font-weight: 700;
       text-align: center;
-      line-height: 1.55;
+      line-height: 1.4;
       color: var(--text-primary);
     }
     .preview-headline .hl { color: #8CAD35; }
@@ -730,6 +730,32 @@
       .l-palm pre { font-size: 1.4vh; }
       .l-rolling-text { font-size: 13px; }
     }
+
+    /* ── 온보딩 스테이지 야자수 배경 ── */
+    .stage-palm {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+      pointer-events: none;
+      user-select: none;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+    .stage-palm.vis { opacity: 1; }
+    .stage-palm pre {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 1.75vh;
+      line-height: 1.0;
+      white-space: pre;
+      color: #ffffff;
+      opacity: 0.10;
+      margin: 0;
+      padding: 0;
+    }
+    /* content 카드는 야자수 위에 렌더링 */
+    .content { position: relative; z-index: 1; }
 
     /* ── 파티클 레인 캔버스 ── */
     #particle-canvas {
