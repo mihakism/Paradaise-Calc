@@ -1667,7 +1667,7 @@ function updateInfBanner(p) {
   const targetYr = yr + N;
   $('inf-banner-txt').innerHTML =
     `오늘의 <strong>${p.targetWithdrawal.toLocaleString()}만원</strong>은 ` +
-    `${targetYr}년에 <strong>${Math.round(realVal).toLocaleString()}만원</strong>의 가치입니다. ` +
+    `${targetYr}년의 <strong>${Math.round(realVal).toLocaleString()}만원</strong> ` +
     `<span style="color:#999999;font-size:13px;">인플레이션 ${S.infRate}% 반영</span>`;
 }
 
@@ -1687,7 +1687,7 @@ function updateDelayBanner(p) {
   if (loss > 0) {
     $('delay-banner-txt').innerHTML =
       `<strong>${S.delayYears}년</strong> 뒤에 시작하면, ` +
-      `은퇴 후 월 인출 가능액이 <strong>-${Math.round(loss).toLocaleString()}만원</strong> 줄어듭니다. ` +
+      `은퇴 후 월 인출 가능액 <strong>-${Math.round(loss).toLocaleString()}만원</strong> 감소. ` +
       `<span style="color:#999999;font-size:13px;">${p.targetWithdrawal.toLocaleString()}만원 → ${Math.round(res.maxWithdrawal).toLocaleString()}만원</span>`;
   } else {
     $('delay-banner-txt').innerHTML =
