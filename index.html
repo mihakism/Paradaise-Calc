@@ -1366,19 +1366,18 @@ function initChart() {
   $('chart').addEventListener('mouseleave', hideChartTooltip);
 }
 
+// "나"(index 0)는 #111111, 비교 시나리오는 PERSON_COLORS 0→1→2→3 순으로 배정
+function personChartColor(i) {
+  return i === 0 ? '#111111' : PERSON_COLORS[(i - 1) % PERSON_COLORS.length].line;
+}
+
 function updateChart(results) {
   if (S.chartMode === 'bar') { buildBarChart(results); return; }
 
+  // 가장 어린 시나리오 기준으로 전체 X축 레이블 생성
   const allAges = new Set();
   results.forEach(r => r.currentPace.points.forEach(p => allAges.add(p.age)));
   const labels = Array.from(allAges).sort((a, b) => a - b);
-
-  const mkGradient = (ctx, r, g, b) => {
-    const grad = ctx.chart.ctx.createLinearGradient(0, 0, 0, 290);
-    grad.addColorStop(0, `rgba(${r},${g},${b},0.15)`);
-    grad.addColorStop(1, `rgba(${r},${g},${b},0.00)`);
-    return grad;
-  };
 
   // 은퇴 시점 변수 갱신
   const active = results[S.activePerson];
@@ -1391,22 +1390,26 @@ function updateChart(results) {
   // "나" (index 0)를 마지막에 렌더링해 항상 위에 표시
   const sortedIndices = [...results.map((_, i) => i).filter(i => i !== 0), 0];
   sortedIndices.forEach((i) => {
-    const res  = results[i];
-    const col  = PERSON_COLORS[i % PERSON_COLORS.length];
-    const name = S.people[i].name;
-    const bw   = i === 0 ? 2.5 : 1.5;
+    const res   = results[i];
+    const name  = S.people[i].name;
+    const isMe  = i === 0;
 
     datasets.push({
       label: name,
+      // 각 시나리오 고유 points 사용 — 시작 나이 이전은 null(라인 끊김)
       data: labels.map(age => {
         const pt = res.currentPace.points.find(p => p.age === age);
         return pt ? pt.assets : null;
       }),
-      borderColor: col.line,
-      backgroundColor: 'transparent',
-      borderWidth: bw, tension: 0.4, fill: false, spanGaps: true,
-      pointRadius: 0,
-      pointHoverRadius: 4,
+      borderColor:       personChartColor(i),
+      backgroundColor:   'transparent',
+      borderDash:        [],
+      borderWidth:       isMe ? 2.5 : 1.5,
+      tension:           0.4,
+      fill:              false,
+      spanGaps:          false,   // null 구간에서 라인 끊김
+      pointRadius:       0,
+      pointHoverRadius:  4,
       pointHoverBorderColor: '#fff',
       pointHoverBorderWidth: 2,
     });
@@ -1486,13 +1489,13 @@ function rebuildLegend(results) {
   const leg = document.getElementById('legend');
   if (!leg) return;
   leg.innerHTML = '';
-  results.forEach((res, i) => {
-    const col  = PERSON_COLORS[i % PERSON_COLORS.length];
-    const name = S.people[i].name;
-    const item = document.createElement('div');
+  results.forEach((_, i) => {
+    const color = personChartColor(i);
+    const name  = S.people[i].name;
+    const item  = document.createElement('div');
     item.className = 'leg-item';
     item.style.cssText = 'cursor:pointer;font-size:11px;color:#999999;display:flex;align-items:center;gap:5px;';
-    item.innerHTML = `<div class="leg-dot" style="background:${col.line};width:8px;height:8px;border-radius:50%;flex-shrink:0;"></div><span>${name}</span>`;
+    item.innerHTML = `<div class="leg-dot" style="background:${color};width:8px;height:8px;border-radius:50%;flex-shrink:0;"></div><span>${name}</span>`;
     item.addEventListener('click', () => setActivePerson(i));
     leg.appendChild(item);
   });
