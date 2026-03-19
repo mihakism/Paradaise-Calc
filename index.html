@@ -1307,18 +1307,13 @@ function initChart() {
             callback: function(value, index) {
               const age = this.getLabelForValue(value);
               if (age % 5 !== 0) return '';
-              return index === 0 ? `${age} (세)` : `${age}`;
+              return index === 0 ? `${age}세` : `${age}`;
             },
           },
         },
         y: {
           min: 0,
-          grid: {
-            color: (ctx) => {
-              const lastIdx = ctx.chart.scales.y.ticks.length - 1;
-              return ctx.index === lastIdx ? 'transparent' : 'rgba(0,0,0,0.04)';
-            },
-          },
+          grid: { display: false },
           border: { display: false },
           ticks: {
             color: '#999999',
@@ -1328,7 +1323,7 @@ function initChart() {
               if (value === 0) return '';
               const uk = value / 10000;
               const ticks = this.ticks;
-              return index === ticks.length - 1 ? `${uk} (억)` : `${uk}`;
+              return index === ticks.length - 1 ? `${uk}억` : `${uk}`;
             },
           },
         },
