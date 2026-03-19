@@ -85,22 +85,37 @@
       letter-spacing: -.2px;
     }
     .prog-back {
-      display: inline-flex; align-items: center; gap: 4px;
+      display: inline-flex; align-items: center; gap: 0;
       font-family: var(--ff-en);
       font-size: 12px; font-weight: 700;
       letter-spacing: .04em;
       text-transform: uppercase;
       color: rgba(255,255,255,.75);
-      background: rgba(255,255,255,.12);
+      background: transparent;
       border: none;
       border-radius: 999px;
-      padding: 8px 16px;
+      padding: 8px 8px;
       cursor: pointer;
-      transition: background .15s ease, color .15s ease;
+      transition: background .2s ease, color .2s ease, gap .2s ease, padding .2s ease;
+    }
+    .prog-back .back-label {
+      max-width: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-width .2s ease, opacity .15s ease, margin-left .2s ease;
+      margin-left: 0;
+      white-space: nowrap;
     }
     .prog-back:hover {
       background: rgba(255,255,255,.20);
       color: rgba(255,255,255,1);
+      gap: 4px;
+      padding: 8px 16px;
+    }
+    .prog-back:hover .back-label {
+      max-width: 48px;
+      opacity: 1;
+      margin-left: 0;
     }
     .prog-dots {
       display: flex;
@@ -132,14 +147,22 @@
       overflow: hidden;
     }
 
-    /* 섹션별 배경 (accent는 :root 블랙 공통 사용) */
-    #s1 { background: #8CAD35; }
-    #s2 { background: #004824; }
-    #s3 { background: #00391c; }
-    #s4 { background: #002b14; }
-    #s5 { background: #001d0d; }
+    /* 섹션 공통 배경 + 단계별 10% 딤 오버레이 */
+    .section { background: #8CAD35; }
 
-    /* ambient radial glow 제거 */
+    .section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #s1::before { background: rgba(0,0,0,0.00); }
+    #s2::before { background: rgba(0,0,0,0.10); }
+    #s3::before { background: rgba(0,0,0,0.20); }
+    #s4::before { background: rgba(0,0,0,0.30); }
+    #s5::before { background: rgba(0,0,0,0.40); }
 
     /* ══════════════════════════════════════════
        Content (fade-in on section enter)
@@ -150,6 +173,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      position: relative;
+      z-index: 1;
       /* card 속성 (대시보드 통일) */
       background: #FFFFFF;
       border: 1px solid #E5E9F0;
@@ -785,7 +810,7 @@
 
 <!-- Header / progress bar (온보딩 시작 후 표시) -->
 <nav id="progress" style="display:none">
-  <button class="prog-back" onclick="goToLanding()"><span class="arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Back</button>
+  <button class="prog-back" onclick="goToLanding()"><span class="arrow"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="back-label">Back</span></button>
   <div class="prog-dots">
     <div class="dot active" data-i="0"></div>
     <div class="dot" data-i="1"></div>
