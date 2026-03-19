@@ -420,22 +420,17 @@
       position: relative; display: inline-block; cursor: default;
     }
     .hero-rate-wrap #hero-rate {
-      border-bottom: 1px dotted currentColor;
-      padding-bottom: 1px;
+      text-decoration: underline dotted currentColor;
+      text-underline-offset: 3px;
     }
     .hero-rate-tip {
-      position: absolute; bottom: calc(100% + 8px); left: 50%;
+      position: absolute; bottom: calc(100% + 4px); left: 50%;
       transform: translateX(-50%);
       background: #111111; color: #ffffff;
       font-size: 11px; font-weight: 400; white-space: nowrap;
       padding: 5px 10px; border-radius: 6px;
       pointer-events: none;
       opacity: 0; transition: opacity 0.15s ease;
-    }
-    .hero-rate-tip::after {
-      content: ''; position: absolute; top: 100%; left: 50%;
-      transform: translateX(-50%);
-      border: 4px solid transparent; border-top-color: #111111;
     }
     .hero-rate-wrap:hover .hero-rate-tip { opacity: 1; }
 
@@ -1189,36 +1184,21 @@ const retirePlugin = {
   id: 'retireLines',
   afterDraw(chart) {
     const { ctx, chartArea: { top, bottom }, scales: { x } } = chart;
-    const labelY = top + 12; // 두 레이블 모두 동일한 가로 위치
 
-    [
-      [_retire2Age, '목표 은퇴'],
-      [_retire1Age, '은퇴 예상'],
-    ].forEach(([age, label]) => {
+    [_retire2Age, _retire1Age].forEach((age) => {
       if (age == null) return;
       const i = _ageLabels.indexOf(age);
       if (i < 0) return;
       const xp = x.getPixelForValue(i);
 
       ctx.save();
-
-      // 수직 점선 (레이블 바로 아래부터 시작)
       ctx.setLineDash([2, 4]);
       ctx.lineWidth = 1;
       ctx.strokeStyle = 'rgba(0,0,0,0.18)';
       ctx.beginPath();
-      ctx.moveTo(xp, labelY + 10);
+      ctx.moveTo(xp, top);
       ctx.lineTo(xp, bottom);
       ctx.stroke();
-
-      // 텍스트 레이블
-      ctx.setLineDash([]);
-      ctx.font = '500 10px -apple-system, BlinkMacSystemFont, sans-serif';
-      ctx.fillStyle = '#111111';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(`${label} ${age}세`, xp, labelY);
-
       ctx.restore();
     });
   },
@@ -1256,12 +1236,13 @@ function showChartTooltip(chart, activeEls) {
 
   if (!personItems.length) { hideChartTooltip(); return; }
 
-  // 은퇴 시점 라벨
-  let retireHtml = '';
-  if (age === _retire1Age)
-    retireHtml = `<div style="font-size:11px;font-weight:600;color:#111111;margin-bottom:5px;">은퇴 예상</div>`;
-  else if (age === _retire2Age)
-    retireHtml = `<div style="font-size:11px;font-weight:600;color:#111111;margin-bottom:5px;">목표 은퇴</div>`;
+  // 은퇴 시점 라벨 — 항상 한 줄에 나란히 표시
+  const retireParts = [];
+  if (_retire2Age != null) retireParts.push(`<span>목표 은퇴&nbsp;<strong style="font-weight:600;">${_retire2Age}세</strong></span>`);
+  if (_retire1Age != null) retireParts.push(`<span>은퇴 예상&nbsp;<strong style="font-weight:600;">${_retire1Age}세</strong></span>`);
+  const retireHtml = retireParts.length
+    ? `<div style="display:flex;justify-content:space-between;gap:12px;font-size:10px;color:#111111;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid rgba(0,0,0,0.06);">${retireParts.join('')}</div>`
+    : '';
 
   // 각 인원 행
   const rowsHtml = personItems.map(({ ds, raw }) => {
