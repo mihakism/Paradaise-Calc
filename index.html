@@ -461,7 +461,7 @@
       font-size: 11px; color: var(--text-3);
     }
     .sc-metric-val {
-      font-size: 13px; font-weight: 500; color: var(--text-1);
+      font-size: 13px; font-weight: 500; color: #666666;
       text-align: center;
     }
     .sc-head-cell {
@@ -1992,7 +1992,7 @@ function buildScenarioCards(results) {
   const metricRows = metrics.map(m => {
     const valueCells = results.map((res, i) => {
       const isBest = m.bestFn ? m.bestFn(i) : (m.best === i);
-      const w = isBest ? 'font-weight:800;' : '';
+      const w = isBest ? 'font-weight:800;color:#111111;' : '';
       return `<div class="sc-metric-val" style="${w}">${m.fn(res, S.people[i])}</div>`;
     }).join('');
     return `
