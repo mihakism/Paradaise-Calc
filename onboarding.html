@@ -1329,6 +1329,7 @@ function startOnboarding() {
     $('landing').style.display = 'none';
     $('progress').style.display = '';
     $('scroller').style.display = '';
+    showStagePalms();
     setTimeout(() => {
       $('c1').classList.add('in');
       const f = FIELDS[0];
@@ -1345,6 +1346,7 @@ function goToLanding() {
 
   $('progress').style.display = 'none';
   $('scroller').style.display = 'none';
+  hideStagePalms();
 
   const landing = $('landing');
   landing.style.display = '';
@@ -1486,11 +1488,35 @@ function initParticleRain() {
   requestAnimationFrame(loop);
 }
 
+/* ── 스테이지 야자수 주입 ── */
+function initStagePalms() {
+  const src = document.querySelector('.l-palm');
+  if (!src) return;
+  document.querySelectorAll('#scroller .section').forEach(section => {
+    const div = document.createElement('div');
+    div.className = 'stage-palm';
+    div.innerHTML = src.innerHTML;   // span.palm-top / span.palm-bottom 포함 복사
+    section.insertBefore(div, section.firstChild);
+  });
+}
+
+function showStagePalms() {
+  // 짧은 딜레이 후 페이드인 (랜딩 fade-out과 타이밍 맞춤)
+  setTimeout(() => {
+    document.querySelectorAll('.stage-palm').forEach(el => el.classList.add('vis'));
+  }, 300);
+}
+
+function hideStagePalms() {
+  document.querySelectorAll('.stage-palm').forEach(el => el.classList.remove('vis'));
+}
+
 /* ── Init ── */
 function init() {
   bindFields();
   updatePreview();
   startRolling();
+  initStagePalms();
   initParticleRain();
 }
 
