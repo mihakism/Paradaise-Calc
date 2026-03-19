@@ -1216,15 +1216,15 @@ const retirePlugin = {
   afterDraw(chart) {
     const { ctx, chartArea: { top, bottom }, scales: { x } } = chart;
     [
-      [_retire2Age, 'rgba(167,139,250,0.5)'],
-      [_retire1Age, 'rgba(124,58,237,0.5)'],
+      [_retire2Age, '#999999'],
+      [_retire1Age, '#999999'],
     ].forEach(([age, color]) => {
       if (age == null) return;
       const i = _ageLabels.indexOf(age);
       if (i < 0) return;
       const xp = x.getPixelForValue(i);
       ctx.save();
-      ctx.setLineDash([1.5, 3.5]);
+      ctx.setLineDash([2, 4]);
       ctx.lineWidth = 1;
       ctx.strokeStyle = color;
       ctx.beginPath();
@@ -1237,7 +1237,7 @@ const retirePlugin = {
 };
 
 // ─── DOM 커스텀 툴팁 ───
-const SKIP_LABELS = ['1억원', '5억원', '10억원', 'FIRE 목표'];
+const SKIP_LABELS = ['FIRE 목표'];
 
 function hideChartTooltip() {
   const el = document.getElementById('chart-tt');
@@ -1358,7 +1358,7 @@ function initChart() {
         },
         y: {
           min: 0,
-          grid: { color: 'rgba(0,0,0,0.04)' },
+          grid: { color: '#E0E0E0' },
           border: { display: false },
           ticks: {
             color: '#999999',
@@ -1405,6 +1405,7 @@ function updateChart(results) {
   results.forEach((res, i) => {
     const col  = PERSON_COLORS[i % PERSON_COLORS.length];
     const name = S.people[i].name;
+    const bw   = i === 0 ? 2.5 : 1.5;
 
     datasets.push({
       label: name,
@@ -1413,28 +1414,12 @@ function updateChart(results) {
         return pt ? pt.assets : null;
       }),
       borderColor: col.line,
-      backgroundColor: ctx => mkGradient(ctx, col.r, col.g, col.b),
-      borderWidth: 1.5, tension: 0.4, fill: true, spanGaps: true,
+      backgroundColor: 'transparent',
+      borderWidth: bw, tension: 0.4, fill: false, spanGaps: true,
       pointRadius: 0,
       pointHoverRadius: 4,
       pointHoverBorderColor: '#fff',
       pointHoverBorderWidth: 2,
-    });
-  });
-
-  // FIRE 목표 마일스톤 수평선 (1억, 5억, 10억)
-  const milestones = [
-    { val: 10000,  label: '1억원',  color: 'rgba(245,158,11,0.20)' },
-    { val: 50000,  label: '5억원',  color: 'rgba(16,185,129,0.20)' },
-    { val: 100000, label: '10억원', color: 'rgba(55,65,81,0.20)' },
-  ];
-  milestones.forEach(m => {
-    datasets.push({
-      label: m.label,
-      data: labels.map(() => m.val),
-      borderColor: m.color, borderDash: [5, 5], borderWidth: 1.5,
-      backgroundColor: 'transparent', tension: 0, fill: false,
-      pointRadius: 0, pointHoverRadius: 0,
     });
   });
 
@@ -1443,7 +1428,7 @@ function updateChart(results) {
     datasets.push({
       label: 'FIRE 목표',
       data: labels.map(() => active.fireNumber),
-      borderColor: 'rgba(239,68,68,0.5)', borderDash: [2, 2], borderWidth: 1,
+      borderColor: '#F4907A', borderDash: [4, 4], borderWidth: 1,
       backgroundColor: 'transparent', tension: 0, fill: false,
       pointRadius: 0, pointHoverRadius: 0,
     });
