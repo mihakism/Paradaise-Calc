@@ -15,31 +15,31 @@
   <style>
     /* ─── 디자인 토큰 (라이트 테마) ─── */
     :root {
-      --bg-base:        #F4F6F9;
+      --bg-base:        #EBEBEB;
       --bg-card:        #FFFFFF;
-      --bg-card-hover:  #FAFBFC;
-      --bg-input:       #EFF2F6;
-      --border:         #E5E9F0;
-      --border-light:   #D4DAE6;
+      --bg-card-hover:  #F5F5F5;
+      --bg-input:       #E0E0E0;
+      --border:         #E0E0E0;
+      --border-light:   #E0E0E0;
 
-      --primary:        #374151;
-      --primary-dim:    #1F2937;
-      --primary-glow:   rgba(55, 65, 81, 0.08);
+      --primary:        #111111;
+      --primary-dim:    #333333;
+      --primary-glow:   rgba(17, 17, 17, 0.08);
 
-      --gold:           #B8D44A;
-      --gold-dim:       #D97706;
-      --gold-glow:      rgba(245, 158, 11, 0.12);
+      --gold:           #C8E620;
+      --gold-dim:       #A0B800;
+      --gold-glow:      rgba(200, 230, 32, 0.12);
 
-      --violet:         #6B7280;
-      --violet-glow:    rgba(107, 114, 128, 0.08);
+      --violet:         #999999;
+      --violet-glow:    rgba(153, 153, 153, 0.08);
 
-      --danger:         #F5628A;
-      --success:        #2DBFBF;
+      --danger:         #F4907A;
+      --success:        #C8E620;
       --warning:        #F97316;
 
-      --text-1:         #111827;
-      --text-2:         #6B7280;
-      --text-3:         #9CA3AF;
+      --text-1:         #111111;
+      --text-2:         #999999;
+      --text-3:         #999999;
 
       --font: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       --r-sm:  8px;
@@ -248,7 +248,7 @@
     input[type="range"] {
       -webkit-appearance: none; appearance: none;
       width: 100%; height: 2px;
-      background: rgba(0,0,0,.10); border-radius: 1px;
+      background: #E0E0E0; border-radius: 1px;
       outline: none; cursor: pointer;
       transition: background .15s;
     }
@@ -488,15 +488,15 @@
       border-top: 1px solid #EBEBEB;
       margin: 14px 0;
     }
-    .sc-gap-pos { color: #10B981; font-size: 12px; font-weight: 500; }
-    .sc-gap-neg { color: #F5628A; font-size: 12px; font-weight: 500; }
+    .sc-gap-pos { color: #C8E620; font-size: 12px; font-weight: 500; }
+    .sc-gap-neg { color: #F4907A; font-size: 12px; font-weight: 500; }
 
     /* ─── pill 아이콘 버튼 (공유/tune/restart/비교 공통) ─── */
     .pill-icon-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(107, 114, 128, 0.2);
+      border: 1px solid #E0E0E0;
       border-radius: 9999px;
       background: transparent;
       color: #6B7280;
@@ -584,8 +584,8 @@
     /* ─── 지연 배너 ─── */
     .delay-banner {
       display: none; align-items: flex-start; gap: 14px;
-      background: rgba(248,113,113,0.06);
-      border: 1px solid rgba(248,113,113,0.25);
+      background: rgba(244,144,122,0.06);
+      border: 1px solid rgba(244,144,122,0.25);
       border-radius: var(--r-md); padding: 14px 18px;
     }
     .delay-banner.vis { display: flex; }
@@ -654,8 +654,8 @@
       display: inline-flex; align-items: center; gap: 3px;
       padding: 2px 7px; border-radius: 99px; font-size: 11px; font-weight: 700;
     }
-    .gap-ok  { background: rgba(45,191,191,0.12); color: var(--success); }
-    .gap-bad { background: rgba(245,98,138,0.12); color: var(--danger); }
+    .gap-ok  { background: rgba(200,230,32,0.12); color: var(--success); }
+    .gap-bad { background: rgba(244,144,122,0.12); color: var(--danger); }
 
     /* ─── 인원 탭 (사이드바) ─── */
     .person-tabs {
@@ -819,7 +819,7 @@
   </div>
 
   <!-- 새로 계산하기 -->
-  <div style="margin-top:24px;border-top:1px solid #E5E5E5;">
+  <div style="margin-top:24px;border-top:1px solid #E0E0E0;">
     <a href="onboarding.html" onclick="localStorage.clear()"
       style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:16px 0;font-size:12px;color:#999999;text-decoration:none;cursor:pointer;transition:color 0.2s;"
       onmouseover="this.style.color='#111111'" onmouseout="this.style.color='#999999'">
@@ -906,7 +906,7 @@
           <span class="ms" style="font-size:20px;color:#999999;">beach_access</span>
           <p style="font-size:14px;font-weight:500;letter-spacing:0em;color:#999999;margin:0;">낙원까지</p>
         </div>
-        <div id="c-countdown" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#B8D44A;">—</div>
+        <div id="c-countdown" style="font-size:40px;font-weight:400;letter-spacing:-0.5px;line-height:1.2;color:#C8E620;">—</div>
         <div id="c-retire-yr" style="font-size:13px;font-weight:400;color:#999999;margin-top:4px;">은퇴 목표 계산 중...</div>
       </div>
     </div>
@@ -1007,11 +1007,11 @@
 
 // ─── 인원 컬러 팔레트 ───
 const PERSON_COLORS = [
-  { line: '#22C55E', r:  34, g: 197, b:  94 },
-  { line: '#F97316', r: 249, g: 115, b:  22 },
-  { line: '#3B82F6', r:  59, g: 130, b: 246 },
-  { line: '#EC4899', r: 236, g:  72, b: 153 },
-  { line: '#8B5CF6', r: 139, g:  92, b: 246 },
+  { line: '#C8E620', r: 200, g: 230, b:  32 },
+  { line: '#B8A8E8', r: 184, g: 168, b: 232 },
+  { line: '#F4907A', r: 244, g: 144, b: 122 },
+  { line: '#54D4E8', r:  84, g: 212, b: 232 },
+  { line: '#6B3FA0', r: 107, g:  63, b: 160 },
 ];
 
 const DEFAULT_PERSON = () => ({
@@ -1507,10 +1507,10 @@ function updateCards(results) {
         const arrowSvg = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><line x1="5" y1="1" x2="5" y2="9"/><polyline points="2,6.5 5,9 8,6.5"/></svg>`;
         if (gap >= 0) {
           gb.innerHTML = `${arrowSvg}+${Math.round(gap).toLocaleString()}만원 여유`;
-          gb.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:rgba(45,191,191,0.12);color:#0A7373;border-radius:4px;padding:2px 6px;font-size:11px;font-weight:500;';
+          gb.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:rgba(200,230,32,0.12);color:#4A5A00;border-radius:4px;padding:2px 6px;font-size:11px;font-weight:500;';
         } else {
           gb.innerHTML = `${arrowSvg}${Math.round(gap).toLocaleString()}만원 부족`;
-          gb.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:rgba(245,98,138,0.12);color:#B5184B;border-radius:4px;padding:2px 6px;font-size:11px;font-weight:500;';
+          gb.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:rgba(244,144,122,0.12);color:#8B3010;border-radius:4px;padding:2px 6px;font-size:11px;font-weight:500;';
         }
       }
     }
@@ -1654,7 +1654,7 @@ function fillSlider(sl, idx, customColor) {
   const min = parseFloat(sl.min), max = parseFloat(sl.max), val = parseFloat(sl.value);
   const pct = ((val - min) / (max - min)) * 100;
   const col = customColor || PERSON_COLORS[idx % PERSON_COLORS.length].line;
-  sl.style.background = `linear-gradient(to right, ${col} ${pct}%, #e5e7eb ${pct}%)`;
+  sl.style.background = `linear-gradient(to right, ${col} ${pct}%, #E0E0E0 ${pct}%)`;
 }
 
 // ─── Debounce ───
@@ -1830,8 +1830,8 @@ function updateMetaBlock(p, resA) {
 
   // STATUS
   statusEl.innerHTML = onTrack
-    ? '<span style="color:#2DBFBF;">●</span> On Track'
-    : '<span style="color:#F5628A;">●</span> Behind';
+    ? '<span style="color:#C8E620;">●</span> On Track'
+    : '<span style="color:#F4907A;">●</span> Behind';
 
   // D-DAY
   const daysLeft = Math.max(0, Math.round((resA.targetRetirementAge - p.currentAge) * 365));
@@ -1845,11 +1845,11 @@ function updateMetaBlock(p, resA) {
   if (onTrack) {
     const surplus = Math.max(0, Math.round(gap));
     needEl.textContent = `+${surplus.toLocaleString()}만원/월 여유`;
-    needEl.style.color = '#2DBFBF';
+    needEl.style.color = '#C8E620';
   } else {
     const deficit = Math.abs(Math.round(gap));
     needEl.textContent = `+${deficit.toLocaleString()}만원/월 필요`;
-    needEl.style.color = '#F5628A';
+    needEl.style.color = '#F4907A';
   }
 }
 
