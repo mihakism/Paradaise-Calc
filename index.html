@@ -1923,11 +1923,37 @@ function buildScenarioCards(results) {
   const n    = results.length;
   const cols = `80px repeat(${n},minmax(0,1fr))`;
 
+  // 각 지표별 "우수" 인덱스 계산
+  const fireRates  = results.map(r => Math.min(100, r.fireRate));
+  const retireAges = results.map(r => r.currentPace.retireAge ?? 9999);
+  const reqSavings = results.map(r => r.requiredMonthlySavings > 0 ? r.requiredMonthlySavings : Infinity);
+  const gaps       = results.map((r, i) => S.people[i].monthlySavings - r.requiredMonthlySavings);
+
+  const bestFireIdx    = fireRates.indexOf(Math.max(...fireRates));
+  const bestRetireIdx  = retireAges.indexOf(Math.min(...retireAges));
+  const bestSavingsIdx = reqSavings.indexOf(Math.min(...reqSavings));
+
   const metrics = [
-    { label: 'FIRE 달성률',     fn: (res, p) => `${Math.min(100, res.fireRate).toFixed(1)}%` },
-    { label: '현재 페이스 은퇴', fn: (res, p) => res.currentPace.retireAge ? `${res.currentPace.retireAge}세` : '90세+' },
-    { label: '목표 은퇴 자산',   fn: (res, p) => fmtShort(res.fireNumber) },
-    { label: '월 필요 저축액',   fn: (res, p) => res.requiredMonthlySavings > 0 ? `${Math.ceil(res.requiredMonthlySavings).toLocaleString()}만원` : '—' },
+    {
+      label: 'FIRE 달성률',
+      fn:    (res, p) => `${Math.min(100, res.fireRate).toFixed(1)}%`,
+      best:  bestFireIdx,
+    },
+    {
+      label: '현재 페이스 은퇴',
+      fn:    (res, p) => res.currentPace.retireAge ? `${res.currentPace.retireAge}세` : '90세+',
+      best:  bestRetireIdx,
+    },
+    {
+      label: '목표 은퇴 자산',
+      fn:    (res, p) => fmtShort(res.fireNumber),
+      best:  -1,
+    },
+    {
+      label: '월 필요 저축액',
+      fn:    (res, p) => res.requiredMonthlySavings > 0 ? `${Math.ceil(res.requiredMonthlySavings).toLocaleString()}만원` : '—',
+      best:  bestSavingsIdx,
+    },
     {
       label: '현재 저축 갭',
       fn: (res, p) => {
@@ -1936,7 +1962,9 @@ function buildScenarioCards(results) {
         return gap >= 0
           ? `<span class="sc-gap-pos">+${Math.round(gap).toLocaleString()}만원</span>`
           : `<span class="sc-gap-neg">${Math.round(gap).toLocaleString()}만원</span>`;
-      }
+      },
+      // 갭이 양수인 모든 인덱스에 볼드 (복수 가능)
+      bestFn: (i) => gaps[i] >= 0,
     },
   ];
 
@@ -1962,9 +1990,11 @@ function buildScenarioCards(results) {
 
   // 지표 행
   const metricRows = metrics.map(m => {
-    const valueCells = results.map((res, i) =>
-      `<div class="sc-metric-val">${m.fn(res, S.people[i])}</div>`
-    ).join('');
+    const valueCells = results.map((res, i) => {
+      const isBest = m.bestFn ? m.bestFn(i) : (m.best === i);
+      const w = isBest ? 'font-weight:800;' : '';
+      return `<div class="sc-metric-val" style="${w}">${m.fn(res, S.people[i])}</div>`;
+    }).join('');
     return `
       <div class="sc-table-row" style="grid-template-columns:${cols};">
         <div class="sc-metric-lbl">${m.label}</div>
