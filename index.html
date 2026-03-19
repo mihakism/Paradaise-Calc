@@ -399,6 +399,21 @@
       border-radius: var(--r-md); padding: 20px 20px;
     }
 
+    /* ─── 야자수 흔들림 애니메이션 ─── */
+    @keyframes sway {
+      0%   { transform: rotate(-1.5deg); }
+      50%  { transform: rotate(1.5deg); }
+      100% { transform: rotate(-1.5deg); }
+    }
+    .palm-leaves {
+      display: inline-block;
+      transform-origin: bottom center;
+      animation: sway 3s ease-in-out infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .palm-leaves { animation: none; }
+    }
+
     /* ─── 히어로 숫자 등장 애니메이션 ─── */
     @keyframes heroRatePop {
       0%   { opacity: 0; transform: translateY(5px) scale(0.94); }
@@ -821,6 +836,23 @@
     </div>
 
   </div>
+
+  <!-- 야자수 아스키 아트 -->
+  <div class="anim-fadeup" style="margin-top:32px;text-align:center;animation-delay:0.1s;"><pre style="font-family:monospace;font-size:13px;line-height:1.2;color:#111111;opacity:0.75;display:inline-block;text-align:left;margin:0;user-select:none;"><span class="palm-leaves">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢰⣖⡶⣦⢦⣀⡀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣖⣶⣲⠄⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢸⣞⣿⡽⣿⡽⣾⢦⡀⠀⠀⠀⢀⣴⣟⣾⣞⣷⢯⡿⡅⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⢿⢯⣿⡽⣦⣀⣴⢿⣳⣿⡺⠓⠁⠁⠈⠀⣄⣖⣠⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⣀⣄⣤⣤⢿⣳⣟⣯⢿⢾⣻⣽⢾⡤⣤⣠⣀⠀⠐⠊⣟⠒⠀⠀⠀
+⠀⠀⠀⠀⢀⣠⡶⣟⣯⣟⣷⣻⢿⣽⢾⣯⢿⣻⣽⢯⡿⣽⣟⣾⣽⣻⡶⣄⡀⠀⠀⠀⠀
+⠀⠀⢀⣰⣞⣯⣟⣯⠟⠚⠙⣸⢿⣞⣿⢾⣻⣽⢾⣻⡯⣏⠊⠓⠯⣷⣟⣯⣷⡤⡀⠀⠀
+⠀⠀⠘⠽⣾⣻⠚⠀⠀⢠⡾⣯⢿⣞⣯⣿⣽⢾⢿⡽⣯⡿⣵⡀⠀⠈⠚⣷⢯⠟⠁⠀⠀</span>⠀⠀⠀⠀⠉⠀⠀⠀⢠⣿⡽⣯⡟⠑⡿⡾⣾⢧⠀⠉⢿⡽⣯⢿⡀⠀⠀⠈⠉⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⣟⣷⣻⡗⠀⠀⠙⣿⡽⣟⣧⠀⠀⢻⣽⣟⣷⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠨⣟⣷⣟⡆⠀⠀⠀⠱⡿⣯⡷⣇⠀⢸⢷⣻⣾⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠈⠛⠓⠛⠂⠀⠀⠀⠀⠹⣷⣟⣿⣂⠘⠛⠙⠚⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⢀⣠⡴⣶⢾⣖⡷⣦⣤⡀⠀⢻⣞⣷⢿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⣴⣻⣞⣿⣽⣻⢾⣻⣽⣞⣿⣲⡀⢻⣾⣻⣽⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣼⣟⣾⣳⣟⣾⡽⣿⢽⣾⣳⣯⣯⢿⡈⢾⣽⢾⣳⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</pre></div>
 
   <!-- 히어로 텍스트 + 유틸리티 버튼 -->
   <div class="anim-fadeup" style="margin-top:32px;display:flex;justify-content:space-between;align-items:flex-end;animation-delay:0.2s;">
