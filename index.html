@@ -193,11 +193,11 @@
     }
 
     /* ─── 섹션 ─── */
-    .section { display: flex; flex-direction: column; gap: 21px; }
+    .section { display: flex; flex-direction: column; gap: 20px; }
 
     .section-hd {
-      font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
-      text-transform: uppercase; color: var(--text-3);
+      font-size: 12px; font-weight: 400;
+      color: var(--text-3);
       display: flex; align-items: center; gap: 6px;
     }
 
@@ -299,8 +299,9 @@
     }
 
     /* ─── 인플레이션 입력 ─── */
-    .inf-row { display: none; align-items: center; gap: 8px; padding: 4px 0; }
+    .inf-row { display: none; align-items: center; gap: 8px; padding: 8px 0 0; }
     .inf-row.vis { display: flex; }
+    .toggle.on .inf-row { display: flex; }
     .inf-label { font-size: 13px; color: var(--text-2); }
     .inf-input {
       width: 54px; background: var(--bg-input);
@@ -638,11 +639,10 @@
     /* ─── 인원 탭 (사이드바) ─── */
     .person-tabs {
       display: flex; gap: 4px; flex-wrap: wrap; align-items: center;
-      padding-bottom: 14px; border-bottom: 1px solid var(--border);
     }
     .ptab {
       display: flex; align-items: center; gap: 5px;
-      padding: 5px 10px; border-radius: 20px;
+      height: 24px; padding: 0 10px; border-radius: 20px;
       font-size: 12px; font-weight: 600; cursor: pointer;
       border: 1.5px solid transparent; transition: all var(--ease);
       background: var(--bg-input); color: var(--text-2);
@@ -678,7 +678,7 @@
     .ptab-add:hover { border-color: var(--primary); color: var(--primary); }
 
     /* ─── 인원 패널 (사이드바 동적 섹션) ─── */
-    .person-panel { display: flex; flex-direction: column; gap: 14px; }
+    .person-panel { display: flex; flex-direction: column; gap: 42px; }
 
     /* ─── 차트 모드 토글 ─── */
     .chart-mode-toggle {
@@ -756,17 +756,19 @@
     <div class="section-hd"><span class="ms">settings</span> 설정</div>
 
     <div style="background:#FFFFFF;border-radius:12px;padding:16px;">
-      <div class="toggle" id="tog-inf" onclick="toggleInf()">
-        <div class="toggle-info">
-          <span class="toggle-title">인플레이션 반영</span>
-          <span class="toggle-desc">실질 구매력 표시 (기본 2.5%)</span>
+      <div class="toggle" id="tog-inf" onclick="toggleInf()" style="flex-direction:column;align-items:stretch;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div class="toggle-info">
+            <span class="toggle-title">인플레이션 반영</span>
+            <span class="toggle-desc">실질 구매력 표시 (기본 2.5%)</span>
+          </div>
+          <div class="sw"></div>
         </div>
-        <div class="sw"></div>
-      </div>
-      <div class="inf-row" id="inf-row">
-        <span class="inf-label">인플레이션율</span>
-        <input type="number" class="inf-input" id="inf-val" value="2.5" min="0" max="10" step="0.1" />
-        <span style="font-size:12px;color:var(--text-3)">%</span>
+        <div class="inf-row" id="inf-row">
+          <span class="inf-label">인플레이션율</span>
+          <input type="number" class="inf-input" id="inf-val" value="2.5" min="0" max="10" step="0.1" onclick="event.stopPropagation()" />
+          <span style="font-size:12px;color:var(--text-3)">%</span>
+        </div>
       </div>
     </div>
 
@@ -1720,20 +1722,6 @@ function buildPersonPanel(idx) {
       ${sliderHtml(idx,'annualReturn',1,20, p.annualReturn,0.5,'연 수익률','%')}
       ${sliderHtml(idx,'savingsGrowth',0,15, p.savingsGrowth,0.5,'저축 증가율','%')}
       ${sliderHtml(idx,'safeRate',2,8, p.safeRate,0.5,'안전 인출률','%')}
-    </div>
-    <div class="hr"></div>
-    <div class="section">
-      <div class="section-hd"><span class="ms">manage_accounts</span> 페르소나 프리셋</div>
-      <div class="preset-row">
-        <div class="preset-card" id="pc-p${idx}-jeehyun" onclick="applyPreset('jeehyun',${idx})">
-          <div class="pc-top"><span class="pc-emoji ms">person</span><span class="pc-name">이지현</span></div>
-          <div class="pc-type">안정형</div><div class="pc-age">40세 · 4.5%</div>
-        </div>
-        <div class="preset-card" id="pc-p${idx}-junhyuk" onclick="applyPreset('junhyuk',${idx})">
-          <div class="pc-top"><span class="pc-emoji ms">laptop_mac</span><span class="pc-name">박준혁</span></div>
-          <div class="pc-type">공격형</div><div class="pc-age">35세 · 9%</div>
-        </div>
-      </div>
     </div>
   `;
   // Fix slider fill colors
