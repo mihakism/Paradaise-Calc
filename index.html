@@ -1179,7 +1179,7 @@ function calcDelay(p, delayYrs) {
 // ─── 차트 ───
 let chart = null;
 
-// 수직선 플러그인
+// 수직선 플러그인 (기존 유지)
 const vertLinePlugin = {
   id: 'vertLine',
   afterDraw(ch) {
@@ -1188,7 +1188,6 @@ const vertLinePlugin = {
     const ctx = ch.ctx;
     const xa  = ch.scales.x;
     const ya  = ch.scales.y;
-
     targets.forEach(({ age, color, dash }) => {
       const idx = ch.data.labels.indexOf(age);
       if (idx < 0) return;
@@ -1206,30 +1205,126 @@ const vertLinePlugin = {
   },
 };
 
-function externalTooltipHandler(context) {
-  const { chart, tooltip } = context;
-  let el = document.getElementById('chartjs-tooltip');
+// 은퇴 시점 수직선 플러그인
+let _retire1Age = null;
+let _retire2Age = null;
+let _ageLabels  = [];
+
+const retirePlugin = {
+  id: 'retireLines',
+  afterDraw(chart) {
+    const { ctx, chartArea: { top, bottom }, scales: { x } } = chart;
+    [
+      [_retire2Age, 'rgba(167,139,250,0.5)'],
+      [_retire1Age, 'rgba(124,58,237,0.5)'],
+    ].forEach(([age, color]) => {
+      if (age == null) return;
+      const i = _ageLabels.indexOf(age);
+      if (i < 0) return;
+      const xp = x.getPixelForValue(i);
+      ctx.save();
+      ctx.setLineDash([1.5, 3.5]);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(xp, top);
+      ctx.lineTo(xp, bottom);
+      ctx.stroke();
+      ctx.restore();
+    });
+  },
+};
+
+// ─── DOM 커스텀 툴팁 ───
+const SKIP_LABELS = ['1억원', '5억원', '10억원', 'FIRE 목표'];
+
+function hideChartTooltip() {
+  const el = document.getElementById('chart-tt');
+  if (el) el.style.display = 'none';
+}
+
+function showChartTooltip(chart, activeEls) {
+  if (!activeEls || !activeEls.length) { hideChartTooltip(); return; }
+
+  let el = document.getElementById('chart-tt');
   if (!el) {
     el = document.createElement('div');
-    el.id = 'chartjs-tooltip';
+    el.id = 'chart-tt';
+    el.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;';
     document.body.appendChild(el);
   }
-  if (tooltip.opacity === 0) { el.style.opacity = '0'; return; }
-  const title = tooltip.title?.[0] || '';
-  const bodyLines = (tooltip.body || [])
-    .map(b => b.lines.join('').trim())
-    .filter(Boolean);
-  el.innerHTML = bodyLines.length
-    ? `${title}세 · ${bodyLines.join(' · ')}`
-    : `${title}세`;
-  el.style.opacity = '1';
-  const rect = chart.canvas.getBoundingClientRect();
-  el.style.left = (rect.left + window.scrollX + tooltip.caretX) + 'px';
-  el.style.top  = (rect.top + window.scrollY + tooltip.caretY - el.offsetHeight - 10) + 'px';
+
+  const dataIndex = activeEls[0].index;
+  const age = chart.data.labels[dataIndex];
+
+  const personItems = activeEls
+    .map(a => ({
+      ds: chart.data.datasets[a.datasetIndex],
+      raw: chart.data.datasets[a.datasetIndex]?.data[a.index],
+      el: a.element,
+    }))
+    .filter(({ ds, raw }) => ds && !SKIP_LABELS.includes(ds.label) && raw != null);
+
+  if (!personItems.length) { hideChartTooltip(); return; }
+
+  // 은퇴 시점 라벨
+  let retireHtml = '';
+  if (age === _retire1Age)
+    retireHtml = `<div style="font-size:11px;font-weight:600;color:#7C3AED;margin-bottom:5px;">은퇴 시점</div>`;
+  else if (age === _retire2Age)
+    retireHtml = `<div style="font-size:11px;font-weight:600;color:#A78BFA;margin-bottom:5px;">목표 은퇴</div>`;
+
+  // 각 인원 행
+  const rowsHtml = personItems.map(({ ds, raw }) => {
+    const col = typeof ds.borderColor === 'string' ? ds.borderColor : '#999';
+    const val = (raw / 10000).toFixed(1) + '억';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;gap:18px;margin-top:4px;">
+      <div style="display:flex;align-items:center;gap:5px;">
+        <div style="width:7px;height:7px;border-radius:50%;background:${col};flex-shrink:0;"></div>
+        <span style="font-size:11px;color:#6B7280;">${ds.label}</span>
+      </div>
+      <span style="font-size:11px;font-weight:600;color:#111111;">${val}</span>
+    </div>`;
+  }).join('');
+
+  // 차이 행 (2인 이상)
+  let diffHtml = '';
+  if (personItems.length >= 2) {
+    const diff = (personItems[0].raw - personItems[1].raw) / 10000;
+    const diffColor = diff >= 0 ? '#7C3AED' : '#E24B4A';
+    const diffStr = (diff >= 0 ? '+' : '') + diff.toFixed(1) + '억';
+    diffHtml = `<div style="margin-top:7px;padding-top:7px;border-top:1px solid rgba(0,0,0,0.06);display:flex;justify-content:space-between;align-items:center;gap:18px;">
+      <span style="font-size:11px;color:#6B7280;">차이</span>
+      <span style="font-size:11px;font-weight:600;color:${diffColor};">${diffStr}</span>
+    </div>`;
+  }
+
+  el.innerHTML = `<div style="background:#fff;border:0.5px solid rgba(0,0,0,0.1);border-radius:10px;padding:10px 13px;box-shadow:0 4px 16px rgba(0,0,0,0.08);min-width:130px;">
+    ${retireHtml}
+    <div style="font-size:11px;color:#6B7280;margin-bottom:2px;">${age}세</div>
+    ${rowsHtml}
+    ${diffHtml}
+  </div>`;
+
+  el.style.display = 'block';
+
+  const rect  = chart.canvas.getBoundingClientRect();
+  const caretX = personItems[0].el?.x ?? 0;
+  const caretY = personItems[0].el?.y ?? 0;
+  const ttW   = el.offsetWidth;
+  const ttH   = el.offsetHeight;
+  const spaceRight = window.innerWidth - (rect.left + caretX) - 14;
+  const left  = spaceRight > ttW + 14
+    ? rect.left + caretX + 14
+    : rect.left + caretX - ttW - 14;
+  const top   = Math.max(rect.top, rect.top + caretY - ttH / 2);
+
+  el.style.left = left + 'px';
+  el.style.top  = top  + 'px';
 }
 
 function initChart() {
-  Chart.register(vertLinePlugin);
+  Chart.register(vertLinePlugin, retirePlugin);
   const ctx = $('chart').getContext('2d');
   chart = new Chart(ctx, {
     type: 'line',
@@ -1239,45 +1334,49 @@ function initChart() {
       maintainAspectRatio: false,
       animation: { duration: 180 },
       interaction: { mode: 'index', intersect: false },
+      onHover: (event, activeEls, ch) => showChartTooltip(ch, activeEls),
       plugins: {
         legend: { display: false },
         vertLine: { targets: [] },
-        tooltip: {
-          enabled: false,
-          external: externalTooltipHandler,
-          callbacks: {
-            title: items => `${items[0].label}`,
-            label: item => {
-              if (item.raw === null || item.raw === undefined) return null;
-              return `${item.dataset.label}: ${fmtShort(item.raw)}`;
-            },
-          },
-        },
+        tooltip: { enabled: false },
       },
       scales: {
         x: {
           grid: { display: false },
-          ticks: {
-            color: '#999999', font: { size: 11 },
-            callback: function(v) { return this.getLabelForValue(v) + '세'; },
-            maxTicksLimit: 12,
-            maxRotation: 0,
-          },
           border: { display: false },
+          ticks: {
+            color: '#999999',
+            font: { size: 11 },
+            maxRotation: 0,
+            callback: function(value, index) {
+              const age = this.getLabelForValue(value);
+              if (age % 5 !== 0) return '';
+              return index === 0 ? `${age} (세)` : `${age}`;
+            },
+          },
         },
         y: {
           min: 0,
-          grid: { display: false },
-          ticks: {
-            color: '#999999', font: { size: 11 },
-            callback: v => fmtShort(v),
-            maxTicksLimit: 6,
-          },
+          grid: { color: 'rgba(0,0,0,0.04)' },
           border: { display: false },
+          ticks: {
+            color: '#999999',
+            font: { size: 11 },
+            maxTicksLimit: 6,
+            callback: function(value, index) {
+              if (value === 0) return '';
+              const uk = value / 10000;
+              const ticks = this.ticks;
+              return index === ticks.length - 1 ? `${uk} (억)` : `${uk}`;
+            },
+          },
         },
       },
     },
   });
+
+  // 캔버스 mouseleave → 툴팁 숨김
+  $('chart').addEventListener('mouseleave', hideChartTooltip);
 }
 
 function updateChart(results) {
@@ -1294,6 +1393,12 @@ function updateChart(results) {
     return grad;
   };
 
+  // 은퇴 시점 변수 갱신
+  const active = results[S.activePerson];
+  _ageLabels  = labels;
+  _retire1Age = active?.currentPace?.retireAge ?? null;
+  _retire2Age = S.people[S.activePerson]?.targetRetirementAge ?? null;
+
   const datasets = [];
 
   results.forEach((res, i) => {
@@ -1309,7 +1414,10 @@ function updateChart(results) {
       borderColor: col.line,
       backgroundColor: ctx => mkGradient(ctx, col.r, col.g, col.b),
       borderWidth: 1.5, tension: 0.4, fill: true, spanGaps: true,
-      pointRadius: 0, pointHoverRadius: 4,
+      pointRadius: 0,
+      pointHoverRadius: 4,
+      pointHoverBorderColor: '#fff',
+      pointHoverBorderWidth: 2,
     });
   });
 
@@ -1341,17 +1449,22 @@ function updateChart(results) {
     });
   }
 
-  const vertTargets = results.map((res, i) => ({
-    age: res.targetRetirementAge,
-    color: PERSON_COLORS[i % PERSON_COLORS.length].line + '55',
-    dash: [6, 4],
-  }));
+  // 활성 인원의 FIRE 목표선
+  if (active) {
+    datasets.push({
+      label: 'FIRE 목표',
+      data: labels.map(() => active.fireNumber),
+      borderColor: 'rgba(239,68,68,0.5)', borderDash: [2, 2], borderWidth: 1,
+      backgroundColor: 'transparent', tension: 0, fill: false,
+      pointRadius: 0, pointHoverRadius: 0,
+    });
+  }
 
   rebuildLegend(results);
 
   chart.data.labels   = labels;
   chart.data.datasets = datasets;
-  chart.options.plugins.vertLine.targets = vertTargets;
+  chart.options.plugins.vertLine.targets = [];
   chart.update('active');
 }
 
