@@ -454,12 +454,12 @@
     }
     .pcard:hover { transform: scale(1.01); }
 
-    /* shimmer 테두리 레이어 — 골드+화이트 1px */
+    /* shimmer 테두리 레이어 — 골드+화이트 0.5px */
     .pcard::before {
       content: '';
       position: absolute;
-      inset: -1px;
-      border-radius: 17px;
+      inset: -0.5px;
+      border-radius: 16.5px;
       background: conic-gradient(
         from var(--sa),
         rgba(200,230,32,0.25) 0%,
@@ -477,15 +477,8 @@
     .preview-cards .pcard:nth-child(2)::before {
       animation-delay: -1.4s;
     }
-    /* 카드 배경 레이어 (테두리 안쪽) */
-    .pcard::after {
-      content: '';
-      position: absolute;
-      inset: 1px;
-      border-radius: 15px;
-      background: var(--bg-card);
-      z-index: -1;
-    }
+    /* 카드 배경 레이어 제거 — 투명 배경 */
+    .pcard::after { display: none; }
     .pcard-lbl {
       font-size: 14px;
       font-weight: 500;
