@@ -141,29 +141,32 @@
 
     /* (layout removed — using .main-wrapper) */
 
-    /* ─── 사이드바 오버레이 ─── */
+    /* ─── 사이드바 오버레이 (조정 패널은 플로팅이므로 오버레이 비활성) ─── */
     .sidebar-overlay {
       position: fixed; inset: 0;
-      background: rgba(0,0,0,.45);
+      background: transparent;
       z-index: 150;
       opacity: 0; pointer-events: none;
       transition: opacity 320ms ease;
     }
-    .sidebar-overlay.open { opacity: 1; pointer-events: all; }
+    .sidebar-overlay.open { opacity: 1; pointer-events: none; }
 
-    /* ─── 조정 사이드바 ─── */
+    /* ─── 조정 사이드바 (플로팅 카드) ─── */
     .sidebar {
       position: fixed;
-      top: 0; right: 0; bottom: 0;
+      top: 80px; right: 20px;
       width: 380px;
+      max-height: calc(100vh - 100px);
       background: rgba(255, 255, 255, 0.97);
-      border-left: 1px solid var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.14), 0 2px 12px rgba(0,0,0,0.08);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       overflow-y: auto;
       padding: 20px;
-      display: flex; flex-direction: column; gap: 18px;
-      transform: translateX(100%);
+      display: flex; flex-direction: column; gap: 22px;
+      transform: translateX(calc(100% + 24px));
       transition: transform 320ms cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 200;
     }
@@ -179,19 +182,21 @@
       letter-spacing: .5px; color: var(--text-2);
     }
     .sidebar-close-btn {
-      display: inline-flex; align-items: center;
-      padding: 5px 10px; border-radius: var(--r-sm);
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      border-radius: var(--r-sm);
       background: transparent; color: var(--text-3);
       border: 1px solid var(--border);
-      font-size: 13px; cursor: pointer;
-      transition: all var(--ease); font-family: var(--font);
+      cursor: pointer;
+      transition: all var(--ease);
+      flex-shrink: 0;
     }
     .sidebar-close-btn:hover {
       background: var(--bg-input); color: var(--text-1);
     }
 
     /* ─── 섹션 ─── */
-    .section { display: flex; flex-direction: column; gap: 12px; }
+    .section { display: flex; flex-direction: column; gap: 14px; }
 
     .section-hd {
       font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
@@ -237,23 +242,25 @@
 
     input[type="range"] {
       -webkit-appearance: none; appearance: none;
-      width: 100%; height: 4px;
-      background: var(--bg-input); border-radius: 2px;
+      width: 100%; height: 2px;
+      background: rgba(0,0,0,.10); border-radius: 1px;
       outline: none; cursor: pointer;
+      transition: background .15s;
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none; appearance: none;
-      width: 17px; height: 17px; border-radius: 50%;
+      width: 16px; height: 16px; border-radius: 50%;
       background: var(--primary); cursor: pointer;
-      box-shadow: 0 0 0 3px rgba(55,65,81,0.15);
-      transition: box-shadow var(--ease);
+      box-shadow: 0 0 0 3px rgba(55,65,81,0.15), 0 0 10px rgba(55,65,81,0.15);
+      transition: box-shadow .2s ease, transform .15s ease;
     }
     input[type="range"]::-webkit-slider-thumb:hover {
-      box-shadow: 0 0 0 6px rgba(55,65,81,0.18);
+      box-shadow: 0 0 0 6px rgba(55,65,81,0.18), 0 0 16px rgba(55,65,81,0.18);
+      transform: scale(1.15);
     }
     input[type="range"].rb::-webkit-slider-thumb {
       background: var(--violet);
-      box-shadow: 0 0 0 3px rgba(107,114,128,0.18);
+      box-shadow: 0 0 0 3px rgba(107,114,128,0.18), 0 0 10px rgba(107,114,128,0.18);
     }
 
     /* ─── 토글 ─── */
@@ -742,7 +749,7 @@
 
   <div class="sidebar-toprow">
     <span class="sidebar-toprow-title"><span class="ms" style="font-size:14px;vertical-align:middle">tune</span> 조정 패널</span>
-    <button class="sidebar-close-btn" onclick="closeSidebar()">✕ 닫기</button>
+    <button class="sidebar-close-btn" onclick="closeSidebar()" title="닫기"><span class="ms" style="font-variation-settings:'FILL' 1;font-size:14px;vertical-align:middle">close</span></button>
   </div>
 
   <!-- 인원 탭 (JS 동적 생성) -->
@@ -1702,20 +1709,6 @@ function buildPersonPanel(idx) {
 
   panel.innerHTML = `
     <div class="section">
-      <div class="section-hd"><span class="ms">manage_accounts</span> 페르소나 프리셋</div>
-      <div class="preset-row">
-        <div class="preset-card" id="pc-p${idx}-jeehyun" onclick="applyPreset('jeehyun',${idx})">
-          <div class="pc-top"><span class="pc-emoji ms">person</span><span class="pc-name">이지현</span></div>
-          <div class="pc-type">안정형</div><div class="pc-age">40세 · 4.5%</div>
-        </div>
-        <div class="preset-card" id="pc-p${idx}-junhyuk" onclick="applyPreset('junhyuk',${idx})">
-          <div class="pc-top"><span class="pc-emoji ms">laptop_mac</span><span class="pc-name">박준혁</span></div>
-          <div class="pc-type">공격형</div><div class="pc-age">35세 · 9%</div>
-        </div>
-      </div>
-    </div>
-    <div class="hr"></div>
-    <div class="section">
       <div class="section-hd"><span class="ms">favorite</span> 원하는 삶</div>
       ${sliderHtml(idx,'targetWithdrawal', 50,1000, p.targetWithdrawal, 10, '희망 월 인출액','만원')}
       ${sliderHtml(idx,'targetRetirementAge',40,70, p.targetRetirementAge,1,'은퇴 희망 나이','세')}
@@ -1733,6 +1726,20 @@ function buildPersonPanel(idx) {
       ${sliderHtml(idx,'annualReturn',1,20, p.annualReturn,0.5,'연 수익률','%')}
       ${sliderHtml(idx,'savingsGrowth',0,15, p.savingsGrowth,0.5,'저축 증가율','%')}
       ${sliderHtml(idx,'safeRate',2,8, p.safeRate,0.5,'안전 인출률','%')}
+    </div>
+    <div class="hr"></div>
+    <div class="section">
+      <div class="section-hd"><span class="ms">manage_accounts</span> 페르소나 프리셋</div>
+      <div class="preset-row">
+        <div class="preset-card" id="pc-p${idx}-jeehyun" onclick="applyPreset('jeehyun',${idx})">
+          <div class="pc-top"><span class="pc-emoji ms">person</span><span class="pc-name">이지현</span></div>
+          <div class="pc-type">안정형</div><div class="pc-age">40세 · 4.5%</div>
+        </div>
+        <div class="preset-card" id="pc-p${idx}-junhyuk" onclick="applyPreset('junhyuk',${idx})">
+          <div class="pc-top"><span class="pc-emoji ms">laptop_mac</span><span class="pc-name">박준혁</span></div>
+          <div class="pc-type">공격형</div><div class="pc-age">35세 · 9%</div>
+        </div>
+      </div>
     </div>
   `;
   // Fix slider fill colors
