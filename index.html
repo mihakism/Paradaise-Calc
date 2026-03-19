@@ -852,49 +852,49 @@
 <!-- ═══ 메인 콘텐츠 ═══ -->
 <main id="capture-area" style="background:#EBEBEB;min-height:100vh;padding:48px 48px 0;">
 
-  <!-- 상단: 로고 (좌) + 우상단 영역 -->
-  <div class="anim-fadeup" style="display:flex;justify-content:space-between;align-items:flex-start;height:240px;">
+  <!-- 상단: 좌(로고+히어로) + 우(메타블록) -->
+  <div class="anim-fadeup" style="display:flex;justify-content:space-between;align-items:flex-end;min-height:180px;">
 
-    <!-- 로고 -->
-    <div style="font-size:64px;font-weight:200;color:#111111;border:1px solid #111111;border-radius:12px;padding:14px 20px;line-height:1;display:inline-block;">P.Calc</div>
+    <!-- 좌: 로고(상단) + 히어로(하단) -->
+    <div style="display:flex;flex-direction:column;justify-content:space-between;height:180px;">
 
-    <!-- 우상단: 메타 블록만 -->
-    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:16px;">
-      <!-- 메타 블록 -->
-      <div id="meta-block" style="display:grid;grid-template-columns:auto auto;column-gap:20px;font-family:monospace;font-size:11px;line-height:2;user-select:none;">
-        <span style="color:#999999;text-transform:uppercase;letter-spacing:0.05em;">Status</span>
-        <span id="meta-status" style="color:#111111;text-align:right;white-space:nowrap;"></span>
-        <span style="color:#999999;text-transform:uppercase;letter-spacing:0.05em;">D-Day</span>
-        <span id="meta-dday" style="color:#111111;text-align:right;white-space:nowrap;"></span>
-        <span style="color:#999999;text-transform:uppercase;letter-spacing:0.05em;">Pace</span>
-        <span id="meta-pace" style="color:#111111;text-align:right;white-space:nowrap;"></span>
-        <span style="color:#999999;text-transform:uppercase;letter-spacing:0.05em;">Need</span>
-        <span id="meta-need" style="text-align:right;white-space:nowrap;"></span>
+      <!-- 로고 -->
+      <div style="font-size:64px;font-weight:200;color:#111111;border:1px solid #111111;border-radius:12px;padding:14px 20px;line-height:1;display:inline-block;">P.Calc</div>
+
+      <!-- 히어로 텍스트 -->
+      <div>
+        <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">나</span>님</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;margin-right:6px;">FIRE까지 <span id="hero-rate" style="color:#111111;font-weight:600;">0%</span> 달성했어요</div>
+          <button class="pill-icon-btn pill-icon-btn-filled" title="조정 패널" onclick="toggleSidebar()">
+            <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;flex-shrink:0;">
+              <line x1="1" y1="3" x2="14" y2="3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <circle cx="9.5" cy="3" r="2" fill="none" stroke="currentColor" stroke-width="1.2"/>
+              <line x1="1" y1="10" x2="14" y2="10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <circle cx="5.5" cy="10" r="2" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+            <span class="pill-label">수정</span>
+          </button>
+          <button class="pill-icon-btn" title="시나리오 비교" onclick="openScenarioPanel()">
+            <span class="ms pill-ico">add</span>
+            <span class="pill-label">시나리오 비교</span>
+          </button>
+        </div>
       </div>
+
     </div>
 
-  </div>
-
-  <!-- 히어로 텍스트 -->
-  <div class="anim-fadeup" style="margin-top:16px;animation-delay:0.2s;">
-    <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">나</span>님</div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;margin-right:6px;">FIRE까지 <span id="hero-rate" style="color:#111111;font-weight:600;">0%</span> 달성했어요</div>
-      <button class="pill-icon-btn pill-icon-btn-filled" title="조정 패널" onclick="toggleSidebar()">
-        <svg width="15" height="13" viewBox="0 0 15 13" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;flex-shrink:0;">
-          <line x1="1" y1="3" x2="14" y2="3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          <circle cx="9.5" cy="3" r="2" fill="currentColor" stroke="currentColor" stroke-width="1.2"/>
-          <line x1="1" y1="10" x2="14" y2="10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-          <circle cx="5.5" cy="10" r="2" fill="currentColor" stroke="currentColor" stroke-width="1.2"/>
-        </svg>
-        <span class="pill-label">수정</span>
-      </button>
-      <button class="pill-icon-btn" title="시나리오 비교" onclick="openScenarioPanel()">
-        <span class="ms pill-ico">add</span>
-        <span class="pill-label">시나리오 비교</span>
-      </button>
+    <!-- 우: 메타 블록 -->
+    <div id="meta-block" style="display:grid;grid-template-columns:auto auto;column-gap:20px;font-family:monospace;font-size:11px;line-height:2;user-select:none;">
+      <span style="color:#999999;text-transform:uppercase;letter-spacing:0.05em;">Status</span>
+      <span id="meta-status" style="color:#111111;text-align:right;white-space:nowrap;"></span>
+      <span style="color:#999999;text-transform:uppercase;letter-spacing:0.05em;">D-Day</span>
+      <span id="meta-dday" style="color:#111111;text-align:right;white-space:nowrap;"></span>
+      <span style="color:#999999;text-transform:uppercase;letter-spacing:0.05em;">Pace</span>
+      <span id="meta-pace" style="color:#111111;text-align:right;white-space:nowrap;"></span>
+      <span style="color:#999999;text-transform:uppercase;letter-spacing:0.05em;">Need</span>
+      <span id="meta-need" style="text-align:right;white-space:nowrap;"></span>
     </div>
-  </div>
 
   <!-- 결과 카드 4개 -->
   <div style="margin-top:48px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
