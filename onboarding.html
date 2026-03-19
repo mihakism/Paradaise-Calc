@@ -139,18 +139,7 @@
     #s4 { background: #002b14; }
     #s5 { background: #001d0d; }
 
-    /* ambient radial glow — 섹션 accent 색 반영 */
-    .section::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(
-        ellipse 60% 50% at 50% 40%,
-        var(--accent-glow) 0%,
-        transparent 70%
-      );
-      pointer-events: none;
-    }
+    /* ambient radial glow 제거 */
 
     /* ══════════════════════════════════════════
        Content (fade-in on section enter)
