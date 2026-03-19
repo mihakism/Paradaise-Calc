@@ -413,6 +413,7 @@
       background: #ffffff;
       border-radius: var(--r-md); padding: 16px 20px;
     }
+    .inf-banner.vis { display: flex; animation: fadeUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 
     /* ─── 히어로 숫자 등장 애니메이션 ─── */
     @keyframes heroRatePop {
@@ -580,7 +581,6 @@
       opacity: 0;
       transition: opacity 0.15s ease;
     }
-    .inf-banner.vis { display: flex; }
     .inf-banner-ico { font-size: 22px; flex-shrink: 0; }
     .inf-banner-txt { font-size: 14px; color: var(--text-1); line-height: 1.5; }
     .inf-banner-txt strong { color: var(--gold); }
@@ -591,7 +591,7 @@
       background: #ffffff;
       border-radius: var(--r-md); padding: 16px 20px;
     }
-    .delay-banner.vis { display: flex; }
+    .delay-banner.vis { display: flex; animation: fadeUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
     .delay-banner-ico { font-size: 22px; flex-shrink: 0; }
     .delay-banner-txt { font-size: 14px; line-height: 1.6; color: var(--text-1); }
     .delay-banner-txt strong { color: var(--danger); font-size: 14px; font-weight: 700; }
