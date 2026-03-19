@@ -815,10 +815,7 @@
   <div class="anim-fadeup" style="display:flex;justify-content:space-between;align-items:flex-start;height:240px;">
 
     <!-- 로고 -->
-    <div style="font-size:64px;font-weight:200;color:#111111;border:1px solid #111111;border-radius:12px;padding:14px 20px;line-height:1;display:inline-flex;align-items:center;gap:10px;">
-      <span>P.Calc</span>
-      <canvas id="palm-logo" width="40" height="60" style="display:inline-block;vertical-align:middle;"></canvas>
-    </div>
+    <div style="font-size:64px;font-weight:200;color:#111111;border:1px solid #111111;border-radius:12px;padding:14px 20px;line-height:1;display:inline-block;">P.Calc</div>
 
     <!-- 우상단: 메타 블록만 -->
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:16px;">
@@ -2046,45 +2043,6 @@ function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
 
-// ─── 로고 야자수 Canvas 렌더링 ───
-(function() {
-  const pixels = [
-    [0,0,0,1,1,0,0,1,1,0,0],
-    [0,0,1,1,1,1,1,1,1,1,0],
-    [0,1,1,1,1,1,1,1,1,1,1],
-    [0,0,1,1,0,1,1,0,1,1,0],
-    [0,0,0,0,1,1,1,0,0,0,0],
-    [0,0,0,0,0,1,1,0,0,0,0],
-    [0,0,0,0,0,1,1,0,0,0,0],
-    [0,0,0,0,0,1,0,0,0,0,0],
-    [0,0,0,0,1,1,0,0,0,0,0],
-    [0,0,0,1,1,1,1,0,0,0,0],
-  ];
-  const DOT = 3;
-  function drawPalm() {
-    const canvas = document.getElementById('palm-logo');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'rgba(17,17,17,0.6)';
-    const cols = pixels[0].length;
-    const rows = pixels.length;
-    const offsetX = Math.floor((canvas.width  - cols * DOT) / 2);
-    const offsetY = Math.floor((canvas.height - rows * DOT) / 2);
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        if (pixels[r][c]) {
-          ctx.fillRect(offsetX + c * DOT, offsetY + r * DOT, DOT, DOT);
-        }
-      }
-    }
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', drawPalm);
-  } else {
-    drawPalm();
-  }
-})();
 </script>
 </body>
 </html>
