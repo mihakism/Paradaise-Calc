@@ -465,14 +465,18 @@
       text-align: center;
     }
     .sc-head-cell {
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
     }
     .sc-head-name {
       display: flex; align-items: center; gap: 5px;
       font-size: 12px; font-weight: 600; color: var(--text-1);
       white-space: nowrap;
     }
-    .sc-head-sub { font-size: 10px; color: var(--text-3); white-space: nowrap; }
+    .sc-head-sub {
+      font-size: 10px; color: var(--text-3);
+      white-space: normal; text-align: center; line-height: 1.4;
+      word-break: keep-all;
+    }
     .sc-gap-pos { color: #81CE16; }
     .sc-gap-neg { color: #F4907A; }
 
@@ -793,20 +797,21 @@
 <!-- ═══ 시나리오 비교 패널 (바텀 시트) ═══ -->
 <div class="sidebar-overlay" id="scenario-overlay" onclick="closeScenarioPanel()"></div>
 <div class="scenario-panel" id="scenario-panel">
-  <!-- 드래그 핸들 -->
-  <div style="display:flex;justify-content:center;margin:-4px 0 4px;">
-    <div style="width:36px;height:4px;border-radius:2px;background:var(--border-light);"></div>
-  </div>
-  <!-- 헤더 -->
-  <div style="display:flex;align-items:center;justify-content:space-between;">
-    <span class="sidebar-toprow-title">
-      <span class="ms" style="font-size:14px;vertical-align:middle;margin-right:6px;">compare_arrows</span>시나리오 비교
-    </span>
-    <button class="sidebar-close-btn" onclick="closeScenarioPanel()" title="닫기">
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
-        <line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/>
-      </svg>
-    </button>
+  <!-- 드래그 핸들 + 헤더 (한 블록) -->
+  <div style="display:flex;flex-direction:column;gap:10px;">
+    <div style="display:flex;justify-content:center;">
+      <div style="width:36px;height:4px;border-radius:2px;background:var(--border-light);"></div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <span class="sidebar-toprow-title">
+        <span class="ms" style="font-size:14px;vertical-align:middle;margin-right:6px;">compare_arrows</span>시나리오 비교
+      </span>
+      <button class="sidebar-close-btn" onclick="closeScenarioPanel()" title="닫기">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+          <line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/>
+        </svg>
+      </button>
+    </div>
   </div>
   <div id="scenario-cards"></div>
 </div>
