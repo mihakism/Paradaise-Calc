@@ -406,7 +406,7 @@
       100% { transform: rotate(-1.5deg); }
     }
     .palm-leaves {
-      display: inline-block;
+      display: block;
       transform-origin: bottom center;
       animation: sway 3s ease-in-out infinite;
     }
@@ -838,15 +838,15 @@
   </div>
 
   <!-- 야자수 아스키 아트 -->
-  <div class="anim-fadeup" style="margin-top:32px;text-align:center;animation-delay:0.1s;"><pre style="font-family:monospace;font-size:13px;line-height:1.2;color:#111111;opacity:0.75;display:inline-block;text-align:left;margin:0;user-select:none;"><span class="palm-leaves">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+  <div class="anim-fadeup" style="margin-top:32px;text-align:center;animation-delay:0.1s;line-height:0;">
+    <div style="display:inline-block;text-align:left;line-height:0;"><pre class="palm-leaves" style="font-family:monospace;font-size:13px;line-height:1.2;color:#111111;opacity:0.75;margin:0;padding:0;user-select:none;display:block;">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⢰⣖⡶⣦⢦⣀⡀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣖⣶⣲⠄⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⢸⣞⣿⡽⣿⡽⣾⢦⡀⠀⠀⠀⢀⣴⣟⣾⣞⣷⢯⡿⡅⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⢿⢯⣿⡽⣦⣀⣴⢿⣳⣿⡺⠓⠁⠁⠈⠀⣄⣖⣠⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⣀⣄⣤⣤⢿⣳⣟⣯⢿⢾⣻⣽⢾⡤⣤⣠⣀⠀⠐⠊⣟⠒⠀⠀⠀
 ⠀⠀⠀⠀⢀⣠⡶⣟⣯⣟⣷⣻⢿⣽⢾⣯⢿⣻⣽⢯⡿⣽⣟⣾⣽⣻⡶⣄⡀⠀⠀⠀⠀
 ⠀⠀⢀⣰⣞⣯⣟⣯⠟⠚⠙⣸⢿⣞⣿⢾⣻⣽⢾⣻⡯⣏⠊⠓⠯⣷⣟⣯⣷⡤⡀⠀⠀
-⠀⠀⠘⠽⣾⣻⠚⠀⠀⢠⡾⣯⢿⣞⣯⣿⣽⢾⢿⡽⣯⡿⣵⡀⠀⠈⠚⣷⢯⠟⠁⠀⠀
-</span>⠀⠀⠀⠀⠉⠀⠀⠀⢠⣿⡽⣯⡟⠑⡿⡾⣾⢧⠀⠉⢿⡽⣯⢿⡀⠀⠀⠈⠉⠀⠀⠀⠀
+⠀⠀⠘⠽⣾⣻⠚⠀⠀⢠⡾⣯⢿⣞⣯⣿⣽⢾⢿⡽⣯⡿⣵⡀⠀⠈⠚⣷⢯⠟⠁⠀⠀</pre><pre style="font-family:monospace;font-size:13px;line-height:1.2;color:#111111;opacity:0.75;margin:0;padding:0;user-select:none;display:block;">⠀⠀⠀⠀⠉⠀⠀⠀⢠⣿⡽⣯⡟⠑⡿⡾⣾⢧⠀⠉⢿⡽⣯⢿⡀⠀⠀⠈⠉⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⣟⣷⣻⡗⠀⠀⠙⣿⡽⣟⣧⠀⠀⢻⣽⣟⣷⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠨⣟⣷⣟⡆⠀⠀⠀⠱⡿⣯⡷⣇⠀⢸⢷⣻⣾⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠈⠛⠓⠛⠂⠀⠀⠀⠀⠹⣷⣟⣿⣂⠘⠛⠙⠚⠀⠀⠀⠀⠀⠀⠀⠀
@@ -854,6 +854,7 @@
 ⠀⠀⠀⠀⠀⣴⣻⣞⣿⣽⣻⢾⣻⣽⣞⣿⣲⡀⢻⣾⣻⣽⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⣼⣟⣾⣳⣟⣾⡽⣿⢽⣾⣳⣯⣯⢿⡈⢾⣽⢾⣳⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</pre></div>
+  </div>
 
   <!-- 히어로 텍스트 + 유틸리티 버튼 -->
   <div class="anim-fadeup" style="margin-top:32px;display:flex;justify-content:space-between;align-items:flex-end;animation-delay:0.2s;">
