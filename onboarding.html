@@ -617,9 +617,9 @@
     /* ─── 야자수 아스키 아트 — 배경 레이어 ─── */
     .l-palm {
       position: absolute;
-      top: 5%;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translate(-50%, -50%);
       z-index: 0;
       pointer-events: none;
       user-select: none;
@@ -681,7 +681,7 @@
     @media (max-width: 700px) {
       .l-title-top,
       .l-title-btm { font-size: clamp(40px, 14vw, 80px); }
-      .l-palm svg { width: 300px; height: 288px; }
+      .l-palm svg { height: 70vh; width: auto; }
       .l-rolling-text { font-size: 13px; }
     }
 
@@ -715,8 +715,8 @@
 
   <!-- 야자수 아스키 아트 — 배경 레이어 -->
   <div class="l-palm">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 250" preserveAspectRatio="xMidYMid meet" style="display:block;width:380px;height:365px;">
-      <g font-family="'Courier New', Courier, monospace" font-size="13" fill="#ffffff" opacity="0.15">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 250" preserveAspectRatio="xMidYMid meet" style="display:block;height:85vh;width:auto;">
+      <g font-family="'Courier New', Courier, monospace" font-size="13" fill="#ffffff" opacity="0.25">
         <g class="palm-leaves">
           <text x="0" y="13">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</text>
           <text x="0" y="28.6">⠀⠀⠀⠀⠀⠀⢰⣖⡶⣦⢦⣀⡀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣖⣶⣲⠄⠀⠀⠀⠀⠀⠀</text>
