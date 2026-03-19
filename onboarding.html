@@ -614,21 +614,28 @@
 
     .l-title-top { padding-bottom: 10px; }
 
-    /* ─── 야자수 SVG 배경 레이어 ─── */
+    /* ─── 야자수 아스키 아트 — 배경 레이어 ─── */
     .l-palm {
       position: absolute;
-      bottom: -2%;
+      bottom: 0;
       left: 50%;
       transform: translateX(-50%);
       z-index: 0;
       pointer-events: none;
       user-select: none;
     }
-    .palm-svg {
-      height: 88vh;
-      width: auto;
-      display: block;
-      opacity: 0.18;
+    .l-palm pre {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 2.2vh;
+      letter-spacing: -0.05em;
+      line-height: 0.88;
+      white-space: pre;
+      color: #ffffff;
+      opacity: 0.22;
+      margin: 0;
+      padding: 0;
+      transform-origin: bottom center;
+      animation: palmSway 5s ease-in-out infinite;
     }
 
     /* ─── 야자수 흔들림 애니메이션 (전체 나무를 뿌리 기준으로 흔들기) ─── */
@@ -636,13 +643,8 @@
       0%, 100% { transform: rotate(-3deg); }
       50%       { transform: rotate(3deg); }
     }
-    .palm-sway {
-      transform-box: fill-box;
-      transform-origin: center bottom;
-      animation: palmSway 5s ease-in-out infinite;
-    }
     @media (prefers-reduced-motion: reduce) {
-      .palm-sway { animation: none; }
+      .l-palm pre { animation: none; }
     }
 
     /* ── 롤링 서브타이틀 ── */
@@ -686,11 +688,11 @@
     @media (max-width: 700px) {
       .l-title-top,
       .l-title-btm { font-size: clamp(40px, 14vw, 80px); }
-      .palm-svg { height: 80vh; }
+      .l-palm pre { font-size: 1.8vh; }
       .l-rolling-text { font-size: 13px; }
     }
 
-    /* ── 동전 낙하 캔버스 ── */
+    /* ── 지폐 낙하 캔버스 ── */
     #coin-canvas {
       position: absolute;
       inset: 0;
@@ -715,7 +717,7 @@
     src="https://cdn.midjourney.com/video/110cd6b5-8978-4268-bcd1-4f6e61e46ba3/2.mp4">
   </video>
 
-  <!-- 동전 낙하 캔버스 -->
+  <!-- 지폐 낙하 캔버스 -->
   <canvas id="coin-canvas"></canvas>
 
   <!-- 야자수 SVG 배경 레이어 -->
@@ -1285,7 +1287,7 @@ function init() {
 document.addEventListener('DOMContentLoaded', init);
 
 /* ═══════════════════════════════════════════════
-   동전 낙하 · 쌓기 애니메이션
+   지폐 낙하 · 쌓기 애니메이션
    ─ requestAnimationFrame 기반 순수 Canvas 구현 ─
 ═══════════════════════════════════════════════ */
 function initCoinRain() {
@@ -1294,19 +1296,19 @@ function initCoinRain() {
   const ctx = canvas.getContext('2d');
 
   /* ── 설정 상수 ── */
-  const R          = 13;      // 동전 반지름 px
-  const GRAVITY    = 0.38;    // 중력 가속도
-  const RESTITUTION = 0.44;   // 바운스 반발 계수 (0=흡수, 1=완전 탄성)
-  const VY_SETTLE  = 0.65;    // 이 이하 속도면 정착
-  const MAX_COINS  = 60;      // 최대 동전 수
-  const SPAWN_MS   = 700;     // 새 동전 생성 주기 (ms)
-  const RECYCLE_MS = 5000;    // 정착 후 재낙하 대기 시간 (ms)
-  const MAX_FALLING = 6;      // 동시 낙하 최대 수
-  const BUCKET     = 3;       // 바닥 맵 x 해상도 (px)
+  const BW          = 60;      // 지폐 너비 px
+  const BH          = 28;      // 지폐 높이 px
+  const R           = BH / 2;  // 충돌 반지름 (높이의 절반)
+  const GRAVITY     = 0.20;    // 가벼운 종이 — 천천히 낙하
+  const RESTITUTION = 0.16;    // 거의 튀지 않는 종이
+  const VY_SETTLE   = 0.5;
+  const MAX_COINS   = 55;
+  const SPAWN_MS    = 620;
+  const RECYCLE_MS  = 5000;
+  const MAX_FALLING = 7;
+  const BUCKET      = 3;
 
-  let coins    = [];
-  let floorMap = [];
-  let lastSpawn = 0;
+  let coins = [], floorMap = [], lastSpawn = 0;
 
   /* ── 캔버스 크기 동기화 ── */
   function resize() {
@@ -1315,7 +1317,7 @@ function initCoinRain() {
     rebuildFloor();
   }
 
-  /* ── 바닥 높이 맵 (x 위치별 현재 "쌓인 높이") ── */
+  /* ── 바닥 높이 맵 ── */
   function initFloor() {
     const len = Math.ceil(canvas.width / BUCKET) + 2;
     floorMap = new Array(len).fill(canvas.height);
@@ -1331,30 +1333,40 @@ function initCoinRain() {
     return floorMap[b];
   }
 
-  /* 정착한 동전의 위치로 바닥 맵 갱신 */
   function stampFloor(x, y) {
-    const s = Math.floor((x - R) / BUCKET);
-    const e = Math.ceil ((x + R) / BUCKET);
+    const s = Math.floor((x - BW / 2) / BUCKET);
+    const e = Math.ceil ((x + BW / 2) / BUCKET);
     for (let b = s; b <= e; b++) {
       if (b >= 0 && b < floorMap.length) {
-        const top = y - R * 0.55;  // 살짝 겹쳐 쌓임감 표현
+        const top = y - R * 0.40;
         if (top < floorMap[b]) floorMap[b] = top;
       }
     }
   }
 
-  /* ── 동전 클래스 ── */
-  class Coin {
+  /* ── 지폐 스타일 (한국 지폐 색상 영감) ── */
+  const STYLES = [
+    { base: '#1a5c2b', mid: '#2e8b47', hi: '#4caf6e', text: '₩10,000', tc: '#c8f0d5' },
+    { base: '#1a3d6b', mid: '#2060a8', hi: '#4a8fd4', text: '₩5,000',  tc: '#c5dcf5' },
+    { base: '#6e2400', mid: '#b54000', hi: '#e8740a', text: '₩1,000',  tc: '#ffe5c0' },
+    { base: '#4a1475', mid: '#7b2fbe', hi: '#b060e0', text: '₩50,000', tc: '#ecd5ff' },
+  ];
+
+  /* ── 지폐 클래스 ── */
+  class Bill {
     constructor() { this.reset(); }
 
     reset() {
-      const w    = Math.max(1, canvas.width - R * 6);
-      this.x     = R * 3 + Math.random() * w;
-      this.y     = -R - Math.random() * 140;   // 랜덤 높이에서 출발
-      this.vy    = 1.5 + Math.random() * 2.5;
-      this.vx    = (Math.random() - 0.5) * 1.8;
-      this.rot   = Math.random() * Math.PI * 2;
-      this.rotV  = (Math.random() - 0.5) * 0.22;
+      const w    = Math.max(1, canvas.width - BW * 3);
+      this.x     = BW * 1.5 + Math.random() * w;
+      this.y     = -BH * 2  - Math.random() * 180;
+      this.vy    = 0.9 + Math.random() * 1.8;
+      this.vx    = (Math.random() - 0.5) * 1.6;
+      this.rot   = (Math.random() - 0.5) * 0.55;
+      this.rotV  = (Math.random() - 0.5) * 0.032;
+      this.flipT = Math.random() * Math.PI * 2;  // 3D 플립 위상
+      this.flipV = 0.045 + Math.random() * 0.05; // 플립 속도
+      this.style = STYLES[Math.floor(Math.random() * STYLES.length)];
       this.settled   = false;
       this.settledAt = 0;
     }
@@ -1362,26 +1374,27 @@ function initCoinRain() {
     update(ts) {
       if (this.settled) return;
 
-      this.vy  += GRAVITY;
-      this.y   += this.vy;
-      this.x   += this.vx;
-      this.rot += this.rotV;
+      this.vx   *= 0.992;          // 공기 저항
+      this.vy   += GRAVITY;
+      this.y    += this.vy;
+      this.x    += this.vx;
+      this.rot  += this.rotV;
+      this.flipT += this.flipV;
 
-      /* 좌우 벽 반사 */
-      if (this.x < R)                { this.x = R;                this.vx =  Math.abs(this.vx) * 0.5; }
-      if (this.x > canvas.width - R) { this.x = canvas.width - R; this.vx = -Math.abs(this.vx) * 0.5; }
+      if (this.x < BW)                { this.x = BW;                this.vx =  Math.abs(this.vx) * 0.4; }
+      if (this.x > canvas.width - BW) { this.x = canvas.width - BW; this.vx = -Math.abs(this.vx) * 0.4; }
 
-      /* 바닥 / 쌓인 동전 충돌 */
       const floor = readFloor(this.x);
       if (this.y + R >= floor) {
-        this.y   = floor - R;
-        this.vy  = -this.vy * RESTITUTION;
-        this.vx *= 0.72;
-        this.rotV *= 0.55;
+        this.y    = floor - R;
+        this.vy   = -this.vy * RESTITUTION;
+        this.vx  *= 0.50;
+        this.rotV *= 0.30;
 
         if (Math.abs(this.vy) < VY_SETTLE) {
           this.settled   = true;
           this.vy = this.vx = this.rotV = 0;
+          this.rot = (Math.random() - 0.5) * 0.14; // 약간 비틀린 채 착지
           this.settledAt = ts;
           stampFloor(this.x, this.y);
         }
@@ -1393,42 +1406,56 @@ function initCoinRain() {
       ctx.translate(this.x, this.y);
       ctx.rotate(this.rot);
 
+      /* 3D 펄럭임: Y축 scaleY 압축으로 종이가 펄럭이는 느낌 */
+      const scaleY = Math.abs(Math.cos(this.flipT)) * 0.80 + 0.20;
+      ctx.scale(1, scaleY);
+
+      const hw = BW / 2, hh = BH / 2, rad = 4;
+
       /* 그림자 */
-      ctx.beginPath();
-      ctx.arc(2, 4, R, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(0,0,0,0.18)';
-      ctx.fill();
+      ctx.save();
+      ctx.shadowColor    = 'rgba(0,0,0,0.28)';
+      ctx.shadowBlur     = 10;
+      ctx.shadowOffsetX  = 2;
+      ctx.shadowOffsetY  = 5;
 
-      /* 동전 본체 — 방사형 그라디언트 */
-      const g = ctx.createRadialGradient(-R * 0.3, -R * 0.35, R * 0.05, 0, 0, R);
-      g.addColorStop(0,   '#FFE87A');
-      g.addColorStop(0.5, '#D4A017');
-      g.addColorStop(1,   '#8A6000');
-      ctx.beginPath();
-      ctx.arc(0, 0, R, 0, Math.PI * 2);
-      ctx.fillStyle = g;
-      ctx.fill();
+      /* 지폐 본체 — 선형 그라디언트 */
+      const grad = ctx.createLinearGradient(-hw, -hh, hw, hh);
+      grad.addColorStop(0,   this.style.base);
+      grad.addColorStop(0.4, this.style.mid);
+      grad.addColorStop(1,   this.style.hi);
 
-      /* 바깥 테두리 */
       ctx.beginPath();
-      ctx.arc(0, 0, R - 0.5, 0, Math.PI * 2);
-      ctx.strokeStyle = '#7A5200';
-      ctx.lineWidth = 1.5;
+      ctx.moveTo(-hw + rad, -hh);
+      ctx.lineTo( hw - rad, -hh);
+      ctx.arcTo ( hw, -hh,  hw, -hh + rad, rad);
+      ctx.lineTo ( hw,  hh - rad);
+      ctx.arcTo ( hw,  hh,  hw - rad,  hh, rad);
+      ctx.lineTo (-hw + rad,  hh);
+      ctx.arcTo (-hw,  hh, -hw,  hh - rad, rad);
+      ctx.lineTo (-hw, -hh + rad);
+      ctx.arcTo (-hw, -hh, -hw + rad, -hh, rad);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.restore();
+
+      /* 테두리 */
+      ctx.strokeStyle = 'rgba(255,255,255,0.24)';
+      ctx.lineWidth   = 0.8;
       ctx.stroke();
 
-      /* 안쪽 링 */
-      ctx.beginPath();
-      ctx.arc(0, 0, R * 0.68, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(255,235,100,0.4)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
+      /* 내부 장식 테두리 */
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.lineWidth   = 0.5;
+      ctx.strokeRect(-hw + 5, -hh + 4, BW - 10, BH - 8);
 
-      /* ₩ 심볼 */
-      ctx.fillStyle = '#7A5200';
-      ctx.font = `bold ${Math.round(R * 1.15)}px Inter, sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('₩', 0, 1);
+      /* 금액 텍스트 */
+      ctx.fillStyle      = this.style.tc;
+      ctx.font           = `700 ${Math.round(BH * 0.40)}px Inter, sans-serif`;
+      ctx.textAlign      = 'center';
+      ctx.textBaseline   = 'middle';
+      ctx.fillText(this.style.text, 0, 0);
 
       ctx.restore();
     }
@@ -1437,15 +1464,14 @@ function initCoinRain() {
   /* ── 스폰 / 재활용 ── */
   function spawnOrRecycle(ts) {
     if (coins.length < MAX_COINS) {
-      coins.push(new Coin());
+      coins.push(new Bill());
       return;
     }
-    /* MAX 도달 시 가장 오래된 정착 동전을 재낙하 */
     const oldest = coins
       .filter(c => c.settled && ts - c.settledAt > RECYCLE_MS)
       .sort((a, b) => a.settledAt - b.settledAt)[0];
     if (oldest) {
-      rebuildFloor();   // 재활용 전 바닥 맵 재계산
+      rebuildFloor();
       oldest.reset();
     }
   }
