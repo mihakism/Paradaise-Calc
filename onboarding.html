@@ -593,12 +593,10 @@
       margin-bottom: 28px;
     }
 
-    /* ══ Hero — Inria Sans 헤드라인 + 장식 이미지 ══ */
+    /* ══ Hero — Inria Sans 헤드라인 ══ */
     .l-hero {
-      position: relative;
       text-align: center;
       margin-bottom: 36px;
-      --deco-w: clamp(88px, 12vw, 148px);
     }
 
     .l-title-top,
@@ -612,31 +610,17 @@
       letter-spacing: -.05em;
       color: #0c1a06;
       text-transform: uppercase;
-      position: relative;
-      z-index: 1;
     }
 
     .l-title-top { padding-bottom: 10px; }
 
-    /* 장식 이미지 — 첫 줄 "TO GO" 사이 위치 */
-    .l-deco {
-      position: absolute;
-      top: 60px;                    /* 120px 타이틀의 수직 중앙 */
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: var(--deco-w);
-      height: var(--deco-w);
-      object-fit: contain;
+    /* ─── 야자수 아스키 아트 컨테이너 ─── */
+    .l-palm {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 32px;
       pointer-events: none;
-      z-index: 2;
-      mix-blend-mode: overlay;
-      opacity: .3;
-      animation: decoIn 1.2s cubic-bezier(.16,1,.3,1) both;
-    }
-
-    @keyframes decoIn {
-      from { opacity: 0; transform: translate(-50%, -50%) scale(.55); }
-      to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      user-select: none;
     }
 
     /* ─── 야자수 흔들림 애니메이션 ─── */
@@ -693,10 +677,9 @@
 
     /* ── Mobile ── */
     @media (max-width: 700px) {
-      .l-hero { --deco-w: clamp(64px, 18vw, 96px); }
       .l-title-top,
       .l-title-btm { font-size: clamp(40px, 14vw, 80px); }
-      .l-deco { top: calc(clamp(40px, 14vw, 80px) * 0.5); }
+      .l-palm svg { width: 200px; height: 193px; }
       .l-rolling-text { font-size: 13px; }
     }
 
@@ -734,11 +717,10 @@
     <!-- Eyebrow 레이블 -->
     <p class="l-eyebrow">Money Plan Calculator</p>
 
-    <!-- Hero: 헤드라인 + 장식 이미지 -->
-    <h1 class="l-hero">
-      <span class="l-title-top">How to go to</span>
-      <svg class="l-deco" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 250" preserveAspectRatio="xMidYMid meet">
-        <g font-family="'Courier New', Courier, monospace" font-size="13" fill="#ffffff" opacity="0.85">
+    <!-- 야자수 아스키 아트 -->
+    <div class="l-palm">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 250" preserveAspectRatio="xMidYMid meet" style="display:block;width:260px;height:250px;">
+        <g font-family="'Courier New', Courier, monospace" font-size="13" fill="#ffffff" opacity="0.7">
           <g class="palm-leaves">
             <text x="0" y="13">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</text>
             <text x="0" y="28.6">⠀⠀⠀⠀⠀⠀⢰⣖⡶⣦⢦⣀⡀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣖⣶⣲⠄⠀⠀⠀⠀⠀⠀</text>
@@ -759,6 +741,11 @@
           <text x="0" y="247">⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀</text>
         </g>
       </svg>
+    </div>
+
+    <!-- Hero: 헤드라인 -->
+    <h1 class="l-hero">
+      <span class="l-title-top">How to go to</span>
       <span class="l-title-btm">the Paradise</span>
     </h1>
 
