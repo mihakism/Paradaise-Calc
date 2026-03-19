@@ -199,7 +199,10 @@
     }
 
     /* ─── 섹션 ─── */
-    .section { display: flex; flex-direction: column; gap: 18px; }
+    .section { display: flex; flex-direction: column; gap: 0; }
+    .section-hd { margin-bottom: 12px; }
+    .section > * + * { margin-top: 12px; }
+    .section > .section-hd + * { margin-top: 0; }
 
     .section-hd {
       font-size: 12px; font-weight: 600;
@@ -1703,6 +1706,7 @@ function rebuildPersonTabs() {
     tab.style.setProperty('--tab-color', col.line);
     tab.style.setProperty('--tab-bg-hover', `rgba(${col.r},${col.g},${col.b},0.08)`);
     tab.innerHTML = `
+      <div class="ptab-dot" style="background:${col.line}"></div>
       <input class="ptab-name" value="${p.name.replace(/"/g,'&quot;')}" maxlength="10" />
       ${S.people.length > 1 ? `<button class="ptab-del">✕</button>` : ''}
     `;
