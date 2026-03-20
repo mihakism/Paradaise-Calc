@@ -1658,15 +1658,12 @@ function updateFull() {
 function update() { updateFull(); }
 
 // ─── 인원 관리 ───
-const ANON_NAMES = ['코코넛', '망고', '파파야', '선인장', '불꽃맨', '바나나', '파인애플', '야자수'];
-
 function addPerson() {
   if (S.people.length >= PERSON_COLORS.length) {
     alert(`최대 ${PERSON_COLORS.length}명까지 추가할 수 있습니다.`);
     return;
   }
   const d = DEFAULT_PERSON();
-  d.name = ANON_NAMES[(S.people.length - 1) % ANON_NAMES.length];
   S.people.push(d);
   S.activePerson = S.people.length - 1;
   rebuildPersonTabs();
