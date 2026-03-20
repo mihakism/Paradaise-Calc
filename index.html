@@ -991,7 +991,12 @@ const PERSON_COLORS = [
 ];
 
 const RANDOM_NAMES = ['배당요정', '커피값아껴', '평일낮잠', '구매왕', '연금의신', '3시산책'];
-const randomName = () => RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)];
+const randomName = () => {
+  const used = (S?.people || []).map(p => p.name);
+  const available = RANDOM_NAMES.filter(n => !used.includes(n));
+  const pool = available.length > 0 ? available : RANDOM_NAMES;
+  return pool[Math.floor(Math.random() * pool.length)];
+};
 
 const DEFAULT_PERSON = () => ({
   name: randomName(),
