@@ -864,7 +864,7 @@
 
   <!-- 히어로 텍스트 -->
   <div class="anim-fadeup" style="margin-top:16px;animation-delay:0.2s;">
-    <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">미학</span>님</div>
+    <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">안녕하세요, <span id="hero-name">—</span>님</div>
     <div style="display:flex;align-items:center;gap:8px;">
           <div style="font-size:36px;font-weight:400;color:#111111;line-height:1.2;">목표 자산의 <span class="hero-rate-wrap"><span id="hero-rate" style="color:#111111;font-weight:600;">0%</span><span class="hero-rate-tip">목표 자산 대비 현재 자산 비율</span></span> 모았어요</div>
           <button class="pill-icon-btn pill-icon-btn-filled" title="조정 패널" onclick="toggleSidebar()">
@@ -990,8 +990,11 @@ const PERSON_COLORS = [
   { line: '#6B3FA0', r: 107, g:  63, b: 160 },
 ];
 
+const RANDOM_NAMES = ['배당요정', '커피값아껴', '평일낮잠', '구매왕', '연금의신', '3시산책'];
+const randomName = () => RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)];
+
 const DEFAULT_PERSON = () => ({
-  name: '미학',
+  name: randomName(),
   targetWithdrawal:    300,
   targetRetirementAge: 55,
   currentAge:          35,
@@ -1510,7 +1513,7 @@ function updateCards(results) {
 
   // ─── 히어로 텍스트 + INFLATION 토글 동기화 ───
   const heroName = $('hero-name');
-  if (heroName) heroName.textContent = p.name || '미학';
+  if (heroName) heroName.textContent = p.name || randomName();
   const assetPct = parseFloat(Math.min(100, resA.fireRate).toFixed(1));
   const heroRate = $('hero-rate');
   if (heroRate) countUp(heroRate, assetPct, v => v + '%', 750, false, D.h);
@@ -1571,10 +1574,10 @@ const FIELDS = [
   'currentAssets', 'monthlySavings', 'annualReturn', 'savingsGrowth', 'safeRate',
 ];
 const PRESETS = {
-  jeehyun: { name:'이지현', targetWithdrawal:250, targetRetirementAge:60,
+  jeehyun: { name:'연금의신', targetWithdrawal:250, targetRetirementAge:60,
     currentAge:40, currentAssets:8000, monthlySavings:200,
     annualReturn:4.5, savingsGrowth:2.0, safeRate:4.0 },
-  junhyuk: { name:'박준혁', targetWithdrawal:350, targetRetirementAge:50,
+  junhyuk: { name:'커피값아껴', targetWithdrawal:350, targetRetirementAge:50,
     currentAge:35, currentAssets:3000, monthlySavings:150,
     annualReturn:9.0, savingsGrowth:5.0, safeRate:3.5 },
 };
