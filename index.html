@@ -991,15 +991,14 @@ const PERSON_COLORS = [
 ];
 
 const RANDOM_NAMES = ['배당요정', '커피값아껴', '평일낮잠', '구매왕', '연금의신', '3시산책', '내꿈은복리왕', '인덱스신봉자'];
-const randomName = () => {
-  const used = (S?.people || []).map(p => p.name);
-  const available = RANDOM_NAMES.filter(n => !used.includes(n));
+const randomName = (usedNames = []) => {
+  const available = RANDOM_NAMES.filter(n => !usedNames.includes(n));
   const pool = available.length > 0 ? available : RANDOM_NAMES;
   return pool[Math.floor(Math.random() * pool.length)];
 };
 
-const DEFAULT_PERSON = () => ({
-  name: randomName(),
+const DEFAULT_PERSON = (usedNames = []) => ({
+  name: randomName(usedNames),
   targetWithdrawal:    300,
   targetRetirementAge: 55,
   currentAge:          35,
@@ -1518,7 +1517,7 @@ function updateCards(results) {
 
   // ─── 히어로 텍스트 + INFLATION 토글 동기화 ───
   const heroName = $('hero-name');
-  if (heroName) heroName.textContent = p.name || randomName();
+  if (heroName) heroName.textContent = p.name || randomName(S.people.map(q => q.name));
   const assetPct = parseFloat(Math.min(100, resA.fireRate).toFixed(1));
   const heroRate = $('hero-rate');
   if (heroRate) countUp(heroRate, assetPct, v => v + '%', 750, false, D.h);
@@ -1668,7 +1667,7 @@ function addPerson() {
     alert(`최대 ${PERSON_COLORS.length}명까지 추가할 수 있습니다.`);
     return;
   }
-  const d = DEFAULT_PERSON();
+  const d = DEFAULT_PERSON(S.people.map(p => p.name));
   S.people.push(d);
   S.activePerson = S.people.length - 1;
   rebuildPersonTabs();
@@ -1892,7 +1891,7 @@ function loadURL() {
   if (n > 0) {
     S.people = [];
     for (let i = 0; i < Math.min(n, PERSON_COLORS.length); i++) {
-      const person = DEFAULT_PERSON();
+      const person = DEFAULT_PERSON(S.people.map(q => q.name));
       FIELDS.forEach(f => { if (p.has(`p${i}_${f}`)) person[f] = parseFloat(p.get(`p${i}_${f}`)); });
       if (p.has(`p${i}_name`)) person.name = decodeURIComponent(p.get(`p${i}_name`));
       S.people.push(person);
